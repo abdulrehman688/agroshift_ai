@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.agroshift.core.data.AppServices;
 import com.agroshift.core.domain.farm.FarmField;
@@ -54,6 +55,7 @@ public final class MarketFragment extends Fragment {
         ZameenUi.applySafeArea(view, false);
         AppServices services = (AppServices) requireContext().getApplicationContext();
         RecyclerView list = view.findViewById(R.id.market_sales);
+        list.setLayoutManager(new LinearLayoutManager(requireContext()));
         View header = getLayoutInflater().inflate(R.layout.header_market, list, false);
         View prices = header.findViewById(R.id.market_prices);
         ZameenUi.applySurface(prices, com.agroshift.core.ui.R.color.zameen_surface_accent,

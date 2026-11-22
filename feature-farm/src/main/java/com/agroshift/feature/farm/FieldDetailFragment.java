@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.agroshift.core.data.AppServices;
 import com.agroshift.core.data.RecordRepository;
@@ -50,6 +51,7 @@ public final class FieldDetailFragment extends Fragment {
         RecordRepository repository = services.recordRepository();
         AppNavigator navigator = (AppNavigator) requireActivity();
         RecyclerView list = view.findViewById(R.id.detail_records);
+        list.setLayoutManager(new LinearLayoutManager(requireContext()));
         View header = getLayoutInflater().inflate(R.layout.header_field_detail, list, false);
         TextView name = view.findViewById(R.id.detail_name);
         TextView crops = view.findViewById(R.id.detail_crops);

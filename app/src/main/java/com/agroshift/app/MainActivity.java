@@ -138,9 +138,17 @@ public final class MainActivity extends AppCompatActivity
     @Override
     public void openAdvisor(String fieldId) {
         ((AppServices) getApplication()).analysisRepository().selectField(fieldId);
-        navController.navigate(R.id.advisorFragment, null, motion()
-                .setLaunchSingleTop(true)
-                .setPopUpTo(R.id.homeFragment, false).build());
+        if (navController.getCurrentDestination() == null) {
+            return;
+        }
+        int current = navController.getCurrentDestination().getId();
+        if (current == R.id.advisorFragment) {
+            return;
+        }
+        if (FULL_SCREEN.contains(current)) {
+            navController.popBackStack(R.id.homeFragment, false);
+        }
+        bottomNav.setSelectedItemId(R.id.advisorFragment);
     }
 
     @Override

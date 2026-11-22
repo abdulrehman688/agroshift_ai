@@ -33,7 +33,9 @@ public final class RecordListBinder {
 
     public RecordListBinder(RecyclerView list, View header, View snackbarHost, RecordRepository repository) {
         adapter = new RecordAdapter(repository);
-        list.setLayoutManager(new LinearLayoutManager(list.getContext()));
+        if (list.getLayoutManager() == null) {
+            list.setLayoutManager(new LinearLayoutManager(list.getContext()));
+        }
         list.setAdapter(new ConcatAdapter(new HeaderAdapter(header), adapter));
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.START | ItemTouchHelper.END) {

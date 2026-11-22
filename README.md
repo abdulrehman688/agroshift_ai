@@ -4,18 +4,18 @@
 
 **A field-first Android companion for Pakistani farmers, built with Java, NASA Earth data and local languages.**
 
-![Version](https://img.shields.io/badge/version-0.6.0%20preview-D8F36F?style=flat-square&labelColor=10140D)
+![Version](https://img.shields.io/badge/version-0.6.1%20preview-D8F36F?style=flat-square&labelColor=10140D)
 ![Java](https://img.shields.io/badge/Java-17-D8F36F?style=flat-square&labelColor=10140D)
 ![Android](https://img.shields.io/badge/Android-7.0%2B-D8F36F?style=flat-square&labelColor=10140D)
 ![Offline first](https://img.shields.io/badge/offline-first-D8F36F?style=flat-square&labelColor=10140D)
 
 <img src="docs/assets/readme-banner.jpg" alt="Pakistani rice, wheat and mustard fields with farmers at harvest" width="100%">
 
-### [Download the Android APK (0.6.0 preview, 7.4 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.6.0-preview.apk)
+### [Download the Android APK (0.6.1 preview, 7.4 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.6.1-preview.apk)
 
 </div>
 
-> **Preview build:** it passes the build, lint and 70 unit tests, but has not yet been confirmed on a physical phone. It uses a development signature, so Android may ask you to allow installation from this source.
+> **Preview build:** it passes the build, lint and 78 automated tests, but has not yet been confirmed on a physical phone. It uses a development signature, so Android may ask you to allow installation from this source.
 
 ## Overview
 

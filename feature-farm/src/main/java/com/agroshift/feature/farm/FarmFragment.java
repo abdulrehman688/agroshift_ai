@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.agroshift.core.data.AppServices;
 import com.agroshift.core.data.FieldRepository;
@@ -49,6 +50,7 @@ public final class FarmFragment extends Fragment {
         FieldRepository repository = services.fieldRepository();
         AppNavigator navigator = (AppNavigator) requireActivity();
         RecyclerView list = view.findViewById(R.id.farm_fields);
+        list.setLayoutManager(new LinearLayoutManager(requireContext()));
         View header = getLayoutInflater().inflate(R.layout.header_farm, list, false);
         empty = header.findViewById(R.id.farm_empty);
         acres = header.findViewById(R.id.farm_stat_acres);
