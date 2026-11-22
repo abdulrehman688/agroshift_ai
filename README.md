@@ -4,18 +4,18 @@
 
 **A field-first Android companion for Pakistani farmers, built with Java, NASA Earth data and local languages.**
 
-![Version](https://img.shields.io/badge/version-0.7.0%20preview-D8F36F?style=flat-square&labelColor=10140D)
+![Version](https://img.shields.io/badge/version-0.8.0%20preview-D8F36F?style=flat-square&labelColor=10140D)
 ![Java](https://img.shields.io/badge/Java-17-D8F36F?style=flat-square&labelColor=10140D)
 ![Android](https://img.shields.io/badge/Android-7.0%2B-D8F36F?style=flat-square&labelColor=10140D)
 ![Offline first](https://img.shields.io/badge/offline-first-D8F36F?style=flat-square&labelColor=10140D)
 
 <img src="docs/assets/readme-banner.jpg" alt="Pakistani rice, wheat and mustard fields with farmers at harvest" width="100%">
 
-### [Download the Android APK (0.7.0 preview, 7.4 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.7.0-preview.apk)
+### [Download the Android APK (0.8.0 preview, 7.6 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.8.0-preview.apk)
 
 </div>
 
-> **Preview build:** it passes the build, lint and 83 automated tests, but has not yet been confirmed on a physical phone. It uses a development signature, so Android may ask you to allow installation from this source.
+> **Preview build:** it passes the build, lint and 100 automated tests, and the latest changes were checked on a real phone. It uses a development signature, so Android may ask you to allow installation from this source.
 
 ## Overview
 
@@ -39,7 +39,7 @@ It combines each farmer's field with NASA climate data. When evidence is missing
 - Crop rotation analysis from 20 years of NASA POWER data, with scores, risks, reasons and actions
 - What-If scenarios for heat and lower rainfall
 - Farm tasks, costs, sales, notes and profit, saved offline with Room
-- Field-aware assistant with voice input, read aloud and copy on every answer
+- Field-aware assistant with voice input, read aloud, copy and saved chat history you can continue
 - Chat in English, Urdu, Punjabi and Sindhi, with Saraiki in beta
 - Market and Help sections, with official AMIS price access
 - Zameen design system with safe areas, large touch targets and right-to-left layout

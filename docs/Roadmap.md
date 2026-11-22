@@ -28,14 +28,14 @@ Back to [[Home]]
 ## Sprints
 
 1. **Useful every day (built in 0.5.0, awaiting phone test):** modern Home, Field Setup map room, irrigation answer, canal turn alarm and danger alerts.
-2. **Course requirements (built in 0.8.0):** MPAndroidChart, generic types, SyncOutbox, typed errors, database upgrade tests, [[Course Report]] and [[Proposal Update]].
+2. **Course requirements (done in 0.8.0, checked on phone):** MPAndroidChart, generic types, SyncOutbox, typed errors, database upgrade tests, [[Course Report]] and [[Proposal Update]].
 3. **Polish and performance:** remaining UX patterns, final fonts, sunlight theme and low-end performance.
 4. **Big features:** Spring Boot backend, daily data pipeline, Field Lens and more languages.
 5. **Later, if time allows:** listings, machinery rental and community.
 
 ## Planned experience
 
-- [ ] Confirm 0.8.0 chat history and Live Farm work on a phone: farm switcher, canal scene, living Home, crop timeline, Farm, records, Market, Advisor, Help and search
+- [x] Confirm 0.8.0 chat history and Live Farm work on a phone: farm switcher, canal scene, living Home, crop timeline, Farm, records, Market, Advisor, Help and search
 - [ ] Finish [[Live Farm Plan]]: all-farm map pins and optional sound
 
 ## High priority

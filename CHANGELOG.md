@@ -28,7 +28,7 @@ All notable changes to AgroShift are recorded here.
 - Version 0.5.0 adds a full-screen Field Setup map, daily irrigation estimate, canal turn alarm, danger alerts and notifications (not yet device-tested)
 - Version 0.6.0 adds a multi-farm Home, live weather sky, weather icons and forecast, draggable crop timeline, live canal scene, soil water meter, and redesigned Farm, field record and Market pages (not yet device-tested)
 - Version 0.7.0 adds a live What-If field, score ring, tappable rain chart, interactive crop guide, read-aloud voice wave, and global search across farms, records, crops and actions (not yet device-tested)
-- Version 0.8.0 adds saved chat sessions with full history, visible plan previews, MPAndroidChart, generic repository and cache types, SyncOutbox, clearer errors, database upgrade tests and the course report (not yet device-tested)
+- Version 0.8.0 adds saved chat sessions with full history, visible plan previews, MPAndroidChart, generic repository and cache types, SyncOutbox, clearer errors, database upgrade tests and the course report (checked on the developer's phone)
 
 ### Fixed
 

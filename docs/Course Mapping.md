@@ -2,7 +2,7 @@
 
 Back to [[Home]]. Full evidence is in [[Course Report]].
 
-Status reflects version 0.8.0. "Tested" means automated tests pass. App behavior still needs confirmation on a physical phone.
+Status reflects version 0.8.0. "Tested" means automated tests pass. The 0.8.0 preview was checked by the developer on a physical phone.
 
 | Requirement | Implementation | Status |
 |---|---|---|
