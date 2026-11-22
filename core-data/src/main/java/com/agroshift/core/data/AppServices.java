@@ -9,4 +9,6 @@ public interface AppServices {
     RecordRepository recordRepository();
 
     OnlineServices onlineServices();
+
+    WaterRepository waterRepository();
 }

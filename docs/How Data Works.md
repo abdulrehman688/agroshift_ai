@@ -1,6 +1,6 @@
 # How Data Works
 
-Back to [[Home]]. Current as of version 0.4.0.
+Back to [[Home]]. Current as of version 0.5.0.
 
 | Data | Source | How it reaches the app |
 |---|---|---|
@@ -22,3 +22,11 @@ Back to [[Home]]. Current as of version 0.4.0.
 5. The answer returns to the app, has its own read-aloud and copy buttons, and is saved per field on the phone.
 
 The exact coordinates and field name are not sent to the assistant. Chat languages: English, Urdu, Punjabi and Sindhi use the backend language setting. Saraiki is beta and uses a prompt instruction. Pashto, Balochi, Hindko and Brahui are shown as coming soon because the backend returned the wrong language for Pashto and Balochi. Read aloud uses voices installed on the phone. General farming advice can still come from the AI's agronomy knowledge, so it is not limited to official documents yet.
+
+## Water and danger alerts
+
+- Open-Meteo supplies 31 past days and 7 forecast days of rain, rain chance, reference evapotranspiration, temperature and wind.
+- The irrigation answer is a simple soil-water estimate using the field's soil and saved last watering date. It does not yet use a crop coefficient, so it tells the farmer to check the soil by hand.
+- If the last watering date or weather days are missing, the app asks for them instead of guessing.
+- Danger alerts use AgroShift thresholds for the next three days. They are not official PMD or NDMA warnings.
+- Canal turns are saved on the phone. Exact alarm timing needs the Android exact-alarm permission on newer phones.

@@ -40,6 +40,7 @@ import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.ui.AppNavigator;
 import com.agroshift.core.ui.ZameenMap;
 import com.agroshift.core.ui.ZameenUi;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -81,6 +82,8 @@ public final class FieldSetupFragment extends Fragment {
     private TextInputEditText area;
     private boolean satellite;
     private OnBackPressedCallback backGuard;
+    private OnBackPressedCallback sheetBack;
+    private BottomSheetBehavior<View> sheetBehavior;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private final Runnable locationTimeout = () -> {
@@ -185,6 +188,7 @@ public final class FieldSetupFragment extends Fragment {
             }
         };
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), backGuard);
+        bindSheet(view);
 
         view.findViewById(R.id.setup_back).setOnClickListener(
                 v -> requireActivity().getOnBackPressedDispatcher().onBackPressed());
@@ -221,6 +225,8 @@ public final class FieldSetupFragment extends Fragment {
                 return true;
             }
             hideKeyboard(search);
+            search.clearFocus();
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             ((AppServices) requireContext().getApplicationContext()).onlineServices().searchPlaces(query,
                     places -> {
                         if (getView() == null) {
@@ -234,6 +240,63 @@ public final class FieldSetupFragment extends Fragment {
                     }, () -> message(string.setup_search_failed));
             return true;
         });
+    }
+
+    private void bindSheet(View root) {
+        View sheet = root.findViewById(R.id.setup_sheet);
+        View tools = root.findViewById(R.id.setup_tools);
+        View details = root.findViewById(R.id.setup_details);
+        sheetBehavior = BottomSheetBehavior.from(sheet);
+        sheetBehavior.setFitToContents(false);
+        sheetBehavior.setHalfExpandedRatio(0.6f);
+        sheetBack = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                hideKeyboard(sheet);
+                sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        };
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), sheetBack);
+        Runnable placeTools = () -> {
+            float top = sheet.getTop();
+            tools.setTranslationY(top - tools.getHeight() - dp(10));
+            float visible = Math.max(0f, Math.min(1f, (top - root.getHeight() * 0.3f) / dp(72)));
+            tools.setAlpha(visible);
+            tools.setVisibility(visible > 0f ? View.VISIBLE : View.INVISIBLE);
+        };
+        sheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                sheetBack.setEnabled(newState != BottomSheetBehavior.STATE_COLLAPSED
+                        && newState != BottomSheetBehavior.STATE_HIDDEN);
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float offset) {
+                placeTools.run();
+            }
+        });
+        sheet.addOnLayoutChangeListener((v, l, t, r, b, oldL, oldT, oldR, oldB) -> placeTools.run());
+        root.post(() -> {
+            if (getView() == null) {
+                return;
+            }
+            WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(root);
+            Insets safe = insets == null ? Insets.NONE : insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.displayCutout());
+            sheetBehavior.setPeekHeight(details.getBottom() + dp(12) + safe.bottom);
+            sheetBehavior.setExpandedOffset(safe.top + dp(64));
+            placeTools.run();
+        });
+        details.setOnClickListener(v -> sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
+        View.OnFocusChangeListener expandOnFocus = (v, focused) -> {
+            if (focused) {
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        };
+        root.findViewById(R.id.setup_search).setOnFocusChangeListener(expandOnFocus);
+        name.setOnFocusChangeListener(expandOnFocus);
+        area.setOnFocusChangeListener(expandOnFocus);
     }
 
     private void hideKeyboard(View input) {
@@ -263,6 +326,7 @@ public final class FieldSetupFragment extends Fragment {
         nameLayout.setError(null);
         areaLayout.setError(null);
         if (marker == null) {
+            sheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             hint.setText(string.error_field_location);
             message(string.error_field_location);
             return;
@@ -490,6 +554,8 @@ public final class FieldSetupFragment extends Fragment {
         name = null;
         area = null;
         backGuard = null;
+        sheetBack = null;
+        sheetBehavior = null;
         super.onDestroyView();
     }
 }

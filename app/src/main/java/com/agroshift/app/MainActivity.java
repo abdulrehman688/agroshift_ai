@@ -22,6 +22,7 @@ import com.agroshift.core.ui.AppNavigator;
 import com.agroshift.feature.account.LanguageFragment;
 import com.agroshift.feature.account.OnboardingFragment;
 import com.agroshift.feature.farm.FieldDetailFragment;
+import com.agroshift.feature.farm.WaterSheet;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,7 @@ public final class MainActivity extends AppCompatActivity
         implements LanguageFragment.Host, OnboardingFragment.Host, AppNavigator, CommandMenuSheet.Host {
     private static final String ACTION_ADD_FIELD = "com.agroshift.app.action.ADD_FIELD";
     private static final String TAG_COMMAND = "command_menu";
+    private static final String TAG_WATER = "water_plan";
     private static final Set<Integer> FULL_SCREEN = Set.of(R.id.languageFragment, R.id.onboardingFragment,
             R.id.fieldSetupFragment, R.id.fieldDetailFragment, R.id.assistantFragment);
 
@@ -154,6 +156,13 @@ public final class MainActivity extends AppCompatActivity
     @Override
     public void openMarket() {
         bottomNav.setSelectedItemId(R.id.marketFragment);
+    }
+
+    @Override
+    public void openWater(String fieldId) {
+        if (getSupportFragmentManager().findFragmentByTag(TAG_WATER) == null) {
+            WaterSheet.create(fieldId).show(getSupportFragmentManager(), TAG_WATER);
+        }
     }
 
     @Override

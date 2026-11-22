@@ -74,6 +74,7 @@ public final class FieldDetailFragment extends Fragment {
         bindAdd(view, R.id.detail_add_cost, fieldId, FarmRecord.Type.EXPENSE);
         bindAdd(view, R.id.detail_add_sale, fieldId, FarmRecord.Type.SALE);
         bindAdd(view, R.id.detail_add_note, fieldId, FarmRecord.Type.NOTE);
+        view.findViewById(R.id.detail_water).setOnClickListener(v -> navigator.openWater(fieldId));
         MaterialButton plan = view.findViewById(R.id.detail_plan);
         ZameenUi.polishPrimary(plan);
         plan.setOnClickListener(v -> navigator.openAdvisor(fieldId));

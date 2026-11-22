@@ -155,6 +155,16 @@
             android:textAllCaps="false" />
     </LinearLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/detail_water"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:minHeight="48dp"
+        android:text="@string/water_plan"
+        android:textAllCaps="false" />
+
     <TextView
         android:id="@+id/detail_empty"
         android:layout_width="match_parent"

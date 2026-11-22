@@ -2,7 +2,7 @@
 
 Back to [[Home]]. Related: [[Zameen Design System]]
 
-Status is based on code in version 0.4.0. These patterns have not been confirmed on a physical phone.
+Status is based on code in version 0.5.0. These patterns have not been confirmed on a physical phone.
 
 | Pattern | Status | Current state |
 |---|---|---|

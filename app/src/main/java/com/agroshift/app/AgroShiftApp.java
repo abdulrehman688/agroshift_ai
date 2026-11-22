@@ -9,6 +9,9 @@ import com.agroshift.core.data.FarmDao;
 import com.agroshift.core.data.FieldRepository;
 import com.agroshift.core.data.OnlineServices;
 import com.agroshift.core.data.RecordRepository;
+import com.agroshift.core.data.WaterRepository;
+import com.agroshift.core.sync.CanalAlarms;
+import com.agroshift.core.sync.DangerAlertWorker;
 import com.agroshift.core.sync.ClimateRefreshWorker;
 import com.agroshift.core.sync.OutboxSyncWorker;
 import com.agroshift.core.sync.SyncGateway;
@@ -23,6 +26,7 @@ public final class AgroShiftApp extends Application implements SyncHost, AppServ
     private AnalysisRepository analysisRepository;
     private RecordRepository recordRepository;
     private OnlineServices onlineServices;
+    private WaterRepository waterRepository;
 
     @Override
     public void onCreate() {
@@ -35,7 +39,10 @@ public final class AgroShiftApp extends Application implements SyncHost, AppServ
         recordRepository = new RecordRepository(database.farmDao(), writes, sync);
         analysisRepository = new AnalysisRepository(database.farmDao());
         onlineServices = new OnlineServices(this);
+        waterRepository = new WaterRepository(database.farmDao(), writes, sync,
+                water -> CanalAlarms.sync(this, water));
         ClimateRefreshWorker.schedule(this);
+        DangerAlertWorker.schedule(this);
     }
 
     @Override
@@ -62,6 +69,11 @@ public final class AgroShiftApp extends Application implements SyncHost, AppServ
     @Override
     public RecordRepository recordRepository() {
         return recordRepository;
+    }
+
+    @Override
+    public WaterRepository waterRepository() {
+        return waterRepository;
     }
 
     @Override

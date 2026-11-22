@@ -9,6 +9,7 @@ import com.agroshift.core.domain.engine.ClimateScenario;
 import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.language.ChatLanguage;
+import com.agroshift.core.domain.water.DayForecast;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -34,7 +35,10 @@ import retrofit2.http.Query;
 
 /** Weather, place search and assistant calls. No API keys are stored in the app. */
 public final class OnlineServices {
-    public record Weather(int currentC, LocalDate rainDate) {
+    public record Weather(int currentC, LocalDate rainDate, List<DayForecast> days, long fetchedMillis) {
+        public Weather {
+            days = List.copyOf(days);
+        }
     }
 
     public record Place(String name, double latitude, double longitude) {
@@ -51,7 +55,8 @@ public final class OnlineServices {
         @GET("v1/forecast")
         Call<JsonObject> forecast(@Query("latitude") double latitude, @Query("longitude") double longitude,
                 @Query("current") String current, @Query("daily") String daily,
-                @Query("forecast_days") int days, @Query("timezone") String timezone);
+                @Query("forecast_days") int days, @Query("past_days") int pastDays,
+                @Query("timezone") String timezone);
     }
 
     private interface PlaceApi {
@@ -66,6 +71,11 @@ public final class OnlineServices {
     }
 
     private static final int RAIN_LIKELY_PERCENT = 50;
+    private static final int FORECAST_DAYS = 7;
+    private static final int PAST_DAYS = 31;
+    private static final String KEY_FETCHED = "agroshift_fetched";
+    private static final String DAILY_VALUES = "precipitation_probability_max,precipitation_sum,"
+            + "et0_fao_evapotranspiration,temperature_2m_max,temperature_2m_min,wind_speed_10m_max";
     private static final int MAX_HISTORY = 12;
     private static final int MAX_ANSWER_ITEMS = 3;
     private static final int MAX_SAVED_MESSAGES = 40;
@@ -94,7 +104,7 @@ public final class OnlineServices {
                 .connectTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(timeoutSeconds, TimeUnit.SECONDS)
                 .addInterceptor(chain -> chain.proceed(chain.request().newBuilder()
-                        .header("User-Agent", "AgroShift-Android/0.3").build()))
+                        .header("User-Agent", "AgroShift-Android/0.5").build()))
                 .build();
         return new Retrofit.Builder().baseUrl(baseUrl).client(http)
                 .addConverterFactory(GsonConverterFactory.create()).build();
@@ -102,7 +112,7 @@ public final class OnlineServices {
 
     /** Shows saved weather at once, then refreshes it. */
     public LiveData<Weather> observeWeather(FarmField field) {
-        String key = String.format(Locale.ROOT, "%.2f,%.2f", field.latitude(), field.longitude());
+        String key = weatherKey(field.latitude(), field.longitude());
         MutableLiveData<Weather> live = weather.computeIfAbsent(key, k -> {
             MutableLiveData<Weather> created = new MutableLiveData<>();
             Weather saved = readSaved(k);
@@ -111,18 +121,13 @@ public final class OnlineServices {
             }
             return created;
         });
-        weatherApi.forecast(field.latitude(), field.longitude(), "temperature_2m",
-                "precipitation_probability_max", 7, "auto").enqueue(new Callback<>() {
+        forecastCall(field.latitude(), field.longitude()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    try {
-                        Weather parsed = parseWeather(response.body());
-                        prefs.edit().putString(key, parsed.currentC() + "|"
-                                + (parsed.rainDate() == null ? "" : parsed.rainDate())).apply();
+                    Weather parsed = store(key, response.body());
+                    if (parsed != null) {
                         live.setValue(parsed);
-                    } catch (RuntimeException ignored) {
-                        // Keep the last saved weather if the response is unusable.
                     }
                 }
             }
@@ -135,15 +140,46 @@ public final class OnlineServices {
         return live;
     }
 
+    /** Blocking refresh for background work. Returns null when the forecast is unavailable. */
+    @Nullable
+    public Weather fetchWeather(double latitude, double longitude) {
+        try {
+            Response<JsonObject> response = forecastCall(latitude, longitude).execute();
+            return response.isSuccessful() && response.body() != null
+                    ? store(weatherKey(latitude, longitude), response.body()) : null;
+        } catch (java.io.IOException offline) {
+            return null;
+        }
+    }
+
+    private Call<JsonObject> forecastCall(double latitude, double longitude) {
+        return weatherApi.forecast(latitude, longitude, "temperature_2m", DAILY_VALUES, FORECAST_DAYS,
+                PAST_DAYS, "auto");
+    }
+
+    private static String weatherKey(double latitude, double longitude) {
+        return String.format(Locale.ROOT, "%.2f,%.2f", latitude, longitude);
+    }
+
+    @Nullable
+    private Weather store(String key, JsonObject body) {
+        try {
+            body.addProperty(KEY_FETCHED, System.currentTimeMillis());
+            Weather parsed = parseWeather(body);
+            prefs.edit().putString(key, body.toString()).apply();
+            return parsed;
+        } catch (RuntimeException unusable) {
+            return null;
+        }
+    }
+
     private Weather readSaved(String key) {
         String value = prefs.getString(key, null);
         if (value == null) {
             return null;
         }
         try {
-            String[] parts = value.split("\\|", -1);
-            LocalDate rain = parts[1].isEmpty() ? null : LocalDate.parse(parts[1]);
-            return new Weather(Integer.parseInt(parts[0]), rain != null && rain.isBefore(LocalDate.now()) ? null : rain);
+            return parseWeather(JsonParser.parseString(value).getAsJsonObject());
         } catch (RuntimeException corrupted) {
             return null;
         }
@@ -154,15 +190,28 @@ public final class OnlineServices {
         JsonObject daily = body.getAsJsonObject("daily");
         JsonArray dates = daily.getAsJsonArray("time");
         JsonArray chances = daily.getAsJsonArray("precipitation_probability_max");
-        LocalDate rain = null;
-        for (int i = 0; i < dates.size() && i < chances.size(); i++) {
-            JsonElement chance = chances.get(i);
-            if (!chance.isJsonNull() && chance.getAsInt() >= RAIN_LIKELY_PERCENT) {
-                rain = LocalDate.parse(dates.get(i).getAsString());
-                break;
+        JsonArray rain = daily.getAsJsonArray("precipitation_sum");
+        JsonArray et0 = daily.getAsJsonArray("et0_fao_evapotranspiration");
+        JsonArray max = daily.getAsJsonArray("temperature_2m_max");
+        JsonArray min = daily.getAsJsonArray("temperature_2m_min");
+        JsonArray wind = daily.getAsJsonArray("wind_speed_10m_max");
+        LocalDate today = LocalDate.now();
+        LocalDate nextRain = null;
+        List<DayForecast> days = new ArrayList<>();
+        for (int i = 0; i < dates.size(); i++) {
+            LocalDate date = LocalDate.parse(dates.get(i).getAsString());
+            int chance = chances.get(i).isJsonNull() ? 0 : chances.get(i).getAsInt();
+            if (nextRain == null && !date.isBefore(today) && chance >= RAIN_LIKELY_PERCENT) {
+                nextRain = date;
+            }
+            if (!rain.get(i).isJsonNull() && !et0.get(i).isJsonNull() && !max.get(i).isJsonNull()
+                    && !min.get(i).isJsonNull() && !wind.get(i).isJsonNull()) {
+                days.add(new DayForecast(date, rain.get(i).getAsDouble(), chance, et0.get(i).getAsDouble(),
+                        max.get(i).getAsDouble(), min.get(i).getAsDouble(), wind.get(i).getAsDouble()));
             }
         }
-        return new Weather(current, rain);
+        long fetched = body.has(KEY_FETCHED) ? body.get(KEY_FETCHED).getAsLong() : 0;
+        return new Weather(current, nextRain, days, fetched);
     }
 
     public void searchPlaces(String query, Consumer<List<Place>> onResult, Runnable onFailure) {

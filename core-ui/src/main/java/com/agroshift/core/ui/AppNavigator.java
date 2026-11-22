@@ -17,4 +17,6 @@ public interface AppNavigator {
     void openFarm();
 
     void openMarket();
+
+    void openWater(String fieldId);
 }

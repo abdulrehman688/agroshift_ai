@@ -9,7 +9,7 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(entities = {FieldEntity.class, OutboxEntity.class, ClimateProfileEntity.class,
-        FarmRecordEntity.class}, version = 3, exportSchema = true)
+        FarmRecordEntity.class, FieldWaterEntity.class}, version = 4, exportSchema = true)
 public abstract class AgroShiftDatabase extends RoomDatabase {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
@@ -39,10 +39,20 @@ public abstract class AgroShiftDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS field_water ("
+                    + "fieldId TEXT NOT NULL, lastWateredEpochDay INTEGER, turnDay INTEGER, "
+                    + "turnStartMinute INTEGER, turnDurationMinutes INTEGER, turnRemindMinutes INTEGER, "
+                    + "updatedAtMillis INTEGER NOT NULL, PRIMARY KEY(fieldId))");
+        }
+    };
+
     public abstract FarmDao farmDao();
 
     public static AgroShiftDatabase create(Context context) {
         return Room.databaseBuilder(context.getApplicationContext(), AgroShiftDatabase.class,
-                "agroshift.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3).build();
+                "agroshift.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build();
     }
 }

@@ -1,15 +1,15 @@
 # AgroShift Project Context
 
-Last updated: 2026-11-22. Status: Android preview 0.4.0, published to the GitHub repository.
+Last updated: 2026-11-22. Status: Android preview 0.5.0, published to the GitHub repository.
 
 ### Current build status
 
 - **Working:** Java multi-module Android app, Zameen theme, language onboarding, Urdu right-to-left UI, five-tab navigation, season thread, add/delete/undo fields, Room persistence, sync outbox with idempotency keys, tested concurrency primitives, command menu, skeleton loading, smooth corners, press springs, and unsaved-sheet protection.
-- **Preview APK:** `releases/AgroShift-0.4.0-preview.apk` includes bilingual photo onboarding, a modern Home, map setup, NASA crop advice, What-If, weather, farm records, Market, Help, field-aware assistant, per-answer read aloud, copy, and a chat language selector. It passed build, lint and 41 unit tests, but has not been confirmed on a device.
+- **Preview APK:** `releases/AgroShift-0.5.0-preview.apk` includes bilingual photo onboarding, a modern Home, irrigation estimate, canal turn alarm, danger alerts, map setup, NASA crop advice, What-If, weather, farm records, Market, Help, field-aware assistant, per-answer read aloud, copy, and a chat language selector. It passed build, lint and 56 unit tests, but has not been confirmed on a device.
 - **Analysis display rule:** show a clear answer first, followed by the full useful analysis: scores, six score bars, water need, rain chart, field stats, risks, reasons and actions. The user rejected the over-simplified version on 2026-11-22.
 - **Data flow:** see `docs/How Data Works.md`. The assistant receives the selected field's NASA analysis, without exact coordinates or field name. Its general farming advice is not yet restricted to a reviewed official knowledge base.
 - **Current limits:** Market opens official AMIS prices instead of showing them in-app. Community groups, listings and rental need a backend. Field Lens needs a secure image AI service.
-- **High-priority UX task:** Home has a dedicated map card. Field Setup still needs more map room. See `docs/Roadmap.md`.
+- **Sprint 1:** built in 0.5.0 and awaiting phone test, including Home and Field Setup map room. Irrigation is an estimate without crop coefficients. Danger alerts use AgroShift thresholds and are not official warnings.
 - **Photography:** app photos are openly licensed Wikimedia Commons images, cropped, graded and credited in `docs/Image Credits.md` and in Help. Do not add images without a compatible license.
 - **Design guidance:** Expo and React Native skills are used only as performance and UX guidance. The app stays Java because the course requires it. SnapAI is installed but unused until the user provides an image API key.
 - **Testing preference:** do not run emulator flows. Build the APK and run normal code checks. The user tests on their phone.

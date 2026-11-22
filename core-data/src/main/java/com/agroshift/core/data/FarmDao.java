@@ -48,6 +48,25 @@ public abstract class FarmDao {
         addOutbox(entry);
     }
 
+    @Query("SELECT * FROM field_water WHERE fieldId = :fieldId")
+    public abstract LiveData<FieldWaterEntity> observeWater(String fieldId);
+
+    @Query("SELECT * FROM field_water WHERE fieldId = :fieldId")
+    public abstract FieldWaterEntity findWater(String fieldId);
+
+    @Query("SELECT w.* FROM field_water w JOIN fields f ON f.id = w.fieldId "
+            + "WHERE w.turnDay IS NOT NULL AND f.deletedAtMillis IS NULL")
+    public abstract List<FieldWaterEntity> waterWithTurns();
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract void putWater(FieldWaterEntity water);
+
+    @Transaction
+    public void saveWater(FieldWaterEntity water, OutboxEntity entry) {
+        putWater(water);
+        addOutbox(entry);
+    }
+
     @Insert(onConflict = OnConflictStrategy.ABORT)
     abstract void addOutbox(OutboxEntity entry);
 

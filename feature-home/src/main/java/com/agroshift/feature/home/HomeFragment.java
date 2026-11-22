@@ -1,9 +1,11 @@
 package com.agroshift.feature.home;
 
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,20 +20,27 @@ import com.agroshift.core.data.AnalysisRepository;
 import com.agroshift.core.data.AnalysisState;
 import com.agroshift.core.data.AppServices;
 import com.agroshift.core.data.OnlineServices;
+import com.agroshift.core.data.WaterRepository;
 import com.agroshift.core.domain.engine.ClimateAlert;
 import com.agroshift.core.domain.engine.ClimateProfile.Metric;
 import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.farm.FarmRecord;
 import com.agroshift.core.domain.season.SeasonPosition;
+import com.agroshift.core.domain.water.DangerAlert;
+import com.agroshift.core.domain.water.DayForecast;
+import com.agroshift.core.domain.water.FieldWater;
+import com.agroshift.core.domain.water.IrrigationAdvisor;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
+import com.agroshift.core.i18n.WaterText;
 import com.agroshift.core.ui.AppNavigator;
 import com.agroshift.core.ui.PhotoView;
 import com.agroshift.core.ui.SeasonThreadView;
 import com.agroshift.core.ui.ZameenMap;
 import com.agroshift.core.ui.ZameenUi;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -54,6 +63,20 @@ public final class HomeFragment extends Fragment {
     private LiveData<OnlineServices.Weather> activeWeather;
     private final Observer<AnalysisState> stateObserver = this::renderState;
     private final Observer<OnlineServices.Weather> weatherObserver = this::renderWeather;
+    private final Observer<FieldWater> waterObserver = next -> {
+        fieldWater = next;
+        renderWater();
+    };
+    private WaterRepository water;
+    private LiveData<FieldWater> activeWater;
+    private FieldWater fieldWater;
+    private OnlineServices.Weather latestWeather;
+    private View waterCard;
+    private TextView waterTitle;
+    private TextView waterReason;
+    private TextView waterTurn;
+    private TextView waterSource;
+    private LinearLayout dangers;
     private MapView map;
     private View mapSection;
     private Marker marker;
@@ -102,6 +125,21 @@ public final class HomeFragment extends Fragment {
         });
         bindHero(view);
         bindTiles(view, navigator);
+        water = services.waterRepository();
+        waterCard = view.findViewById(R.id.home_water_card);
+        ZameenUi.applySurface(waterCard, com.agroshift.core.ui.R.color.zameen_surface_accent,
+                com.agroshift.core.ui.R.dimen.zameen_radius_card);
+        waterTitle = view.findViewById(R.id.home_water_title);
+        waterReason = view.findViewById(R.id.home_water_reason);
+        waterTurn = view.findViewById(R.id.home_water_turn);
+        waterSource = view.findViewById(R.id.home_water_source);
+        dangers = view.findViewById(R.id.home_dangers);
+        view.findViewById(R.id.home_water_done).setOnClickListener(v -> markWatered());
+        view.findViewById(R.id.home_water_plan).setOnClickListener(v -> {
+            if (primary != null) {
+                navigator.openWater(primary.id());
+            }
+        });
         title = view.findViewById(R.id.home_title);
         body = view.findViewById(R.id.home_body);
         weatherCard = view.findViewById(R.id.home_weather_card);
@@ -173,6 +211,10 @@ public final class HomeFragment extends Fragment {
             return;
         }
         detach();
+        fieldWater = null;
+        latestWeather = null;
+        dangers.removeAllViews();
+        waterCard.setVisibility(View.GONE);
         weatherCard.setVisibility(View.GONE);
         watchCard.setVisibility(View.GONE);
         stats.setVisibility(View.GONE);
@@ -201,6 +243,8 @@ public final class HomeFragment extends Fragment {
         analysis.load(field, false);
         activeWeather = online.observeWeather(field);
         activeWeather.observe(getViewLifecycleOwner(), weatherObserver);
+        activeWater = water.observe(field.id());
+        activeWater.observe(getViewLifecycleOwner(), waterObserver);
     }
 
     private void detach() {
@@ -211,6 +255,10 @@ public final class HomeFragment extends Fragment {
         if (activeWeather != null) {
             activeWeather.removeObserver(weatherObserver);
             activeWeather = null;
+        }
+        if (activeWater != null) {
+            activeWater.removeObserver(waterObserver);
+            activeWater = null;
         }
     }
 
@@ -240,6 +288,55 @@ public final class HomeFragment extends Fragment {
                     weather.rainDate().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault())));
         }
         weatherCard.setVisibility(View.VISIBLE);
+        latestWeather = weather;
+        renderDangers(weather);
+        renderWater();
+    }
+
+    private void renderDangers(OnlineServices.Weather weather) {
+        dangers.removeAllViews();
+        LayoutInflater inflater = getLayoutInflater();
+        for (DangerAlert alert : DangerAlert.find(weather.days(), LocalDate.now())) {
+            View row = inflater.inflate(R.layout.item_home_danger, dangers, false);
+            ZameenUi.applySurface(row, com.agroshift.core.ui.R.color.zameen_surface,
+                    com.agroshift.core.ui.R.dimen.zameen_radius_card);
+            ((TextView) row.findViewById(R.id.danger_severity)).setText(WaterText.dangerSeverity(requireContext(), alert));
+            ((TextView) row.findViewById(R.id.danger_title)).setText(WaterText.dangerTitle(requireContext(), alert));
+            ((TextView) row.findViewById(R.id.danger_detail)).setText(WaterText.dangerDetail(requireContext(), alert));
+            dangers.addView(row);
+        }
+    }
+
+    private void renderWater() {
+        if (getView() == null || primary == null || !primary.hasLocation() || fieldWater == null) {
+            return;
+        }
+        List<DayForecast> days = latestWeather == null ? List.of() : latestWeather.days();
+        IrrigationAdvisor.Answer answer = IrrigationAdvisor.decide(days, fieldWater.lastWatered(), LocalDate.now(),
+                primary.water(), primary.soil());
+        waterTitle.setText(WaterText.title(requireContext(), answer));
+        waterReason.setText(WaterText.reason(requireContext(), answer));
+        waterTurn.setText(fieldWater.turn() == null ? getString(string.turn_none)
+                : WaterText.nextTurn(requireContext(), fieldWater.turn()));
+        if (latestWeather != null && latestWeather.fetchedMillis() > 0) {
+            waterSource.setText(getString(string.water_estimate, DateUtils.getRelativeTimeSpanString(
+                    latestWeather.fetchedMillis(), System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)));
+            waterSource.setVisibility(View.VISIBLE);
+        } else {
+            waterSource.setVisibility(View.GONE);
+        }
+        waterCard.setVisibility(View.VISIBLE);
+    }
+
+    private void markWatered() {
+        if (primary == null || fieldWater == null) {
+            return;
+        }
+        String id = primary.id();
+        LocalDate previous = fieldWater.lastWatered();
+        water.setLastWatered(id, LocalDate.now());
+        Snackbar.make(requireView(), string.water_marked, Snackbar.LENGTH_LONG)
+                .setAction(string.action_undo, v -> water.setLastWatered(id, previous)).show();
     }
 
     private void renderState(@Nullable AnalysisState state) {
@@ -368,6 +465,14 @@ public final class HomeFragment extends Fragment {
         map.onDetach();
         map = null;
         mapSection = null;
+        waterCard = null;
+        waterTitle = null;
+        waterReason = null;
+        waterTurn = null;
+        waterSource = null;
+        dangers = null;
+        fieldWater = null;
+        latestWeather = null;
         marker = null;
         primary = null;
         weatherCard = null;

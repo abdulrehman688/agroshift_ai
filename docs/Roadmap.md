@@ -27,7 +27,7 @@ Back to [[Home]]
 
 ## Sprints
 
-1. **Useful every day (in progress):** Home built in 0.4.0. Next are Field Setup map room, irrigation answer, canal turn alarm and danger alerts.
+1. **Useful every day (built in 0.5.0, awaiting phone test):** modern Home, Field Setup map room, irrigation answer, canal turn alarm and danger alerts.
 2. **Course requirements:** proposal gaps, tests, topic-to-code report and proposal wording.
 3. **Polish and performance:** remaining UX patterns, final fonts, sunlight theme and low-end performance.
 4. **Big features:** Spring Boot backend, daily data pipeline, Field Lens and more languages.
@@ -35,7 +35,7 @@ Back to [[Home]]
 
 ## High priority
 
-- [ ] **Give the map more room.** Home now has a dedicated 240dp map card in 0.4.0. Field Setup still needs this work. The user reported on 2026-11-22 that map screens feel congested. Applies to Field Setup (`fragment_field_setup.xml`) and Home (`fragment_home.xml`). Keep the map as the main element, move secondary controls into a draggable bottom sheet, keep controls clear of system bars and the keyboard, and keep 48dp touch targets, right-to-left layout and smooth sheet motion.
+- [ ] **Confirm map room on a phone.** Home has a 240dp map card and Field Setup has a full-screen map with a draggable form in 0.5.0. The user reported on 2026-11-22 that map screens feel congested. Applies to Field Setup (`fragment_field_setup.xml`) and Home (`fragment_home.xml`). Keep the map as the main element, move secondary controls into a draggable bottom sheet, keep controls clear of system bars and the keyboard, and keep 48dp touch targets, right-to-left layout and smooth sheet motion.
 
 ## Next
 

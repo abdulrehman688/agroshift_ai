@@ -140,4 +140,14 @@ public final class FieldRepository {
             throw new IllegalStateException("Could not encode field", e);
         }
     }
+
+    /** Blocking read for background receivers and workers. */
+    public FieldEntity findBlocking(String id) {
+        return dao.findField(id);
+    }
+
+    /** Blocking read for background receivers and workers. */
+    public java.util.List<FieldEntity> activeBlocking() {
+        return dao.activeFields();
+    }
 }

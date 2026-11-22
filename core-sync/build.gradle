@@ -10,5 +10,7 @@ android {
 
 dependencies {
     api project(":core-data")
+    implementation project(":core-i18n")
+    implementation "androidx.core:core:${rootProject.ext.coreVersion}"
     api "androidx.work:work-runtime:${rootProject.ext.workVersion}"
 }

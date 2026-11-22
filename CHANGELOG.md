@@ -25,6 +25,7 @@ All notable changes to AgroShift are recorded here.
 - Version 0.3.3 redesigns the chatbot with answer cards, read aloud and copy on each answer, suggested questions and a chat language selector (not yet device-tested)
 
 - Version 0.4.0 adds bilingual Urdu and English photo onboarding, a modern Home, licensed farm photography, photo headers on main screens and in-app photo credits (not yet device-tested)
+- Version 0.5.0 adds a full-screen Field Setup map, daily irrigation estimate, canal turn alarm, danger alerts and notifications (not yet device-tested)
 
 ### Fixed
 

@@ -2,7 +2,7 @@
 
 Back to [[Home]]. Compared with https://fieldshift-virid.vercel.app/ on 2026-11-22.
 
-**In APK** means the code is in `AgroShift-0.4.0-preview.apk`. It passed build, lint and unit tests, but has not been confirmed on a device.
+**In APK** means the code is in `AgroShift-0.5.0-preview.apk`. It passed build, lint and unit tests, but has not been confirmed on a device.
 
 | Website feature | Mobile status |
 |---|---|

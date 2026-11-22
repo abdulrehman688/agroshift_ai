@@ -4,18 +4,18 @@
 
 **A field-first Android companion for Pakistani farmers, built with Java, NASA Earth data and local languages.**
 
-![Version](https://img.shields.io/badge/version-0.4.0%20preview-D8F36F?style=flat-square&labelColor=10140D)
+![Version](https://img.shields.io/badge/version-0.5.0%20preview-D8F36F?style=flat-square&labelColor=10140D)
 ![Java](https://img.shields.io/badge/Java-17-D8F36F?style=flat-square&labelColor=10140D)
 ![Android](https://img.shields.io/badge/Android-7.0%2B-D8F36F?style=flat-square&labelColor=10140D)
 ![Offline first](https://img.shields.io/badge/offline-first-D8F36F?style=flat-square&labelColor=10140D)
 
 <img src="docs/assets/readme-banner.jpg" alt="Pakistani rice, wheat and mustard fields with farmers at harvest" width="100%">
 
-### [Download the Android APK (0.4.0 preview, 7.3 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.4.0-preview.apk)
+### [Download the Android APK (0.5.0 preview, 7.3 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.5.0-preview.apk)
 
 </div>
 
-> **Preview build:** it passes the build, lint and 41 unit tests, but has not yet been confirmed on a physical phone. It uses a development signature, so Android may ask you to allow installation from this source.
+> **Preview build:** it passes the build, lint and 56 unit tests, but has not yet been confirmed on a physical phone. It uses a development signature, so Android may ask you to allow installation from this source.
 
 ## Overview
 
@@ -27,7 +27,10 @@ It combines each farmer's field with NASA climate data. When evidence is missing
 
 - Bilingual Urdu and English onboarding with real Pakistani farm photography
 - Modern Home with a seasonal photo, today's answer, weather, field map and quick actions
-- Map-based field setup with GPS, place search and satellite view
+- Full-screen map field setup with a draggable form, GPS, place search and satellite view
+- Daily irrigation estimate from forecast rain, evapotranspiration, soil and your last watering date
+- Weekly canal turn (warabandi) alarm that survives phone restarts
+- Frost, heat, heavy rain and strong wind alerts for the next three days
 - Crop rotation analysis from 20 years of NASA POWER data, with scores, risks, reasons and actions
 - What-If scenarios for heat and lower rainfall
 - Farm tasks, costs, sales, notes and profit, saved offline with Room
@@ -42,7 +45,7 @@ Urdu is a machine draft awaiting native review. Punjabi, Sindhi, Pashto, Saraiki
 
 | Sprint | Focus | Status |
 |---|---|---|
-| **1. Useful every day** | Map room, modern Home, irrigation answer, canal turn alarm, danger alerts | In progress: Home is built |
+| **1. Useful every day** | Map room, modern Home, irrigation answer, canal turn alarm, danger alerts | Built, awaiting phone test |
 | **2. Course requirements** | Proposal gaps, tests, topic-to-code report, proposal wording | Planned |
 | **3. Polish and performance** | Remaining UX patterns, final fonts, sunlight theme, low-end performance | Planned |
 | **4. Big features** | Spring Boot backend, daily data pipeline, Field Lens, more languages | Planned |
