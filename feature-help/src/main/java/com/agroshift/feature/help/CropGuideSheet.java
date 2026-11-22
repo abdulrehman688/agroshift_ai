@@ -12,12 +12,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.agroshift.core.domain.engine.Crop;
 import com.agroshift.core.domain.engine.CropJourney;
+import com.agroshift.core.domain.scene.LivingScene;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
-import com.agroshift.core.ui.CropGrowthView;
+import com.agroshift.core.ui.CropPhotos;
+import com.agroshift.core.ui.LivingPhotoView;
 import com.agroshift.core.ui.SplitBarView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.slider.Slider;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +28,8 @@ import java.util.List;
 public final class CropGuideSheet extends BottomSheetDialogFragment {
     private static final String ARG_CROP = "crop";
     private static final int MAX_TRAIT = 5;
+
+    private String slug;
 
     public static CropGuideSheet create(String slug) {
         CropGuideSheet sheet = new CropGuideSheet();
@@ -51,7 +56,11 @@ public final class CropGuideSheet extends BottomSheetDialogFragment {
                 EngineText.month(context, crop.calendar().harvestMonth())));
 
         List<CropJourney.Step> journey = CropJourney.of(crop);
-        CropGrowthView growth = view.findViewById(R.id.guide_growth);
+        LivingPhotoView growth = view.findViewById(R.id.guide_growth);
+        slug = crop.slug();
+        growth.setFieldMode(true);
+        growth.setCropFocus(0.5f, 0.6f);
+        growth.setScene(LivingScene.forField(LocalDateTime.now(), null));
         TextView month = view.findViewById(R.id.guide_month);
         TextView stage = view.findViewById(R.id.guide_stage);
         Slider slider = view.findViewById(R.id.guide_slider);
@@ -62,9 +71,8 @@ public final class CropGuideSheet extends BottomSheetDialogFragment {
         slider.setEnabled(journey.size() > 1);
         slider.setLabelFormatter(value -> EngineText.month(context,
                 journey.get(Math.min(journey.size() - 1, Math.round(value))).month()));
-        slider.addOnChangeListener((bar, value, fromUser) ->
-                showStep(context, journey.get(Math.min(journey.size() - 1, Math.round(value))), growth, month, stage));
-        showStep(context, journey.get(0), growth, month, stage);
+        slider.addOnChangeListener((bar, value, fromUser) -> showStep(context, journey, value, growth, month, stage));
+        showStep(context, journey, 0f, growth, month, stage);
 
         LinearLayout traits = view.findViewById(R.id.guide_traits);
         addTrait(traits, string.trait_drought, com.agroshift.core.ui.R.drawable.ic_ui_drop, crop.droughtTolerance());
@@ -94,9 +102,10 @@ public final class CropGuideSheet extends BottomSheetDialogFragment {
         ((TextView) view.findViewById(R.id.guide_facts)).setText(String.join("\n", facts));
     }
 
-    private void showStep(Context context, CropJourney.Step step, CropGrowthView growth, TextView month,
-            TextView stage) {
-        growth.setGrowth((float) step.growth());
+    private void showStep(Context context, List<CropJourney.Step> journey, float value, LivingPhotoView growth,
+            TextView month, TextView stage) {
+        CropJourney.Step step = journey.get(Math.min(journey.size() - 1, Math.round(value)));
+        CropPhotos.show(growth, slug, (float) step.growth());
         month.setText(EngineText.month(context, step.month()));
         stage.setText(getString(string.timeline_stage, EngineText.stage(context, step.stageKey())));
     }

@@ -16,8 +16,9 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+import com.agroshift.core.domain.scene.LivingScene;
 import com.agroshift.core.i18n.R.string;
-import com.agroshift.core.ui.PhotoView;
+import com.agroshift.core.ui.LivingPhotoView;
 import com.agroshift.core.ui.ZameenUi;
 import com.google.android.material.button.MaterialButton;
 
@@ -27,10 +28,13 @@ public final class OnboardingFragment extends Fragment {
         void onOnboardingDone();
     }
 
-    private static final float PARALLAX = 0.28f;
+    private static final LivingScene WELCOME_SCENE = new LivingScene(0f, 0f, 0f, 0.42f, 0.25f, 1f, 0f, 0f, 0f, 1f);
     private static final int[] PHOTOS = {com.agroshift.core.ui.R.drawable.photo_onboard_field,
             com.agroshift.core.ui.R.drawable.photo_onboard_harvest,
             com.agroshift.core.ui.R.drawable.photo_onboard_tractor};
+    private static final int[] MASKS = {com.agroshift.core.ui.R.drawable.photo_onboard_field_mask,
+            com.agroshift.core.ui.R.drawable.photo_onboard_harvest_mask,
+            com.agroshift.core.ui.R.drawable.photo_onboard_tractor_mask};
     private static final int[] TITLES_UR = {string.bi_title_1_ur, string.bi_title_2_ur, string.bi_title_3_ur};
     private static final int[] BODIES_UR = {string.bi_body_1_ur, string.bi_body_2_ur, string.bi_body_3_ur};
     private static final int[] TITLES_EN = {string.bi_title_1_en, string.bi_title_2_en, string.bi_title_3_en};
@@ -67,14 +71,10 @@ public final class OnboardingFragment extends Fragment {
         });
         pager.setAdapter(new PageAdapter());
         pager.setOffscreenPageLimit(1);
-        if (ZameenUi.motionEnabled(requireContext())) {
-            pager.setPageTransformer((page, position) -> {
-                View photo = page.findViewById(R.id.page_photo);
-                if (photo != null && position > -1f && position < 1f) {
-                    photo.setTranslationX(-position * page.getWidth() * PARALLAX);
-                }
-            });
-        }
+        LivingPhotoView living = view.findViewById(R.id.onboarding_photo);
+        living.setFieldMode(true);
+        living.setScene(WELCOME_SCENE);
+        living.setTrack(PHOTOS, MASKS, 0f);
         for (int i = 0; i < PHOTOS.length; i++) {
             View dot = new View(requireContext());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(8), dp(6));
@@ -82,6 +82,11 @@ public final class OnboardingFragment extends Fragment {
             dots.addView(dot, params);
         }
         callback = new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float offset, int offsetPixels) {
+                living.setTrack(PHOTOS, MASKS, position + offset);
+            }
+
             @Override
             public void onPageSelected(int position) {
                 renderDots(dots, position);
@@ -125,7 +130,6 @@ public final class OnboardingFragment extends Fragment {
     }
 
     private static final class PageHolder extends RecyclerView.ViewHolder {
-        final PhotoView photo;
         final TextView titleUr;
         final TextView bodyUr;
         final TextView titleEn;
@@ -133,7 +137,6 @@ public final class OnboardingFragment extends Fragment {
 
         PageHolder(@NonNull View view) {
             super(view);
-            photo = view.findViewById(R.id.page_photo);
             titleUr = view.findViewById(R.id.page_title_ur);
             bodyUr = view.findViewById(R.id.page_body_ur);
             titleEn = view.findViewById(R.id.page_title_en);
@@ -151,7 +154,6 @@ public final class OnboardingFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull PageHolder holder, int position) {
-            holder.photo.setPhoto(PHOTOS[position]);
             holder.titleUr.setText(TITLES_UR[position]);
             holder.bodyUr.setText(BODIES_UR[position]);
             holder.titleEn.setText(TITLES_EN[position]);

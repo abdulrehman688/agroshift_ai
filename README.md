@@ -4,14 +4,14 @@
 
 **A field-first Android companion for Pakistani farmers, built with Java, NASA Earth data and local languages.**
 
-![Version](https://img.shields.io/badge/version-0.8.0%20preview-D8F36F?style=flat-square&labelColor=10140D)
+![Version](https://img.shields.io/badge/version-0.10.2%20preview-D8F36F?style=flat-square&labelColor=10140D)
 ![Java](https://img.shields.io/badge/Java-17-D8F36F?style=flat-square&labelColor=10140D)
 ![Android](https://img.shields.io/badge/Android-7.0%2B-D8F36F?style=flat-square&labelColor=10140D)
 ![Offline first](https://img.shields.io/badge/offline-first-D8F36F?style=flat-square&labelColor=10140D)
 
 <img src="docs/assets/readme-banner.jpg" alt="Pakistani rice, wheat and mustard fields with farmers at harvest" width="100%">
 
-### [Download the Android APK (0.8.0 preview, 7.6 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.8.0-preview.apk)
+### [Download the Android APK (0.10.2 preview, 13.7 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.10.2-preview.apk)
 
 </div>
 
@@ -52,7 +52,7 @@ Urdu is a machine draft awaiting native review. Punjabi, Sindhi, Pashto, Saraiki
 |---|---|---|
 | **1. Useful every day** | Map room, modern Home, irrigation answer, canal turn alarm, danger alerts | Built, awaiting phone test |
 | **2. Course requirements** | Proposal gaps, tests, topic-to-code report, proposal wording | Built in 0.8.0 |
-| **Living Photo Engine** | Real photos animated by GPU shaders and farm data | Canal prototype built, awaiting phone test |
+| **Living Photo Engine** | Real photos animated by GPU shaders and farm data | Built across Home, Advisor, Help, Farm, canal and onboarding in 0.10.2, checked on phone |
 | **Crop Plan Studio** | All crop plans, filters, plan builder and comparison | Approved, starts after the prototype |
 | **3. Polish and performance** | Remaining UX patterns, final fonts, sunlight theme, low-end performance | Planned |
 | **4. Big features** | Spring Boot backend, daily data pipeline, Field Lens, more languages | Planned |
@@ -62,9 +62,27 @@ See the full [roadmap](docs/Roadmap.md).
 
 ## How the Living Photo Engine is made
 
-> **Prototype:** the canal scene is built in version 0.9.0 and is awaiting phone testing. The download above stays on the phone-checked 0.8.0 until then.
+> **Status:** version 0.10.2 brings bright real photos to the whole app and has been checked on a phone.
 
-AgroShift is replacing cartoon-style drawings with **real Pakistani farm photos brought to life on the phone's GPU**. Farm data decides what moves.
+AgroShift has replaced its cartoon-style drawings with **real farm photos brought to life on the phone's GPU**. Farm data decides what moves.
+
+### Before and after
+
+**Canal turn**
+
+<img src="docs/assets/living-photo/before-after-canal.gif" alt="Old drawn canal beside the real animated canal photo" width="724">
+
+**Crop growth from the season timeline**
+
+<img src="docs/assets/living-photo/before-after-crop.gif" alt="Old drawn wheat stems beside real wheat photos changing step by step from sprouts to harvest" width="724">
+
+**What-If stress on a real crop**
+
+<img src="docs/assets/living-photo/living-what-if.gif" alt="Real wheat field turning dry and golden under hotter and drier conditions" width="448">
+
+The before frames come from the app's old drawing code. The after frames come from the app's current shader, rendered in WebGL on a computer.
+
+### The process
 
 | 1. Real photo | 2. Measure the canal | 3. Build the mask |
 |:---:|:---:|:---:|
@@ -80,6 +98,17 @@ Then an OpenGL ES shader moves only the marked areas, using the field's real can
 | Golden evening | Night | Extreme heat |
 |:---:|:---:|:---:|
 | <img src="docs/assets/living-photo/scene-golden.jpg" alt="Canal in golden evening light" width="270"> | <img src="docs/assets/living-photo/scene-night.jpg" alt="Canal at night" width="270"> | <img src="docs/assets/living-photo/scene-heat.jpg" alt="Canal in extreme heat" width="270"> |
+
+### What 0.10.2 adds
+
+| Step | What happens |
+|---|---|
+| Real crop stages | 11 crops have 5 or 6 real photos each, from early growth to harvest |
+| Step by step | The Rabi and Kharif timeline and crop guide slider move through those real photos |
+| Clean changes | Each new photo slides in beside the last one, so two photos are never merged |
+| Real conditions | Weather, canal turn and What-If choices change wind, rain, heat and crop stress. Photos stay bright at night |
+| All devices | The engine picks a still, light, balanced or high tier from memory, processor, battery saver and motion settings |
+| Saving power | Scenes pause when hidden or scrolled away, and lists use still photos |
 
 These frames were rendered from the app's actual shader in WebGL on a computer. Read the full process in [Living Photo Engine](docs/Living%20Photo%20Engine.md).
 

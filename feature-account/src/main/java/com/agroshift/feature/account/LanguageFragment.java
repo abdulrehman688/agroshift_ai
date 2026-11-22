@@ -13,7 +13,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import com.agroshift.core.domain.language.AppLanguage;
+import com.agroshift.core.domain.scene.LivingScene;
 import com.agroshift.core.i18n.LanguageController;
+import com.agroshift.core.ui.LivingPhotoView;
 import com.google.android.material.button.MaterialButton;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +47,13 @@ public final class LanguageFragment extends Fragment {
             v.setPadding(v.getPaddingLeft(), 0, v.getPaddingRight(), bars.bottom);
             return insets;
         });
+
+        LivingPhotoView photo = view.findViewById(R.id.language_photo);
+        photo.setFieldMode(true);
+        photo.setCropFocus(0.4f, 0.55f);
+        photo.setScene(new LivingScene(0f, 0f, 0f, 0.35f, 0.15f, 0.9f, 0.75f, 0f, 0f, 1f));
+        photo.setPhoto(com.agroshift.core.ui.R.drawable.photo_language,
+                com.agroshift.core.ui.R.drawable.photo_language_mask);
 
         LinearLayout list = view.findViewById(R.id.language_list);
         LayoutInflater inflater = getLayoutInflater();

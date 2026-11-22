@@ -40,23 +40,26 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_crop_card"
             android:orientation="vertical"
-            android:padding="14dp">
+            android:padding="8dp">
+
+            <com.agroshift.core.ui.LivingPhotoView
+                android:id="@+id/guide_growth"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                app:photoRadius="@dimen/zameen_radius_card" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <com.agroshift.core.ui.CropGrowthView
-                    android:id="@+id/guide_growth"
-                    android:layout_width="112dp"
-                    android:layout_height="96dp" />
+                android:orientation="horizontal"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
                     android:orientation="vertical">
 

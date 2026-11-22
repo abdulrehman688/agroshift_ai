@@ -2,7 +2,7 @@
 
 A Java Android farm companion for Pakistani farmers, built around their own fields, NASA Earth data, official guidance and local languages.
 
-**Current milestone:** Living Photo prototype 0.9.0, awaiting phone test
+**Current milestone:** Living Photo 0.10.2, checked on phone
 **Last updated:** 2026-11-22
 
 ## Start here

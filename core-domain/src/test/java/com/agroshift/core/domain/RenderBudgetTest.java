@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.agroshift.core.domain.scene.CropVisual;
 import com.agroshift.core.domain.scene.RenderBudget;
 import com.agroshift.core.domain.scene.RenderBudget.Tier;
 import org.junit.Test;
@@ -48,27 +47,4 @@ public class RenderBudgetTest {
         assertFalse(budget(512, false, 8, true, true).animated());
     }
 
-    @Test
-    public void cropGrowthBlendsBetweenRealStages() {
-        CropVisual.Blend start = CropVisual.blend(0f);
-        assertEquals(0, start.from());
-        assertEquals(0f, start.amount(), 0.001f);
-        CropVisual.Blend quarter = CropVisual.blend(0.25f);
-        assertEquals(0, quarter.from());
-        assertEquals(1, quarter.to());
-        assertEquals(0.5f, quarter.amount(), 0.001f);
-        CropVisual.Blend late = CropVisual.blend(0.75f);
-        assertEquals(1, late.from());
-        assertEquals(2, late.to());
-        CropVisual.Blend end = CropVisual.blend(1f);
-        assertEquals(2, end.from());
-        assertEquals(2, end.to());
-        assertEquals(0f, end.amount(), 0.001f);
-    }
-
-    @Test
-    public void growthOutsideRangeIsClamped() {
-        assertEquals(0, CropVisual.blend(-1f).from());
-        assertEquals(2, CropVisual.blend(4f).to());
-    }
 }

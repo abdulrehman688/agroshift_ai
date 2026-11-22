@@ -250,10 +250,11 @@
                 android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
 
-            <com.agroshift.core.ui.WhatIfFieldView
+            <com.agroshift.core.ui.LivingPhotoView
                 android:id="@+id/advisor_scene"
                 android:layout_width="match_parent"
-                android:layout_height="190dp" />
+                android:layout_height="230dp"
+                app:photoRadius="@dimen/zameen_radius_card" />
 
             <TextView
                 android:id="@+id/advisor_scene_caption"

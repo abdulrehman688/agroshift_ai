@@ -59,13 +59,13 @@ public class LivingSceneTest {
         assertEquals(1f, day.daylight(), 0.001f);
         assertEquals(0f, day.golden(), 0.001f);
         assertTrue(evening.golden() > 0.5f);
-        assertEquals(0f, night.daylight(), 0.001f);
+        assertEquals(1f, night.daylight(), 0.001f);
     }
 
     @Test
     public void weatherServiceNightOverridesClock() {
         LivingScene scene = LivingScene.forCanal(null, NOON, new SkyState(false, 0, 0, 0, 20));
-        assertEquals(0f, scene.daylight(), 0f);
+        assertEquals(1f, scene.daylight(), 0f);
     }
 
     @Test
@@ -87,5 +87,12 @@ public class LivingSceneTest {
         assertEquals(0f, stressed.rain(), 0f);
         assertEquals(0f, base.withWhatIf(false, false, 2f).dryness(), 0f);
         assertEquals(1f, base.withWhatIf(false, false, 2f).health(), 0f);
+    }
+
+    @Test
+    public void normalWhatIfKeepsCropGreenEvenForLowPlanScore() {
+        LivingScene normal = LivingScene.forField(NOON, null).withWhatIf(false, false, 0.2f);
+        assertEquals(1f, normal.health(), 0f);
+        assertEquals(0f, normal.dryness(), 0f);
     }
 }

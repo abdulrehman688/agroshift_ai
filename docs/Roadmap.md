@@ -40,8 +40,11 @@ Back to [[Home]]
 
 ## Visual engine
 
-- [ ] Confirm the [[Living Photo Engine]] canal prototype on a phone
-- [ ] Extend Living Photo to Home, Advisor and the crop timeline
+- [x] Confirm the [[Living Photo Engine]] canal prototype on a phone
+- [x] Extend Living Photo to Home, Advisor, Help, My Farm, onboarding and the crop timeline
+- [x] Redesign the reopen screen
+- [x] Confirm version 0.10.2 on a phone
+- [ ] Build Crop Plan Studio
 - [ ] Build Crop Plan Studio on top of it
 
 ## High priority

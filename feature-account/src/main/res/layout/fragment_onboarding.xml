@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/zameen_background">
+
+    <com.agroshift.core.ui.LivingPhotoView
+        android:id="@+id/onboarding_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="230dp"
+        app:photoScrim="true" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/onboarding_pager"
@@ -20,8 +28,7 @@
         android:text="@string/bi_skip"
         android:textAllCaps="false"
         android:textColor="@color/zameen_text"
-        app:backgroundTint="@color/zameen_background"
-        xmlns:app="http://schemas.android.com/apk/res-auto" />
+        app:backgroundTint="@color/zameen_background" />
 
     <LinearLayout
         android:id="@+id/onboarding_controls"

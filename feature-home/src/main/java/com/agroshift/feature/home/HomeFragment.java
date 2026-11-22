@@ -29,6 +29,7 @@ import com.agroshift.core.domain.engine.RotationPlan;
 import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.farm.FarmRecord;
 import com.agroshift.core.domain.farm.FarmSelection;
+import com.agroshift.core.domain.scene.LivingScene;
 import com.agroshift.core.domain.season.SeasonPosition;
 import com.agroshift.core.domain.season.SeasonTimeline;
 import com.agroshift.core.domain.water.DangerAlert;
@@ -40,16 +41,18 @@ import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.i18n.WaterText;
 import com.agroshift.core.ui.AppNavigator;
-import com.agroshift.core.ui.CropGrowthView;
-import com.agroshift.core.ui.LiveSkyView;
+import com.agroshift.core.ui.CropPhotos;
+import com.agroshift.core.ui.LivingPhotoView;
 import com.agroshift.core.ui.PhotoView;
 import com.agroshift.core.ui.SeasonTimelineView;
+import com.agroshift.core.ui.SplitBarView;
 import com.agroshift.core.ui.ZameenMap;
 import com.agroshift.core.ui.ZameenUi;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.List;
@@ -91,10 +94,10 @@ public final class HomeFragment extends Fragment {
     private List<FarmField> allFields;
     private View farmsSection;
     private TextView farmPill;
-    private LiveSkyView skyView;
+    private LivingPhotoView skyView;
     private TextView heroDate;
     private SeasonTimelineView timeline;
-    private CropGrowthView growth;
+    private SplitBarView growth;
     private TextView timelineMonth;
     private TextView timelineCrop;
     private TextView timelineStage;
@@ -291,6 +294,16 @@ public final class HomeFragment extends Fragment {
         renderTimeline();
     }
 
+    private void showSeasonPhoto(SeasonPosition.Season season) {
+        if (season == SeasonPosition.Season.RABI) {
+            skyView.setPhoto(com.agroshift.core.ui.R.drawable.photo_home_rabi,
+                    com.agroshift.core.ui.R.drawable.photo_home_rabi_mask);
+        } else {
+            skyView.setPhoto(com.agroshift.core.ui.R.drawable.photo_home_kharif,
+                    com.agroshift.core.ui.R.drawable.photo_home_kharif_mask);
+        }
+    }
+
     private void renderTimeline() {
         if (timeline == null || getView() == null) {
             return;
@@ -313,15 +326,18 @@ public final class HomeFragment extends Fragment {
         if (primary == null) {
             timelineCrop.setText(string.timeline_no_farm);
             timelineStage.setText(string.timeline_hint);
-            growth.setGrowth(0f);
+            growth.setValues(0, 1);
+            showSeasonPhoto(moment.season());
         } else if (moment.hasCrop()) {
             timelineCrop.setText(EngineText.cropName(requireContext(), moment.cropSlug()));
             timelineStage.setText(getString(string.timeline_stage, EngineText.stage(requireContext(), moment.stageKey())));
-            growth.setGrowth((float) moment.growth());
+            growth.setValues(moment.growth(), 1 - moment.growth());
+            CropPhotos.show(skyView, moment.cropSlug(), (float) moment.growth());
         } else {
             timelineCrop.setText(string.timeline_bare);
             timelineStage.setText(string.timeline_hint);
-            growth.setGrowth(0f);
+            growth.setValues(0, 1);
+            showSeasonPhoto(moment.season());
         }
         timelineToday.setVisibility(isToday ? View.GONE : View.VISIBLE);
         timeline.setContentDescription(getString(string.timeline_description, month, season,
@@ -334,7 +350,7 @@ public final class HomeFragment extends Fragment {
         if (same) {
             return;
         }
-        skyView.setSky(null);
+        skyView.setScene(LivingScene.forField(LocalDateTime.now(), null));
         renderHeroDate(null);
         detach();
         fieldWater = null;
@@ -419,7 +435,7 @@ public final class HomeFragment extends Fragment {
         boolean fresh = weather.fetchedMillis() > 0
                 && System.currentTimeMillis() - weather.fetchedMillis() < SKY_FRESH_MILLIS;
         SkyState sky = fresh ? weather.sky() : null;
-        skyView.setSky(sky);
+        skyView.setScene(LivingScene.forField(LocalDateTime.now(), sky));
         renderHeroDate(sky);
         renderDangers(weather);
         renderWater();
@@ -607,11 +623,12 @@ public final class HomeFragment extends Fragment {
 
     private void bindHero(View view) {
         SeasonPosition position = SeasonPosition.of(LocalDate.now());
-        boolean rabi = position.season() == SeasonPosition.Season.RABI;
-        PhotoView photo = view.findViewById(R.id.home_photo);
-        photo.setPhoto(rabi ? com.agroshift.core.ui.R.drawable.photo_home_rabi
-                : com.agroshift.core.ui.R.drawable.photo_home_kharif);
-        skyView = view.findViewById(R.id.home_sky);
+        LivingPhotoView photo = view.findViewById(R.id.home_photo);
+        skyView = photo;
+        photo.setFieldMode(true);
+        photo.setCropFocus(0.5f, 0.6f);
+        photo.setScene(LivingScene.forField(LocalDateTime.now(), null));
+        showSeasonPhoto(position.season());
         heroDate = view.findViewById(R.id.home_date);
         renderHeroDate(null);
         if (ZameenUi.motionEnabled(requireContext())) {

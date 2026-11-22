@@ -25,23 +25,25 @@ import com.agroshift.core.domain.data.DataAccessException;
 import com.agroshift.core.domain.engine.ClimateAlert;
 import com.agroshift.core.domain.engine.ClimateProfile.Metric;
 import com.agroshift.core.domain.engine.ClimateScenario;
-import com.agroshift.core.domain.engine.Crop;
 import com.agroshift.core.domain.engine.FarmGoal;
 import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.engine.RotationScores;
 import com.agroshift.core.domain.farm.FarmField;
+import com.agroshift.core.domain.scene.LivingScene;
 import com.agroshift.core.domain.season.SeasonTimeline;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.ui.AppNavigator;
 import com.agroshift.core.ui.ScoreRingView;
-import com.agroshift.core.ui.WhatIfFieldView;
+import com.agroshift.core.ui.CropPhotos;
+import com.agroshift.core.ui.LivingPhotoView;
 import com.agroshift.core.ui.ZameenUi;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -53,7 +55,7 @@ public final class AdvisorFragment extends Fragment {
     private static final int MAX_ALERTS = 6;
     private static final double HEALTH_LOW = 35;
     private static final double HEALTH_HIGH = 85;
-    private static final double WATER_SCALE_MM = 2200;
+    private static final float SHOWCASE_GROWTH = 0.5f;
     private static final int SCENE_SCROLL_MARGIN = 72;
 
     private FieldRepository fields;
@@ -72,7 +74,7 @@ public final class AdvisorFragment extends Fragment {
     private ChipGroup fieldChips;
     private ChipGroup priorityChips;
     private ChipGroup whatIfChips;
-    private WhatIfFieldView scene;
+    private LivingPhotoView scene;
     private ScoreRingView bestRing;
     private ClimateScenario activeScenario = ClimateScenario.NORMAL;
     private RotationAdvisor.Advice shownAdvice;
@@ -100,6 +102,8 @@ public final class AdvisorFragment extends Fragment {
         priorityChips = view.findViewById(R.id.advisor_priorities);
         whatIfChips = view.findViewById(R.id.advisor_whatif);
         scene = view.findViewById(R.id.advisor_scene);
+        scene.setFieldMode(true);
+        scene.setCropFocus(0.5f, 0.62f);
         bestRing = view.findViewById(R.id.advisor_best_ring);
         for (int id : new int[] {R.id.advisor_card_score, R.id.advisor_card_rain, R.id.advisor_card_demand}) {
             ZameenUi.applySurface(view.findViewById(id), com.agroshift.core.ui.R.color.zameen_surface,
@@ -350,9 +354,9 @@ public final class AdvisorFragment extends Fragment {
             }
         }
         previewKind = chosen.kind();
-        scene.setScene(activeScenario.hotter(), activeScenario.drier(),
-                (float) ((chosen.scores().overall() - HEALTH_LOW) / (HEALTH_HIGH - HEALTH_LOW)), lookFor(chosen),
-                (float) (chosen.plan().annualWaterNeedMm() / WATER_SCALE_MM), (float) (chosen.scores().soilHealth() / 100));
+        CropPhotos.show(scene, showcaseCrop(chosen), SHOWCASE_GROWTH);
+        scene.setScene(LivingScene.forField(LocalDateTime.now(), null).withWhatIf(activeScenario.hotter(),
+                activeScenario.drier(), (float) ((chosen.scores().overall() - HEALTH_LOW) / (HEALTH_HIGH - HEALTH_LOW))));
         ((TextView) requireView().findViewById(R.id.advisor_scene_caption)).setText(getString(string.whatif_scene_caption,
                 EngineText.optionName(requireContext(), chosen.kind()),
                 EngineText.cropSequence(requireContext(), chosen.plan()),
@@ -368,15 +372,16 @@ public final class AdvisorFragment extends Fragment {
         }
     }
 
-    private static WhatIfFieldView.Look lookFor(RotationAdvisor.Option option) {
+    /** Picks the crop that makes this plan different from the farmer's current one. */
+    private String showcaseCrop(RotationAdvisor.Option option) {
+        List<String> current = shownAdvice.current().plan().uniqueCropSlugs();
+        for (String slug : option.plan().uniqueCropSlugs()) {
+            if (!current.contains(slug)) {
+                return slug;
+            }
+        }
         SeasonTimeline.Moment now = SeasonTimeline.at(option.plan(), YearMonth.now());
-        String slug = now.hasCrop() ? now.cropSlug() : option.plan().steps().get(0).cropSlug();
-        return switch (Crop.bySlug(slug).family()) {
-            case "malvaceae" -> WhatIfFieldView.Look.COTTON;
-            case "legume" -> WhatIfFieldView.Look.LEGUME;
-            case "brassica" -> WhatIfFieldView.Look.MUSTARD;
-            default -> WhatIfFieldView.Look.GRASS;
-        };
+        return now.hasCrop() ? now.cropSlug() : option.plan().steps().get(0).cropSlug();
     }
 
     private void scrollToScene() {

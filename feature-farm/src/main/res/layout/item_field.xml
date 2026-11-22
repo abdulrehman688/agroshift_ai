@@ -14,10 +14,12 @@
     android:paddingEnd="10dp"
     android:paddingBottom="12dp">
 
-    <com.agroshift.core.ui.CropGrowthView
+    <com.agroshift.core.ui.PhotoView
         android:id="@+id/field_growth"
-        android:layout_width="76dp"
-        android:layout_height="80dp" />
+        android:layout_width="84dp"
+        android:layout_height="88dp"
+        app:photoRadius="@dimen/zameen_radius_card"
+        app:photoScrim="false" />
 
     <LinearLayout
         android:layout_width="0dp"

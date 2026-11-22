@@ -7,13 +7,18 @@ precision mediump float;
 varying vec2 vUv;
 uniform sampler2D uPhoto;
 uniform sampler2D uMask;
+uniform sampler2D uPhotoB;
+uniform sampler2D uMaskB;
+uniform float uBlend;
+uniform float uField;
+uniform float uDry;
+uniform float uHealth;
 uniform float uTime;
 uniform float uFlow;
 uniform float uProgress;
 uniform float uRain;
 uniform float uWind;
 uniform float uCloud;
-uniform float uDay;
 uniform float uGold;
 uniform float uHeat;
 uniform float uLow;
@@ -21,6 +26,15 @@ uniform float uRippleAge;
 uniform vec2 uRipple;
 
 const float HORIZON = 0.42;
+float second = 0.0;
+
+vec3 photoAt(vec2 p) {
+    return second > 0.5 ? texture2D(uPhotoB, p).rgb : texture2D(uPhoto, p).rgb;
+}
+
+vec3 maskAt(vec2 p) {
+    return second > 0.5 ? texture2D(uMaskB, p).rgb : texture2D(uMask, p).rgb;
+}
 
 float hash(vec2 p) {
     vec3 q = fract(vec3(p.xyx) * 0.1031);
@@ -75,7 +89,14 @@ float rainRing(vec2 uv, float scale, float t) {
 
 void main() {
     vec2 uv = vUv;
-    vec3 mask = texture2D(uMask, uv).rgb;
+    if (uBlend > 0.0005) {
+        uv.x += uBlend;
+        if (uv.x >= 1.0) {
+            uv.x -= 1.0;
+            second = 1.0;
+        }
+    }
+    vec3 mask = maskAt(uv);
     float water = mask.r;
     float plants = mask.g;
     float sky = mask.b;
@@ -91,6 +112,14 @@ void main() {
     float gust = 0.55 + 0.45 * sin(time * 0.7 + uv.x * 3.0);
     sampleUv.x += sin(time * (1.3 + uWind) + uv.x * 15.0 + uv.y * 24.0) * swayAmount * gust;
     sampleUv.y += cos(time * 1.1 + uv.x * 19.0) * swayAmount * 0.35;
+
+    float fieldWave = 0.0;
+    if (uField > 0.5) {
+        float drift = noise(uv * vec2(2.6, 4.2) + vec2(time * 0.05, 0.0));
+        fieldWave = sin(uv.x * 7.5 + uv.y * 5.0 - time * (1.0 + 2.4 * uWind) + drift * 5.0);
+        float reach = plants * (0.0016 + 0.0075 * uWind) * (0.45 + 0.55 * smoothstep(0.0, 1.0, 1.0 - uv.y));
+        sampleUv += vec2(fieldWave, fieldWave * 0.28) * reach;
+    }
 
     vec2 normal = vec2(0.0);
     float ring = 0.0;
@@ -110,12 +139,30 @@ void main() {
             normal += normalize(delta + 0.0001) * wave * 0.022;
         }
         vec2 moved = uv + normal * (0.016 + 0.05 * s) * water;
-        if (texture2D(uMask, moved).r > 0.6) {
+        if (maskAt(moved).r > 0.6) {
             sampleUv = moved;
         }
     }
 
-    vec3 color = texture2D(uPhoto, sampleUv).rgb;
+    vec3 color = photoAt(sampleUv);
+    if (uField > 0.5) {
+        color *= 1.0 + plants * fieldWave * (0.022 + 0.062 * uWind);
+    }
+    float stress = clamp(uDry * 0.72 + (1.0 - uHealth) * 0.62, 0.0, 1.0);
+    if (stress > 0.001) {
+        float plantLuma = dot(color, vec3(0.299, 0.587, 0.114));
+        vec3 straw = plantLuma * vec3(1.28, 1.06, 0.62);
+        color = mix(color, straw, plants * stress);
+    }
+    if (uDry > 0.001) {
+        float ground = clamp(1.0 - plants - sky - water, 0.0, 1.0);
+        color = mix(color, color * vec3(1.14, 1.03, 0.84), ground * uDry);
+        if (uLow < 0.5) {
+            float crackA = smoothstep(0.022, 0.0, abs(noise(uv * vec2(36.0, 66.0)) - 0.5));
+            float crackB = smoothstep(0.018, 0.0, abs(noise(uv * vec2(71.0, 122.0) + 4.0) - 0.5));
+            color *= 1.0 - (crackA * 0.42 + crackB * 0.24) * ground * uDry;
+        }
+    }
 
     if (water > 0.01) {
         vec3 n = normalize(vec3(-normal * 3.2, 1.0));
@@ -133,29 +180,28 @@ void main() {
 
     if (uProgress > 0.0 && uLow < 0.5 && water < 0.98) {
         float reach = 0.008 + 0.034 * uProgress;
-        float near = max(max(texture2D(uMask, uv + vec2(reach, 0.0)).r, texture2D(uMask, uv - vec2(reach, 0.0)).r),
-                         max(texture2D(uMask, uv + vec2(0.0, reach)).r, texture2D(uMask, uv - vec2(0.0, reach)).r));
+        float near = max(max(maskAt(uv + vec2(reach, 0.0)).r, maskAt(uv - vec2(reach, 0.0)).r),
+                         max(maskAt(uv + vec2(0.0, reach)).r, maskAt(uv - vec2(0.0, reach)).r));
         float wetBank = clamp(near - water, 0.0, 1.0) * (1.0 - sky) * smoothstep(0.0, 0.05, uProgress);
         color *= 1.0 - 0.30 * wetBank;
     }
 
-    float shadow = smoothstep(0.42, 0.74, fbm(vec2(uv.x * 2.1 + time * (0.016 + 0.03 * uWind), uv.y * 3.0)));
-    color *= 1.0 - shadow * uCloud * 0.24 * (1.0 - sky);
-    float cloudForm = smoothstep(0.34, 0.78, fbm(vec2(uv.x * 3.0 + time * (0.012 + 0.03 * uWind), uv.y * 6.0)));
-    color = mix(color, mix(vec3(0.86, 0.87, 0.85), vec3(0.45, 0.48, 0.5), uRain), sky * cloudForm * uCloud * 0.62);
+    if (uCloud > 0.01) {
+        float shadow = smoothstep(0.42, 0.74, noise(vec2(uv.x * 2.1 + time * (0.016 + 0.03 * uWind), uv.y * 3.0)));
+        color *= 1.0 - shadow * uCloud * 0.09 * (1.0 - sky);
+        if (sky > 0.01) {
+            float cloudForm = smoothstep(0.34, 0.78, fbm(vec2(uv.x * 3.0 + time * (0.012 + 0.03 * uWind), uv.y * 6.0)));
+            color = mix(color, mix(vec3(0.90, 0.91, 0.89), vec3(0.68, 0.71, 0.73), uRain), sky * cloudForm * uCloud * 0.62);
+        }
+    }
 
     float luma = dot(color, vec3(0.299, 0.587, 0.114));
-    color = mix(color, vec3(luma), 0.22 * uRain) * (1.0 - 0.20 * uRain);
+    color = mix(color, vec3(luma), 0.10 * uRain) * (1.0 - 0.05 * uRain);
     color = mix(color, color * vec3(1.13, 1.0, 0.82), uHeat * 0.55);
 
     vec3 goldLight = color * vec3(1.15, 0.98, 0.76);
     goldLight += sky * vec3(0.11, 0.04, -0.03) * (1.0 - uv.y / HORIZON * 0.25);
-    color = mix(color, goldLight, uGold);
-
-    float nightLuma = dot(color, vec3(0.299, 0.587, 0.114));
-    vec3 night = mix(vec3(nightLuma), color, 0.32) * vec3(0.34, 0.40, 0.54);
-    night += water * vec3(0.012, 0.022, 0.04);
-    color = mix(night, color, uDay);
+    color = mix(color, goldLight, uGold * 0.3);
 
     if (uRain > 0.0) {
         vec2 r = vec2(uv.x + uv.y * 0.11, uv.y);
@@ -165,6 +211,6 @@ void main() {
     }
 
     vec2 corner = uv - 0.5;
-    color *= 1.0 - 0.28 * dot(corner, corner);
+    color *= 1.0 - 0.06 * dot(corner, corner);
     gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
 }

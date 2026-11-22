@@ -18,7 +18,8 @@ import com.agroshift.core.domain.engine.Crop;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.ui.AppNavigator;
-import com.agroshift.core.ui.CropGrowthView;
+import com.agroshift.core.ui.CropPhotos;
+import com.agroshift.core.ui.PhotoView;
 import com.agroshift.core.ui.ZameenUi;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -137,7 +138,7 @@ public final class HelpFragment extends Fragment {
                 : Crop.RABI.contains(slug) ? string.season_rabi : string.crop_year_round);
         ((TextView) card.findViewById(R.id.crop_water)).setText(getString(string.crop_water_short,
                 EngineText.number(crop.waterNeedMm(), 0)));
-        ((CropGrowthView) card.findViewById(R.id.crop_growth)).setGrowth(0.85f);
+        ((PhotoView) card.findViewById(R.id.crop_photo)).setPhoto(CropPhotos.photo(slug));
         card.setContentDescription(getString(string.crop_open, name));
         ZameenUi.attachPressSpring(card);
         card.setOnClickListener(v -> {

@@ -38,3 +38,50 @@ All notable changes to AgroShift are recorded here.
 - Android lifecycle dependency crash at startup
 - Dark status bar icons over the field view
 - Field validation errors now clear when corrected
+
+## [0.10.2] - 2026-11-22
+
+### Changed
+
+- Restored step-by-step crop stages, now with 5 or 6 real photos per crop
+- Each new stage slides in cleanly, with no merged photos
+
+### Removed
+
+- Simulated one-photo season from 0.10.1
+- Season bar from the reopen screen
+
+## [0.10.1] - 2026-11-22
+
+### Fixed
+
+- Photos stay bright at every hour, with lighter overlays and brighter crop grading
+- Normal What-If no longer drains green from the crop
+- Berseem now changes through its season on the Help slider
+- Photo decoding moved off the render thread for smoother motion
+
+### Changed
+
+- Each crop stays on one real field through its season
+- Photos no longer merge. A different photo slides in beside the current one
+
+## [0.10.0] - 2026-11-22
+
+### Added
+
+- Real photos for 11 crops, with motion masks
+- Live crop season on the Home timeline and Help crop guide
+- Living What-If scene in Advisor
+- Device tiers, off-screen pausing and still-photo fallback
+- New reopen screen with system splash, season photo and bilingual brand line
+- Before and after GIFs in the README
+
+### Changed
+
+- Onboarding and language screens now use Living Photo
+- Help cards and My Farm fields now show real crop photos
+
+### Removed
+
+- Drawn crop, What-If and sky views
+

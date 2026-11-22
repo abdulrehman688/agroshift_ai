@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:layout_weight="1"
@@ -7,17 +8,21 @@
     android:focusable="true"
     android:minHeight="148dp"
     android:orientation="vertical"
-    android:padding="12dp">
+    android:padding="8dp">
 
-    <com.agroshift.core.ui.CropGrowthView
-        android:id="@+id/crop_growth"
+    <com.agroshift.core.ui.PhotoView
+        android:id="@+id/crop_photo"
         android:layout_width="match_parent"
-        android:layout_height="64dp" />
+        android:layout_height="104dp"
+        app:photoRadius="@dimen/zameen_radius_card"
+        app:photoScrim="false" />
 
     <TextView
         android:id="@+id/crop_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
         android:layout_marginTop="6dp"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
@@ -30,6 +35,8 @@
         android:id="@+id/crop_season"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
         android:maxLines="1"
         android:textAlignment="viewStart"
         android:textAppearance="@style/TextAppearance.AgroShift.Caption"
@@ -39,6 +46,8 @@
         android:id="@+id/crop_water"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
         android:maxLines="1"
         android:textAlignment="viewStart"
         android:textAppearance="@style/TextAppearance.AgroShift.Caption" />

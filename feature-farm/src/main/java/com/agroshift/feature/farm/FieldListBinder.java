@@ -19,7 +19,8 @@ import com.agroshift.core.domain.farm.RecordStats;
 import com.agroshift.core.domain.season.SeasonTimeline;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
-import com.agroshift.core.ui.CropGrowthView;
+import com.agroshift.core.ui.CropPhotos;
+import com.agroshift.core.ui.PhotoView;
 import com.agroshift.core.ui.ZameenUi;
 import com.google.android.material.snackbar.Snackbar;
 import java.text.NumberFormat;
@@ -125,7 +126,8 @@ public final class FieldListBinder {
             holder.tasks.setText(EngineText.number(summary.openTasks(), 0));
             holder.money.setText(EngineText.rupees(context, summary.profit()));
             SeasonTimeline.Moment moment = moment(field);
-            holder.growth.setGrowth((float) moment.growth());
+            holder.growth.setPhoto(moment.hasCrop() ? CropPhotos.nearest(moment.cropSlug(), (float) moment.growth()).photo()
+                    : com.agroshift.core.ui.R.drawable.photo_home_rabi);
             holder.stage.setText(moment.hasCrop()
                     ? context.getString(string.farm_now_stage, EngineText.cropName(context, moment.cropSlug()),
                             EngineText.stage(context, moment.stageKey()))
@@ -153,7 +155,7 @@ public final class FieldListBinder {
             final TextView stage;
             final TextView tasks;
             final TextView money;
-            final CropGrowthView growth;
+            final PhotoView growth;
 
             Holder(@NonNull View view) {
                 super(view);

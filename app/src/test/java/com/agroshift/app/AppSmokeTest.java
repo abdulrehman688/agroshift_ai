@@ -186,6 +186,24 @@ public class AppSmokeTest {
         layout(current());
     }
 
+    /** The real analysis must finish first, or its late result can replace the test's state. */
+    private void waitForBackgroundAnalysis(FarmField field) {
+        long deadline = System.currentTimeMillis() + 10_000;
+        while (System.currentTimeMillis() < deadline) {
+            shadowOf(Looper.getMainLooper()).idle();
+            AnalysisState state = services.analysisRepository().observe(field.id()).getValue();
+            if (state != null && state.status() != AnalysisState.Status.LOADING) {
+                return;
+            }
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+    }
+
     @SuppressWarnings("unchecked")
     private void useAdvisor(FarmField field) {
         tabs.setSelectedItemId(R.id.advisorFragment);
@@ -207,6 +225,7 @@ public class AppSmokeTest {
         }
         services.analysisRepository().selectField(field.id());
         settle();
+        waitForBackgroundAnalysis(field);
         ((MutableLiveData<AnalysisState>) services.analysisRepository().observe(field.id())).setValue(
                 new AnalysisState(AnalysisState.Status.READY, 0, 0, outlooks, null, false));
         shadowOf(Looper.getMainLooper()).idle();

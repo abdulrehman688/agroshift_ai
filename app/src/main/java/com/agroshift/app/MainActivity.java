@@ -11,6 +11,7 @@ import android.view.View;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.SystemBarStyle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
@@ -41,6 +42,7 @@ public final class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle state) {
+        SplashScreen.installSplashScreen(this);
         EdgeToEdge.enable(this,
                 SystemBarStyle.dark(Color.TRANSPARENT),
                 SystemBarStyle.dark(Color.TRANSPARENT));
@@ -75,6 +77,7 @@ public final class MainActivity extends AppCompatActivity
             navController.navigate(R.id.onboardingFragment, null, new NavOptions.Builder()
                     .setPopUpTo(R.id.homeFragment, true).build());
         } else if (state == null) {
+            LaunchScreen.show(this);
             handleShortcut(getIntent());
         }
     }

@@ -10,10 +10,11 @@
         android:layout_width="match_parent"
         android:layout_height="232dp">
 
-        <com.agroshift.core.ui.PhotoView
+        <com.agroshift.core.ui.LivingPhotoView
+            android:id="@+id/language_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:photo="@drawable/photo_language" />
+            app:photoScrim="true" />
 
         <LinearLayout
             android:layout_width="match_parent"

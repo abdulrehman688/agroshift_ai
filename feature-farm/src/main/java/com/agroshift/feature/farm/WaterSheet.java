@@ -129,6 +129,7 @@ public final class WaterSheet extends BottomSheetDialogFragment {
         allowAlerts = view.findViewById(R.id.water_allow_alerts);
         allowExact = view.findViewById(R.id.water_allow_exact);
         scene = view.findViewById(R.id.water_scene);
+        scene.setCropFocus(0.62f, 0.68f);
         scene.setPhoto(com.agroshift.core.ui.R.drawable.living_canal_photo,
                 com.agroshift.core.ui.R.drawable.living_canal_mask);
         countdown = view.findViewById(R.id.water_countdown);

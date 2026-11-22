@@ -130,10 +130,10 @@ public final class PhotoView extends AppCompatImageView {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
         if (scrim && height > 0) {
             int clear = scrimColor & 0x00FFFFFF;
-            int top = (0x66 << 24) | clear;
+            int top = (0x2E << 24) | clear;
             scrimPaint.setShader(new LinearGradient(0, 0, 0, height,
-                    new int[] {top, clear, clear, (0xB8 << 24) | clear, scrimColor | Color.BLACK},
-                    new float[] {0f, 0.22f, 0.42f, 0.78f, 1f}, Shader.TileMode.CLAMP));
+                    new int[] {top, clear, clear, (0x78 << 24) | clear, scrimColor | Color.BLACK},
+                    new float[] {0f, 0.18f, 0.55f, 0.84f, 1f}, Shader.TileMode.CLAMP));
         }
     }
 

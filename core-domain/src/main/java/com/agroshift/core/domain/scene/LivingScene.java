@@ -23,7 +23,7 @@ public record LivingScene(float flow, float turnProgress, float rain, float wind
             }
         }
         float hour = now.getHour() + now.getMinute() / 60f;
-        float daylight = smooth(5.5f, 7.5f, hour) * (1f - smooth(17.5f, 19.5f, hour));
+        float daylight = 1f;
         float golden = Math.max(bump(hour, 6.5f), bump(hour, 18f));
         float rain = 0f;
         float wind = 0f;
@@ -37,7 +37,6 @@ public record LivingScene(float flow, float turnProgress, float rain, float wind
             cloud = clamp(sky.cloudPercent() / 100f);
             heat = clamp(((float) sky.tempC() - 34f) / 10f);
             if (!sky.day()) {
-                daylight = 0f;
                 golden = 0f;
             }
         }
@@ -53,16 +52,11 @@ public record LivingScene(float flow, float turnProgress, float rain, float wind
     /** Applies a What-If future and the chosen plan's crop health. */
     public LivingScene withWhatIf(boolean hotter, boolean drier, float cropHealth) {
         return new LivingScene(flow, turnProgress, drier ? 0f : rain, Math.max(wind, 0.2f), drier ? cloud * 0.3f : cloud,
-                daylight, golden, hotter ? Math.max(heat, 0.85f) : heat, drier ? 1f : 0f, clamp(cropHealth));
+                daylight, golden, hotter ? Math.max(heat, 0.85f) : heat, drier ? 1f : 0f, hotter || drier ? clamp(cropHealth) : 1f);
     }
 
     private static float bump(float hour, float center) {
         return Math.max(0f, 1f - Math.abs(hour - center) / 1.5f);
-    }
-
-    private static float smooth(float from, float to, float value) {
-        float t = clamp((value - from) / (to - from));
-        return t * t * (3f - 2f * t);
     }
 
     private static float clamp(float value) {

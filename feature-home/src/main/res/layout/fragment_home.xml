@@ -17,15 +17,11 @@
             android:layout_width="match_parent"
             android:layout_height="440dp">
 
-            <com.agroshift.core.ui.PhotoView
+            <com.agroshift.core.ui.LivingPhotoView
                 android:id="@+id/home_photo"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <com.agroshift.core.ui.LiveSkyView
-                android:id="@+id/home_sky"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                app:photoScrim="true" />
 
             <LinearLayout
                 android:id="@+id/home_top_bar"
@@ -130,6 +126,102 @@
         </FrameLayout>
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/zameen_gutter"
+            android:paddingEnd="@dimen/zameen_gutter">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/season_rabi"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/season_kharif"
+                    android:textAlignment="viewEnd"
+                    android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+            </LinearLayout>
+
+            <com.agroshift.core.ui.SeasonTimelineView
+                android:id="@+id/home_timeline"
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <LinearLayout
+                android:id="@+id/home_timeline_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="92dp"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/home_timeline_month"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                        android:textColor="@color/zameen_accent" />
+
+                    <TextView
+                        android:id="@+id/home_timeline_crop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/home_timeline_stage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                    <com.agroshift.core.ui.SplitBarView
+                        android:id="@+id/home_growth"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_timeline_today"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/timeline_today"
+                    android:textAllCaps="false"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/home_farms_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -171,94 +263,6 @@
             android:orientation="vertical"
             android:paddingStart="@dimen/zameen_gutter"
             android:paddingEnd="@dimen/zameen_gutter">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/season_rabi"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/season_kharif"
-                    android:textAlignment="viewEnd"
-                    android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
-            </LinearLayout>
-
-            <com.agroshift.core.ui.SeasonTimelineView
-                android:id="@+id/home_timeline"
-                android:layout_width="match_parent"
-                android:layout_height="48dp" />
-
-            <LinearLayout
-                android:id="@+id/home_timeline_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:minHeight="104dp"
-                android:orientation="horizontal"
-                android:padding="12dp">
-
-                <com.agroshift.core.ui.CropGrowthView
-                    android:id="@+id/home_growth"
-                    android:layout_width="92dp"
-                    android:layout_height="80dp" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/home_timeline_month"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:textAlignment="viewStart"
-                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
-                        android:textColor="@color/zameen_accent" />
-
-                    <TextView
-                        android:id="@+id/home_timeline_crop"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:textAlignment="viewStart"
-                        android:textAppearance="@style/TextAppearance.AgroShift.Body"
-                        android:textSize="18sp" />
-
-                    <TextView
-                        android:id="@+id/home_timeline_stage"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAlignment="viewStart"
-                        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
-                </LinearLayout>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/home_timeline_today"
-                    style="@style/Widget.Material3.Button.TextButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:minHeight="48dp"
-                    android:paddingStart="8dp"
-                    android:paddingEnd="8dp"
-                    android:text="@string/timeline_today"
-                    android:textAllCaps="false"
-                    android:visibility="gone" />
-            </LinearLayout>
 
             <com.agroshift.core.ui.SkeletonView
                 android:id="@+id/home_skeleton"
