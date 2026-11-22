@@ -38,6 +38,12 @@ Back to [[Home]]
 - [x] Confirm 0.8.0 chat history and Live Farm work on a phone: farm switcher, canal scene, living Home, crop timeline, Farm, records, Market, Advisor, Help and search
 - [ ] Finish [[Live Farm Plan]]: all-farm map pins and optional sound
 
+## Visual engine
+
+- [ ] Confirm the [[Living Photo Engine]] canal prototype on a phone
+- [ ] Extend Living Photo to Home, Advisor and the crop timeline
+- [ ] Build Crop Plan Studio on top of it
+
 ## High priority
 
 - [ ] **Confirm map room on a phone.** Home has a 240dp map card and Field Setup has a full-screen map with a draggable form in 0.5.0. The user reported on 2026-11-22 that map screens feel congested. Applies to Field Setup (`fragment_field_setup.xml`) and Home (`fragment_home.xml`). Keep the map as the main element, move secondary controls into a draggable bottom sheet, keep controls clear of system bars and the keyboard, and keep 48dp touch targets, right-to-left layout and smooth sheet motion.

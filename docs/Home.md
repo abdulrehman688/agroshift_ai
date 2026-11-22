@@ -2,7 +2,7 @@
 
 A Java Android farm companion for Pakistani farmers, built around their own fields, NASA Earth data, official guidance and local languages.
 
-**Current milestone:** Sprint 2 preview 0.8.0, checked on phone
+**Current milestone:** Living Photo prototype 0.9.0, awaiting phone test
 **Last updated:** 2026-11-22
 
 ## Start here
@@ -22,6 +22,7 @@ A Java Android farm companion for Pakistani farmers, built around their own fiel
 
 - [[Zameen Design System]]
 - [[UX Patterns]]
+- [[Living Photo Engine]]
 - [[Image Credits]]
 - [[Live Farm Plan]]
 

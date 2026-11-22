@@ -1,6 +1,6 @@
 # AgroShift Project Context
 
-Last updated: 2026-11-22. Status: Android preview 0.8.0, checked by the user on their phone and published to GitHub.
+Last updated: 2026-11-22. Status: GitHub release APK is the phone-checked 0.8.0. Living Photo prototype 0.9.0 is built and awaiting phone test.
 
 ### Current build status
 
@@ -18,6 +18,8 @@ Last updated: 2026-11-22. Status: Android preview 0.8.0, checked by the user on 
 - **Version 0.7.0:** adds interactive Advisor and Help pages and global search. It passed build, lint and 83 automated tests, but has not been confirmed on a phone.
 - **Version 0.8.0:** adds saved chat sessions, Sprint 2 course types, MPAndroidChart and the course report. It passed build, lint and 100 automated tests, and the user reported that it worked on their phone.
 - **Scope:** the teacher encourages more features, so the app should stay feature-rich, with UI as the top priority.
+- **Visual direction:** the user rejected cartoon-style farm drawings and chose the Living Photo Engine over full 3D. See `docs/Living Photo Engine.md`. Crop Plan Studio is approved and follows the canal prototype.
+- **README process:** document major visual processes in the GitHub README with real process images.
 - **Testing preference:** do not run emulator flows. Build the APK and run normal code checks. The user tests on their phone.
 - **Website parity:** feature-by-feature status is in `docs/Website Parity.md`. All website features are planned for mobile except the Iowa location and sample result.
 - **Not built yet:** Spring Boot backend, real sync gateway, Field Lens, server NASA pipeline, image placeholders, shared-element transitions, custom predictive-back transitions, safe-triangle menus, light sunlight theme, bundled Schibsted Grotesk and Nastaliq fonts. Exact pattern status is in `docs/UX Patterns.md`.
@@ -73,6 +75,7 @@ From the Software Construction and Development proposal, "AgroShift: Crop Rotati
 | D9 | AI keys stay on the server and never ship in the APK | Required |
 | D10 | Field Lens camera assistant uses photo, NASA field evidence and official sources | Decided, see section 13 |
 | D11 | No unsupported claims. If evidence is missing, the assistant says so | Required |
+| D12 | Realistic scenes use real licensed photos animated by GPU shaders from farm data | Decided, prototype pending phone test |
 
 ## 3. Features
 

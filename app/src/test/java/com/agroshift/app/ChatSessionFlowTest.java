@@ -19,6 +19,7 @@ import com.agroshift.core.data.ChatRepository;
 import com.agroshift.core.data.OnlineServices;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
@@ -48,16 +49,18 @@ public class ChatSessionFlowTest {
     public void newLaunchStartsNewSessionAndKeepsOldMessages() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
         AgroShiftDatabase database = AgroShiftDatabase.create(context);
-        ChatRepository first = new ChatRepository(database.chatDao(), Executors.newSingleThreadExecutor());
+        ExecutorService writes = Executors.newSingleThreadExecutor();
+        ChatRepository first = new ChatRepository(database.chatDao(), writes);
         OnlineServices launchOne = new OnlineServices(context, first);
         String oldSession = launchOne.currentSession(null);
         List<OnlineServices.ChatMessage> saved = List.of(
                 new OnlineServices.ChatMessage(true, "When should I sow wheat?", List.of(), null, false, "en"),
                 new OnlineServices.ChatMessage(false, "Sow in November", List.of("Prepare land"), "Ask officer", true, "en"));
         first.save(oldSession, null, saved);
+        writes.submit(() -> { }).get(5, TimeUnit.SECONDS);
         settle();
 
-        ChatRepository second = new ChatRepository(database.chatDao(), Executors.newSingleThreadExecutor());
+        ChatRepository second = new ChatRepository(database.chatDao(), writes);
         OnlineServices launchTwo = new OnlineServices(context, second);
         assertNotEquals(oldSession, launchTwo.currentSession(null));
         CompletableFuture<List<OnlineServices.ChatMessage>> restored = new CompletableFuture<>();
@@ -69,7 +72,7 @@ public class ChatSessionFlowTest {
     }
 
     @Test
-    public void historyOpensAndContinuesAChat() {
+    public void historyOpensAndContinuesAChat() throws Exception {
         Context context = ApplicationProvider.getApplicationContext();
         context.getSharedPreferences("agroshift_language", Context.MODE_PRIVATE).edit()
                 .putString("selected_tag", "en-PK").putBoolean("onboarding_seen", true).commit();
@@ -79,10 +82,12 @@ public class ChatSessionFlowTest {
         settle();
         AppServices services = (AppServices) context;
         AgroShiftDatabase database = AgroShiftDatabase.create(context);
-        ChatRepository repository = new ChatRepository(database.chatDao(), Executors.newSingleThreadExecutor());
+        ExecutorService writes = Executors.newSingleThreadExecutor();
+        ChatRepository repository = new ChatRepository(database.chatDao(), writes);
         repository.save("older-chat", null, List.of(
                 new OnlineServices.ChatMessage(true, "Canal water question", List.of(), null, false, "en"),
                 new OnlineServices.ChatMessage(false, "Saved answer", List.of(), null, false, "en")));
+        writes.submit(() -> { }).get(5, TimeUnit.SECONDS);
         settle();
         activity.openAssistant();
         settle();

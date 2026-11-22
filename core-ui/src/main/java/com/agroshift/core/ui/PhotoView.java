@@ -40,7 +40,7 @@ public final class PhotoView extends AppCompatImageView {
     };
 
     private final Paint scrimPaint = new Paint();
-    private final boolean scrim;
+    private boolean scrim;
     private final int scrimColor;
     private int requested;
 
@@ -67,6 +67,11 @@ public final class PhotoView extends AppCompatImageView {
         if (photo != 0 && !isInEditMode()) {
             setPhoto(photo);
         }
+    }
+
+    public void setScrimEnabled(boolean enabled) {
+        scrim = enabled;
+        invalidate();
     }
 
     public void setPhoto(@DrawableRes int resource) {

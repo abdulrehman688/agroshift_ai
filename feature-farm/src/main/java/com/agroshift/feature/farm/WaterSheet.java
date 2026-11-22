@@ -27,13 +27,14 @@ import com.agroshift.core.data.AppServices;
 import com.agroshift.core.data.OnlineServices;
 import com.agroshift.core.data.WaterRepository;
 import com.agroshift.core.domain.farm.FarmField;
+import com.agroshift.core.domain.scene.LivingScene;
 import com.agroshift.core.domain.water.CanalTurn;
 import com.agroshift.core.domain.water.FieldWater;
 import com.agroshift.core.domain.water.IrrigationAdvisor;
 import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.i18n.WaterText;
 import com.agroshift.core.sync.CanalAlarms;
-import com.agroshift.core.ui.CanalSceneView;
+import com.agroshift.core.ui.LivingPhotoView;
 import com.agroshift.core.ui.SoilMeterView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
@@ -56,7 +57,7 @@ public final class WaterSheet extends BottomSheetDialogFragment {
     private static final int[] DURATIONS = {30, 60, 90, 120, 180, 240};
     private static final int[] REMINDERS = {15, 30, 60, 120};
     private static final int DEFAULT_START = 6 * 60;
-    private static final int SOON_MINUTES = 60;
+    private static final long SKY_FRESH_MILLIS = 3 * 60 * 60 * 1000L;
 
     private final ActivityResultLauncher<String> notificationPermission = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), granted -> renderPermissions());
@@ -76,7 +77,7 @@ public final class WaterSheet extends BottomSheetDialogFragment {
     private TextView lastValue;
     private View allowAlerts;
     private View allowExact;
-    private CanalSceneView scene;
+    private LivingPhotoView scene;
     private TextView countdown;
     private View meterSection;
     private TextView meterLabel;
@@ -88,6 +89,7 @@ public final class WaterSheet extends BottomSheetDialogFragment {
     private final Observer<OnlineServices.Weather> weatherObserver = next -> {
         weather = next;
         renderMeter();
+        renderScene();
     };
     private final Runnable tick = new Runnable() {
         @Override
@@ -127,6 +129,8 @@ public final class WaterSheet extends BottomSheetDialogFragment {
         allowAlerts = view.findViewById(R.id.water_allow_alerts);
         allowExact = view.findViewById(R.id.water_allow_exact);
         scene = view.findViewById(R.id.water_scene);
+        scene.setPhoto(com.agroshift.core.ui.R.drawable.living_canal_photo,
+                com.agroshift.core.ui.R.drawable.living_canal_mask);
         countdown = view.findViewById(R.id.water_countdown);
         meterSection = view.findViewById(R.id.water_meter_section);
         meterLabel = view.findViewById(R.id.water_meter_label);
@@ -224,20 +228,17 @@ public final class WaterSheet extends BottomSheetDialogFragment {
             return;
         }
         CanalTurn turn = current.turn();
+        LocalDateTime now = LocalDateTime.now();
+        boolean freshWeather = weather != null && weather.fetchedMillis() > 0
+                && System.currentTimeMillis() - weather.fetchedMillis() < SKY_FRESH_MILLIS;
+        scene.setScene(LivingScene.forCanal(turn, now, freshWeather ? weather.sky() : null));
         if (turn == null) {
-            scene.setState(CanalSceneView.Mode.NONE, 0f);
             countdown.setText(string.turn_scene_none);
+        } else if (turn.isActive(now)) {
+            countdown.setText(getString(string.turn_running, WaterText.duration(requireContext(), turn.remaining(now))));
         } else {
-            LocalDateTime now = LocalDateTime.now();
-            if (turn.isActive(now)) {
-                scene.setState(CanalSceneView.Mode.RUNNING, turn.progress(now));
-                countdown.setText(getString(string.turn_running, WaterText.duration(requireContext(), turn.remaining(now))));
-            } else {
-                Duration until = turn.untilStart(now);
-                boolean soon = until.toMinutes() < Math.max(SOON_MINUTES, turn.remindMinutes());
-                scene.setState(soon ? CanalSceneView.Mode.SOON : CanalSceneView.Mode.WAITING, 0f);
-                countdown.setText(getString(string.turn_countdown, WaterText.duration(requireContext(), until)));
-            }
+            Duration until = turn.untilStart(now);
+            countdown.setText(getString(string.turn_countdown, WaterText.duration(requireContext(), until)));
         }
         scene.setContentDescription(countdown.getText());
     }
@@ -311,6 +312,7 @@ public final class WaterSheet extends BottomSheetDialogFragment {
     public void onResume() {
         super.onResume();
         renderPermissions();
+        scene.setPaused(false);
         handler.post(tick);
         if (current != null && current.turn() != null) {
             CanalAlarms.sync(requireContext(), current);
@@ -320,6 +322,7 @@ public final class WaterSheet extends BottomSheetDialogFragment {
     @Override
     public void onPause() {
         handler.removeCallbacks(tick);
+        scene.setPaused(true);
         super.onPause();
     }
 

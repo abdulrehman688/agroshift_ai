@@ -52,11 +52,36 @@ Urdu is a machine draft awaiting native review. Punjabi, Sindhi, Pashto, Saraiki
 |---|---|---|
 | **1. Useful every day** | Map room, modern Home, irrigation answer, canal turn alarm, danger alerts | Built, awaiting phone test |
 | **2. Course requirements** | Proposal gaps, tests, topic-to-code report, proposal wording | Built in 0.8.0 |
+| **Living Photo Engine** | Real photos animated by GPU shaders and farm data | Canal prototype built, awaiting phone test |
+| **Crop Plan Studio** | All crop plans, filters, plan builder and comparison | Approved, starts after the prototype |
 | **3. Polish and performance** | Remaining UX patterns, final fonts, sunlight theme, low-end performance | Planned |
 | **4. Big features** | Spring Boot backend, daily data pipeline, Field Lens, more languages | Planned |
 | **Later** | Listings, machinery rental, community | If time allows |
 
 See the full [roadmap](docs/Roadmap.md).
+
+## How the Living Photo Engine is made
+
+> **Prototype:** the canal scene is built in version 0.9.0 and is awaiting phone testing. The download above stays on the phone-checked 0.8.0 until then.
+
+AgroShift is replacing cartoon-style drawings with **real Pakistani farm photos brought to life on the phone's GPU**. Farm data decides what moves.
+
+| 1. Real photo | 2. Measure the canal | 3. Build the mask |
+|:---:|:---:|:---:|
+| <img src="docs/assets/living-photo/1-original.jpg" alt="Original photo of an irrigation canal in Faisalabad" width="270"> | <img src="docs/assets/living-photo/2-measure.jpg" alt="Canal photo with a measuring grid" width="270"> | <img src="docs/assets/living-photo/3-mask.jpg" alt="Mask with water in red, plants in green and sky in blue" width="270"> |
+| Openly licensed canal photo | A grid is used to trace the water edge | Red is water, green is plants, blue is sky |
+
+Then an OpenGL ES shader moves only the marked areas, using the field's real canal turn, weather and local time:
+
+| Calm day | Canal turn running | Rain and wind |
+|:---:|:---:|:---:|
+| <img src="docs/assets/living-photo/scene-calm.jpg" alt="Calm canal in daylight" width="270"> | <img src="docs/assets/living-photo/scene-turn.jpg" alt="Canal with faster water during a turn" width="270"> | <img src="docs/assets/living-photo/scene-rain.jpg" alt="Canal in rain and wind" width="270"> |
+
+| Golden evening | Night | Extreme heat |
+|:---:|:---:|:---:|
+| <img src="docs/assets/living-photo/scene-golden.jpg" alt="Canal in golden evening light" width="270"> | <img src="docs/assets/living-photo/scene-night.jpg" alt="Canal at night" width="270"> | <img src="docs/assets/living-photo/scene-heat.jpg" alt="Canal in extreme heat" width="270"> |
+
+These frames were rendered from the app's actual shader in WebGL on a computer. Read the full process in [Living Photo Engine](docs/Living%20Photo%20Engine.md).
 
 ## Architecture
 
@@ -143,6 +168,7 @@ The [`docs`](docs/Home.md) folder is an [Obsidian](https://obsidian.md) vault an
 - [UX patterns](docs/UX%20Patterns.md)
 - [Course mapping](docs/Course%20Mapping.md)
 - [Course report](docs/Course%20Report.md)
+- [Living Photo Engine](docs/Living%20Photo%20Engine.md)
 - [Image credits](docs/Image%20Credits.md)
 - [Changelog](CHANGELOG.md)
 
