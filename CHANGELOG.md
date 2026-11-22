@@ -39,6 +39,20 @@ All notable changes to AgroShift are recorded here.
 - Dark status bar icons over the field view
 - Field validation errors now clear when corrected
 
+## [0.11.0] - 2026-11-23
+
+### Added
+
+- Crop Plan Studio with all 28 crop plans for the selected field
+- Goal filters, swipe cards, saved plans shown first and a full plan list
+- Build-your-own plans from one Kharif crop and one Rabi crop
+- Year timeline, six score bars, water need and a four-way weather stress test
+- Side-by-side comparison with the better plan named in text
+
+### Fixed
+
+- Removed a timing race from the Home screen smoke test
+
 ## [0.10.3] - 2026-11-22
 
 ### Added

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studio_open">تمام %1$s فصلی منصوبے دیکھیں</string>
+    <string name="studio_title">فصل منصوبہ اسٹوڈیو</string>
+    <string name="studio_for">%1$s کے لیے</string>
+    <string name="studio_waiting">اس کھیت کا تجزیہ تیار ہو رہا ہے</string>
+    <string name="studio_unavailable">اس کھیت کا تجزیہ دستیاب نہیں۔ مشیر پر واپس جا کر دوبارہ کوشش کریں</string>
+    <string name="studio_lens_best">مجموعی طور پر بہترین</string>
+    <string name="studio_rank">منصوبہ %1$s از %2$s</string>
+    <string name="studio_current">آپ کا موجودہ منصوبہ</string>
+    <string name="studio_swipe_hint">مزید منصوبوں کے لیے کارڈ سرکائیں</string>
+    <string name="studio_save">منصوبہ محفوظ کریں</string>
+    <string name="studio_saved">محفوظ ہے</string>
+    <string name="studio_compare">موازنہ کریں</string>
+    <string name="studio_comparing">موازنے میں شامل</string>
+    <string name="studio_year_title">آپ کا سال</string>
+    <string name="studio_year_n">سال %1$s</string>
+    <string name="studio_scores_title">اس کے اسکور</string>
+    <string name="studio_stress_title">موسمی دباؤ کی جانچ</string>
+    <string name="studio_stress_steady">یہ منصوبہ مضبوط ہے۔ اسکور زیادہ سے زیادہ %1$s پوائنٹ کم ہوتا ہے</string>
+    <string name="studio_stress_sensitive">یہ منصوبہ موسم سے متاثر ہوتا ہے۔ اسکور %1$s پوائنٹ تک کم ہو سکتا ہے</string>
+    <string name="studio_build_title">اپنا منصوبہ بنائیں</string>
+    <string name="studio_build_kharif">خریف کی فصل</string>
+    <string name="studio_build_rabi">ربیع کی فصل</string>
+    <string name="studio_build_hint">ہر موسم کے لیے ایک فصل چنیں</string>
+    <string name="studio_build_result">%1$s، اسکور %2$s</string>
+    <string name="studio_build_open">یہ منصوبہ دیکھیں</string>
+    <string name="studio_compare_title">آمنے سامنے</string>
+    <string name="studio_compare_hint">یہاں دیکھنے کے لیے دو منصوبوں پر موازنہ دبائیں</string>
+    <string name="studio_compare_clear">موازنہ صاف کریں</string>
+    <string name="studio_better">%1$s، بہتر</string>
+    <string name="studio_overall">مجموعی اسکور</string>
+    <string name="studio_all_title">تمام منصوبے</string>
+    <string name="studio_show_all">تمام %1$s منصوبے دکھائیں</string>
+    <string name="studio_note">اسکور ناسا کے 20 سال کے موسمی ڈیٹا سے لگائے گئے اندازے ہیں۔ فصل بدلنے سے پہلے اپنے مقامی زرعی افسر سے مشورہ کریں۔</string>
+</resources>

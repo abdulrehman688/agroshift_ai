@@ -460,6 +460,14 @@
                 android:layout_marginTop="8dp"
                 android:orientation="vertical" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/advisor_open_studio"
+                style="@style/Widget.AgroShift.PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                app:icon="@drawable/ic_ui_field" />
+
             <LinearLayout
                 android:id="@+id/advisor_chart_card"
                 android:layout_width="match_parent"

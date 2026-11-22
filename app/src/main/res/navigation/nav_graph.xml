@@ -23,6 +23,10 @@
     </fragment>
 
     <fragment
+        android:id="@+id/planStudioFragment"
+        android:name="com.agroshift.feature.advisor.PlanStudioFragment" />
+
+    <fragment
         android:id="@+id/assistantFragment"
         android:name="com.agroshift.feature.help.AssistantFragment" />
 

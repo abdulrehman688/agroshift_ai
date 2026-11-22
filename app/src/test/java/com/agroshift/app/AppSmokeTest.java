@@ -20,12 +20,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.viewpager2.widget.ViewPager2;
 import com.agroshift.core.data.AnalysisState;
 import com.agroshift.core.data.AppServices;
 import com.agroshift.core.domain.engine.ClimateEngine;
 import com.agroshift.core.domain.engine.ClimateScenario;
 import com.agroshift.core.domain.engine.DailyClimate;
 import com.agroshift.core.domain.engine.FarmGoal;
+import com.agroshift.core.domain.engine.PlanStudio;
 import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.engine.RotationPlan;
 import com.agroshift.core.domain.engine.SoilType;
@@ -119,6 +121,9 @@ public class AppSmokeTest {
         layout(current());
 
         ViewGroup strip = current().findViewById(com.agroshift.feature.home.R.id.home_farms);
+        for (int wait = 0; wait < 20 && strip.getChildCount() != 3; wait++) {
+            settle();
+        }
         assertEquals(3, strip.getChildCount());
         strip.getChildAt(1).performClick();
         settle();
@@ -263,6 +268,50 @@ public class AppSmokeTest {
         chart.highlightValue(tapped, true);
         assertNotEquals(before, month.getText().toString());
         draw(advisor);
+        useStudio(advisor, field, outlooks);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void useStudio(View advisor, FarmField field, Map<ClimateScenario, RotationAdvisor.Advice> outlooks) {
+        advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_open_studio).performClick();
+        settle();
+        ((MutableLiveData<AnalysisState>) services.analysisRepository().observe(field.id())).setValue(
+                new AnalysisState(AnalysisState.Status.READY, 0, 0, outlooks, null, false));
+        shadowOf(Looper.getMainLooper()).idle();
+        View studio = current();
+        draw(studio);
+        assertEquals(View.VISIBLE, studio.findViewById(com.agroshift.feature.advisor.R.id.studio_scroll).getVisibility());
+        ViewPager2 deck = studio.findViewById(com.agroshift.feature.advisor.R.id.studio_deck);
+        assertEquals(PlanStudio.catalog().size(), deck.getAdapter().getItemCount());
+        ChipGroup lenses = studio.findViewById(com.agroshift.feature.advisor.R.id.studio_lens);
+        for (int i = lenses.getChildCount() - 1; i >= 0; i--) {
+            lenses.getChildAt(i).performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            draw(studio);
+        }
+        ((ViewGroup) studio.findViewById(com.agroshift.feature.advisor.R.id.studio_kharif)).getChildAt(2).performClick();
+        ((ViewGroup) studio.findViewById(com.agroshift.feature.advisor.R.id.studio_rabi)).getChildAt(3).performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        View open = studio.findViewById(com.agroshift.feature.advisor.R.id.studio_build_open);
+        assertEquals(View.VISIBLE, open.getVisibility());
+        open.performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        View save = studio.findViewById(com.agroshift.feature.advisor.R.id.studio_save);
+        save.performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        View compare = studio.findViewById(com.agroshift.feature.advisor.R.id.studio_compare);
+        compare.performClick();
+        ViewGroup list = studio.findViewById(com.agroshift.feature.advisor.R.id.studio_list);
+        list.getChildAt(3).performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        compare.performClick();
+        ViewGroup table = studio.findViewById(com.agroshift.feature.advisor.R.id.studio_compare_table);
+        assertEquals(PlanStudio.Lens.values().length + 1, table.getChildCount());
+        studio.findViewById(com.agroshift.feature.advisor.R.id.studio_show_all).performClick();
+        assertEquals(PlanStudio.catalog().size(), list.getChildCount());
+        draw(studio);
+        activity.getOnBackPressedDispatcher().onBackPressed();
+        settle();
     }
 
     private void draw(View view) {

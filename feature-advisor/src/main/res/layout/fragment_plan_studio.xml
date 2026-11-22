@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zameen_background"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="@dimen/zameen_gutter"
+        android:paddingBottom="8dp">
+
+        <ImageButton
+            android:id="@+id/studio_back"
+            android:layout_width="@dimen/zameen_touch"
+            android:layout_height="@dimen/zameen_touch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_close"
+            android:src="@drawable/ic_setup_back" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/studio_title"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Headline"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/studio_field"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                android:textDirection="firstStrong" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/studio_waiting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/zameen_gutter"
+            android:paddingEnd="@dimen/zameen_gutter">
+
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/studio_waiting_bar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorColor="@color/zameen_accent"
+                app:trackColor="@color/zameen_hairline" />
+
+            <TextView
+                android:id="@+id/studio_waiting_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/studio_waiting"
+                android:textAlignment="center"
+                android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/studio_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="24dp">
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingStart="@dimen/zameen_gutter"
+                    android:paddingEnd="@dimen/zameen_gutter"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/studio_lens"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:selectionRequired="true"
+                        app:singleLine="true"
+                        app:singleSelection="true" />
+                </HorizontalScrollView>
+
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/studio_deck"
+                    android:layout_width="match_parent"
+                    android:layout_height="324dp"
+                    android:layout_marginStart="18dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="18dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:paddingStart="@dimen/zameen_gutter"
+                    android:paddingEnd="@dimen/zameen_gutter"
+                    android:text="@string/studio_swipe_hint"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="@dimen/zameen_gutter"
+                    android:paddingEnd="@dimen/zameen_gutter">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/studio_save"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:minHeight="48dp"
+                            android:textAllCaps="false"
+                            android:textColor="@color/zameen_text"
+                            app:icon="@drawable/ic_ui_star"
+                            app:iconTint="@color/zameen_accent" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/studio_compare"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:minHeight="48dp"
+                            android:textAllCaps="false"
+                            android:textColor="@color/zameen_text"
+                            app:icon="@drawable/ic_ui_trend"
+                            app:iconTint="@color/zameen_accent" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/studio_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/studio_year_title"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                            android:textSize="18sp" />
+
+                        <com.agroshift.feature.advisor.PlanYearView
+                            android:id="@+id/studio_year"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp" />
+
+                        <TextView
+                            android:id="@+id/studio_water"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/studio_scores_title"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                            android:textSize="18sp" />
+
+                        <LinearLayout
+                            android:id="@+id/studio_bars"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/studio_stress_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/studio_stress_title"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/studio_stress_summary"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                        <LinearLayout
+                            android:id="@+id/studio_stress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/studio_build_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/studio_build_title"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/studio_build_kharif"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/studio_kharif"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/studio_build_rabi"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/studio_rabi"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:singleSelection="true" />
+
+                        <TextView
+                            android:id="@+id/studio_build_result"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/studio_build_hint"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/studio_build_open"
+                            style="@style/Widget.AgroShift.PrimaryButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/studio_build_open"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/studio_compare_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/studio_compare_title"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/studio_compare_hint"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:text="@string/studio_compare_hint"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                        <LinearLayout
+                            android:id="@+id/studio_compare_table"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:orientation="vertical" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/studio_compare_clear"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="48dp"
+                            android:text="@string/studio_compare_clear"
+                            android:textAllCaps="false"
+                            android:textColor="@color/zameen_accent"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/studio_all_title"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                        android:textSize="18sp" />
+
+                    <LinearLayout
+                        android:id="@+id/studio_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/studio_show_all"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="48dp"
+                        android:textAllCaps="false"
+                        android:textColor="@color/zameen_text" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/studio_note"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
+</LinearLayout>

@@ -26,6 +26,7 @@ import com.agroshift.core.domain.engine.ClimateAlert;
 import com.agroshift.core.domain.engine.ClimateProfile.Metric;
 import com.agroshift.core.domain.engine.ClimateScenario;
 import com.agroshift.core.domain.engine.FarmGoal;
+import com.agroshift.core.domain.engine.PlanStudio;
 import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.engine.RotationScores;
 import com.agroshift.core.domain.farm.FarmField;
@@ -127,6 +128,11 @@ public final class AdvisorFragment extends Fragment {
                 analysis.load(selected, true);
             }
         });
+
+        MaterialButton studio = view.findViewById(R.id.advisor_open_studio);
+        ZameenUi.polishPrimary(studio);
+        studio.setText(getString(string.studio_open, EngineText.number(PlanStudio.catalog().size(), 0)));
+        studio.setOnClickListener(v -> ((AppNavigator) requireActivity()).openPlanStudio());
 
         addPriority(string.priority_water, FarmGoal.Priority.WATER);
         addPriority(string.priority_soil, FarmGoal.Priority.SOIL);

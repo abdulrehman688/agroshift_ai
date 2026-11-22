@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="studio_open">Explore all %1$s crop plans</string>
+    <string name="studio_title">Crop Plan Studio</string>
+    <string name="studio_for">For %1$s</string>
+    <string name="studio_waiting">Preparing this field\'s analysis</string>
+    <string name="studio_unavailable">This field\'s analysis is not available. Go back to Advisor and try again</string>
+    <string name="studio_lens_best">Best overall</string>
+    <string name="studio_rank">Plan %1$s of %2$s</string>
+    <string name="studio_current">Your current plan</string>
+    <string name="studio_swipe_hint">Swipe the card to see more plans</string>
+    <string name="studio_save">Save plan</string>
+    <string name="studio_saved">Saved</string>
+    <string name="studio_compare">Compare</string>
+    <string name="studio_comparing">In comparison</string>
+    <string name="studio_year_title">Your year</string>
+    <string name="studio_year_n">Year %1$s</string>
+    <string name="studio_scores_title">How it scores</string>
+    <string name="studio_stress_title">Weather stress test</string>
+    <string name="studio_stress_steady">Holds up well. The score drops by at most %1$s points</string>
+    <string name="studio_stress_sensitive">Sensitive to weather. The score can drop by %1$s points</string>
+    <string name="studio_build_title">Build your own</string>
+    <string name="studio_build_kharif">Kharif crop</string>
+    <string name="studio_build_rabi">Rabi crop</string>
+    <string name="studio_build_hint">Pick one crop for each season</string>
+    <string name="studio_build_result">%1$s, score %2$s</string>
+    <string name="studio_build_open">See this plan</string>
+    <string name="studio_compare_title">Side by side</string>
+    <string name="studio_compare_hint">Tap Compare on two plans to see them here</string>
+    <string name="studio_compare_clear">Clear comparison</string>
+    <string name="studio_better">%1$s, better</string>
+    <string name="studio_overall">Overall score</string>
+    <string name="studio_all_title">All plans</string>
+    <string name="studio_show_all">Show all %1$s plans</string>
+    <string name="studio_note">Scores are estimates from 20 years of NASA climate data. Check with your local agriculture officer before changing crops.</string>
+</resources>

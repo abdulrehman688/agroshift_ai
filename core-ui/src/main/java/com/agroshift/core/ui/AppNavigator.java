@@ -12,6 +12,8 @@ public interface AppNavigator {
 
     void openAdvisor(String fieldId);
 
+    void openPlanStudio();
+
     void openAssistant();
 
     void openFarm();

@@ -10,8 +10,8 @@ android {
         applicationId "com.agroshift.app"
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
-        versionCode 18
-        versionName "0.10.3"
+        versionCode 19
+        versionName "0.11.0"
     }
 
     buildTypes {

@@ -53,7 +53,7 @@ Urdu is a machine draft awaiting native review. Punjabi, Sindhi, Pashto, Saraiki
 | **1. Useful every day** | Map room, modern Home, irrigation answer, canal turn alarm, danger alerts | Built, awaiting phone test |
 | **2. Course requirements** | Proposal gaps, tests, topic-to-code report, proposal wording | Built in 0.8.0 |
 | **Living Photo Engine** | Real photos animated by GPU shaders and farm data | Built across Home, Advisor, Help, Farm, canal and onboarding in 0.10.2, checked on phone |
-| **Crop Plan Studio** | All crop plans, filters, plan builder and comparison | Approved, starts after the prototype |
+| **Crop Plan Studio** | 28 crop plans, goal filters, swipe cards, plan builder, year timeline, weather stress test, favorites and comparison | Built in 0.11.0, awaiting phone test. The download above stays on the phone-checked 0.10.3 until then |
 | **3. Polish and performance** | Remaining UX patterns, final fonts, sunlight theme, low-end performance | Planned |
 | **4. Big features** | Spring Boot backend, daily data pipeline, Field Lens, more languages | Planned |
 | **Later** | Listings, machinery rental, community | If time allows |

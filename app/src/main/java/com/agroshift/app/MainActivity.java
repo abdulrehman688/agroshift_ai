@@ -34,7 +34,7 @@ public final class MainActivity extends AppCompatActivity
     private static final String TAG_COMMAND = "command_menu";
     private static final String TAG_WATER = "water_plan";
     private static final Set<Integer> FULL_SCREEN = Set.of(R.id.languageFragment, R.id.onboardingFragment,
-            R.id.fieldSetupFragment, R.id.fieldDetailFragment, R.id.assistantFragment);
+            R.id.fieldSetupFragment, R.id.fieldDetailFragment, R.id.assistantFragment, R.id.planStudioFragment);
 
     private NavController navController;
     private LanguageController languages;
@@ -152,6 +152,14 @@ public final class MainActivity extends AppCompatActivity
             navController.popBackStack(R.id.homeFragment, false);
         }
         bottomNav.setSelectedItemId(R.id.advisorFragment);
+    }
+
+    @Override
+    public void openPlanStudio() {
+        if (navController.getCurrentDestination() != null
+                && navController.getCurrentDestination().getId() != R.id.planStudioFragment) {
+            navController.navigate(R.id.planStudioFragment, null, motion().build());
+        }
     }
 
     @Override

@@ -35,3 +35,9 @@ Status is based on code in version 0.8.0. These patterns have not been confirmed
 ## Version 0.10.3 notes
 
 - Undo toasts now have a lasting backup: deleted farms and records stay in the Recycle Bin on My Farm until restored.
+
+## Version 0.11.0 notes
+
+- Crop Plan Studio uses 48dp controls, safe-area insets, tabular scores and English and Urdu text.
+- Plan fit, saved state, current plan and comparison winners are written in text, not shown by color alone.
+- Swipe cards and lists use still photos for performance. Two crop photos sit side by side and are never merged.
