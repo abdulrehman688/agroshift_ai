@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.text.BidiFormatter;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
@@ -24,10 +25,12 @@ import com.agroshift.core.domain.data.DataAccessException;
 import com.agroshift.core.domain.engine.ClimateAlert;
 import com.agroshift.core.domain.engine.ClimateProfile.Metric;
 import com.agroshift.core.domain.engine.ClimateScenario;
+import com.agroshift.core.domain.engine.Crop;
 import com.agroshift.core.domain.engine.FarmGoal;
 import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.engine.RotationScores;
 import com.agroshift.core.domain.farm.FarmField;
+import com.agroshift.core.domain.season.SeasonTimeline;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.ui.AppNavigator;
@@ -40,6 +43,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
@@ -48,6 +52,10 @@ import java.util.Map;
 /** Full rotation comparison with scores, climate chart, risks and What-If. */
 public final class AdvisorFragment extends Fragment {
     private static final int MAX_ALERTS = 6;
+    private static final double HEALTH_LOW = 35;
+    private static final double HEALTH_HIGH = 85;
+    private static final double WATER_SCALE_MM = 2200;
+    private static final int SCENE_SCROLL_MARGIN = 72;
 
     private FieldRepository fields;
     private AnalysisRepository analysis;
@@ -344,7 +352,13 @@ public final class AdvisorFragment extends Fragment {
             }
         }
         previewKind = chosen.kind();
-        scene.setScene(activeScenario.hotter(), activeScenario.drier(), (float) (chosen.scores().overall() / 100));
+        scene.setScene(activeScenario.hotter(), activeScenario.drier(),
+                (float) ((chosen.scores().overall() - HEALTH_LOW) / (HEALTH_HIGH - HEALTH_LOW)), lookFor(chosen),
+                (float) (chosen.plan().annualWaterNeedMm() / WATER_SCALE_MM), (float) (chosen.scores().soilHealth() / 100));
+        ((TextView) requireView().findViewById(R.id.advisor_scene_caption)).setText(getString(string.whatif_scene_caption,
+                EngineText.optionName(requireContext(), chosen.kind()),
+                EngineText.cropSequence(requireContext(), chosen.plan()),
+                EngineText.number(chosen.plan().annualWaterNeedMm(), 0)));
         scene.setContentDescription(getString(string.whatif_scene_description,
                 EngineText.optionName(requireContext(), chosen.kind()),
                 EngineText.number(chosen.scores().overall(), 0)));
@@ -354,6 +368,26 @@ public final class AdvisorFragment extends Fragment {
             ZameenUi.applySurface(entry.getValue(), active ? com.agroshift.core.ui.R.color.zameen_surface_accent
                     : com.agroshift.core.ui.R.color.zameen_surface, com.agroshift.core.ui.R.dimen.zameen_radius_card);
         }
+    }
+
+    private static WhatIfFieldView.Look lookFor(RotationAdvisor.Option option) {
+        SeasonTimeline.Moment now = SeasonTimeline.at(option.plan(), YearMonth.now());
+        String slug = now.hasCrop() ? now.cropSlug() : option.plan().steps().get(0).cropSlug();
+        return switch (Crop.bySlug(slug).family()) {
+            case "malvaceae" -> WhatIfFieldView.Look.COTTON;
+            case "legume" -> WhatIfFieldView.Look.LEGUME;
+            case "brassica" -> WhatIfFieldView.Look.MUSTARD;
+            default -> WhatIfFieldView.Look.GRASS;
+        };
+    }
+
+    private void scrollToScene() {
+        NestedScrollView page = requireView().findViewById(R.id.advisor_root);
+        int top = 0;
+        for (View item = scene; item != null && item != page; item = (View) item.getParent()) {
+            top += item.getTop();
+        }
+        page.smoothScrollTo(0, Math.max(0, top - SCENE_SCROLL_MARGIN * Math.round(getResources().getDisplayMetrics().density)));
     }
 
     private void showChartMonth(int month) {
@@ -390,7 +424,10 @@ public final class AdvisorFragment extends Fragment {
             View card = optionCard(options, option, option == advice.best(), currentScore);
             optionCards.put(option.kind(), card);
             ZameenUi.attachPressSpring(card);
-            card.setOnClickListener(v -> showPreview(option.kind()));
+            card.setOnClickListener(v -> {
+                showPreview(option.kind());
+                scrollToScene();
+            });
             options.addView(card);
         }
         showPreview(previewKind == null ? advice.best().kind() : previewKind);

@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
@@ -222,8 +223,16 @@ public class AppSmokeTest {
         }
         ViewGroup options = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_options);
         assertEquals(3, options.getChildCount());
-        options.getChildAt(options.getChildCount() - 1).performClick();
-        shadowOf(Looper.getMainLooper()).idle();
+        TextView caption = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_scene_caption);
+        String first = caption.getText().toString();
+        boolean changed = false;
+        for (int i = 0; i < options.getChildCount(); i++) {
+            options.getChildAt(i).performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            changed |= !first.equals(caption.getText().toString());
+            draw(advisor);
+        }
+        assertTrue(changed);
         View chart = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_chart);
         long now = SystemClock.uptimeMillis();
         MotionEvent up = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, chart.getWidth() / 2f, 20f, 0);

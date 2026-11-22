@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 
 /** A field that visibly changes with the selected What-If weather and crop score. */
 public final class WhatIfFieldView extends View {
+    public enum Look { GRASS, COTTON, LEGUME, MUSTARD }
+
     private static final long FRAME_MILLIS = 33;
     private static final int PLANTS = 13;
 
@@ -32,6 +34,10 @@ public final class WhatIfFieldView extends View {
     private float heat;
     private float dry;
     private float health = 0.7f;
+    private float water = 0.5f;
+    private float soil = 0.5f;
+    private Look look = Look.GRASS;
+    private final Paint head = new Paint(Paint.ANTI_ALIAS_FLAG);
     private float time;
     private boolean running;
     private long lastFrame;
@@ -43,7 +49,13 @@ public final class WhatIfFieldView extends View {
         line.setStrokeCap(Paint.Cap.ROUND);
     }
 
-    public void setScene(boolean hotter, boolean drier, float cropHealth) {
+    public void setScene(boolean hotter, boolean drier, float cropHealth, Look nextLook, float waterUse,
+            float soilQuality) {
+        look = nextLook;
+        float fromWater = water;
+        float fromSoil = soil;
+        float toWater = Math.max(0f, Math.min(1f, waterUse));
+        float toSoil = Math.max(0f, Math.min(1f, soilQuality));
         float fromHeat = heat;
         float fromDry = dry;
         float fromHealth = health;
@@ -57,6 +69,8 @@ public final class WhatIfFieldView extends View {
             heat = toHeat;
             dry = toDry;
             health = toHealth;
+            water = toWater;
+            soil = toSoil;
             invalidate();
             return;
         }
@@ -68,6 +82,8 @@ public final class WhatIfFieldView extends View {
             heat = fromHeat + (toHeat - fromHeat) * t;
             dry = fromDry + (toDry - fromDry) * t;
             health = fromHealth + (toHealth - fromHealth) * t;
+            water = fromWater + (toWater - fromWater) * t;
+            soil = fromSoil + (toSoil - fromSoil) * t;
             invalidate();
         });
         animator.start();
@@ -130,8 +146,13 @@ public final class WhatIfFieldView extends View {
         canvas.drawCircle(width * 0.8f, height * 0.2f, (13 + 10 * heat) * density, fill);
         drawClouds(canvas, width, height);
 
-        fill.setColor(mix(0xFF2F4522, 0xFF66512F, dry * 0.8f + heat * 0.2f));
+        int richSoil = mix(0xFF4A4426, 0xFF21331A, soil);
+        fill.setColor(mix(richSoil, 0xFF66512F, dry * 0.8f + heat * 0.2f));
         canvas.drawRect(0, horizon, width, height, fill);
+        fill.setColor(Color.argb(Math.round(205 * (1 - dry * 0.55f)), 111, 183, 200));
+        float channel = (2.5f + 9 * water) * density;
+        float channelY = horizon + (height - horizon) * 0.5f;
+        canvas.drawRect(0, channelY - channel / 2, width, channelY + channel / 2, fill);
         drawCracks(canvas, width, horizon, height);
         drawCrops(canvas, width, horizon, height);
         drawRain(canvas, width, horizon);
@@ -207,6 +228,31 @@ public final class WhatIfFieldView extends View {
                 leaf.moveTo(x + sway * 0.5f, midY);
                 leaf.quadTo(x + reach * 0.7f, midY - reach, x + reach, midY - reach * 0.1f);
                 canvas.drawPath(leaf, line);
+                drawCropTop(canvas, tipX, tipY, scale);
+            }
+        }
+    }
+
+    private void drawCropTop(Canvas canvas, float x, float y, float scale) {
+        float size = (2.2f + 2.6f * health) * density * scale;
+        switch (look) {
+            case COTTON -> {
+                head.setColor(0xFFF5F3E6);
+                canvas.drawCircle(x, y, size * 1.25f, head);
+            }
+            case LEGUME -> {
+                head.setColor(0xFF6FBF62);
+                canvas.drawCircle(x - size, y + size * 0.5f, size, head);
+                canvas.drawCircle(x + size, y + size * 0.5f, size, head);
+                canvas.drawCircle(x, y - size * 0.5f, size, head);
+            }
+            case MUSTARD -> {
+                head.setColor(0xFFF3D23C);
+                canvas.drawCircle(x, y, size * 1.2f, head);
+            }
+            case GRASS -> {
+                head.setColor(0xFFE0C35D);
+                canvas.drawOval(x - size * 0.55f, y - size * 2f, x + size * 0.55f, y + size * 0.4f, head);
             }
         }
     }

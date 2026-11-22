@@ -255,6 +255,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="190dp" />
 
+            <TextView
+                android:id="@+id/advisor_scene_caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:fontFamily="sans-serif-medium"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                android:textColor="@color/zameen_accent" />
+
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

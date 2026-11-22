@@ -32,6 +32,7 @@ import com.agroshift.core.data.AnalysisRepository;
 import com.agroshift.core.data.AnalysisState;
 import com.agroshift.core.data.AppServices;
 import com.agroshift.core.data.OnlineServices;
+import com.agroshift.core.domain.chat.ChatSession;
 import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.language.ChatLanguage;
 import com.agroshift.core.i18n.EngineText;
@@ -42,12 +43,14 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /** Text and voice chat grounded in the selected field's NASA analysis. */
 public final class AssistantFragment extends Fragment {
-    private static final String GENERAL_CHAT = "general";
+    private static final int MAX_RECENT = 3;
     private static final String TTS_SETTINGS = "com.android.settings.TTS_SETTINGS";
     private static final int[] PROMPTS = {string.assistant_prompt_1, string.assistant_prompt_2,
             string.assistant_prompt_3};
@@ -83,6 +86,9 @@ public final class AssistantFragment extends Fragment {
     private ChipGroup fieldChips;
     private View fieldScroll;
     private TextView contextLine;
+    private View recentSection;
+    private LinearLayout recentRows;
+    private List<ChatSession> sessions = List.of();
 
     private final ActivityResultLauncher<Intent> voice = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -145,7 +151,24 @@ public final class AssistantFragment extends Fragment {
         });
         clear.setOnClickListener(v -> {
             stopSpeaking();
-            online.clearChat(chatKey());
+            online.startNewSession(selected == null ? null : selected.id());
+            attachChat();
+        });
+        recentSection = view.findViewById(R.id.assistant_recent_section);
+        recentRows = view.findViewById(R.id.assistant_recent);
+        View.OnClickListener history = v -> {
+            if (getChildFragmentManager().findFragmentByTag("chat_history") == null) {
+                new ChatHistorySheet().show(getChildFragmentManager(), "chat_history");
+            }
+        };
+        view.findViewById(R.id.assistant_history).setOnClickListener(history);
+        view.findViewById(R.id.assistant_full_history).setOnClickListener(history);
+        getChildFragmentManager().setFragmentResultListener(ChatHistorySheet.RESULT, getViewLifecycleOwner(),
+                (key, result) -> openSession(result.getString(ChatHistorySheet.KEY_SESSION),
+                        result.getString(ChatHistorySheet.KEY_FIELD)));
+        online.observeSessions().observe(getViewLifecycleOwner(), next -> {
+            sessions = next;
+            renderRecent();
         });
         view.findViewById(R.id.assistant_mic).setOnClickListener(v -> startVoice());
         language.setOnClickListener(v -> new ChatLanguageSheet().show(getChildFragmentManager(), "chat_language"));
@@ -252,8 +275,7 @@ public final class AssistantFragment extends Fragment {
             detach();
             analysisState = null;
             renderedCount = -1;
-            activeChat = online.chatMessages(chatKey());
-            activeChat.observe(getViewLifecycleOwner(), chatObserver);
+            attachChat();
             if (next != null) {
                 activeAnalysis = analysis.observe(next.id());
                 activeAnalysis.observe(getViewLifecycleOwner(), analysisObserver);
@@ -263,6 +285,51 @@ public final class AssistantFragment extends Fragment {
             analysis.load(next, false);
         }
         renderContext();
+    }
+
+    private void attachChat() {
+        if (activeChat != null) {
+            activeChat.removeObserver(chatObserver);
+        }
+        renderedCount = -1;
+        activeChat = online.chatMessages(chatKey());
+        activeChat.observe(getViewLifecycleOwner(), chatObserver);
+        renderRecent();
+    }
+
+    private void openSession(@Nullable String sessionId, @Nullable String fieldId) {
+        if (sessionId == null) {
+            return;
+        }
+        stopSpeaking();
+        boolean known = false;
+        for (FarmField field : fields) {
+            known |= field.id().equals(fieldId);
+        }
+        if (known && (selected == null || !selected.id().equals(fieldId))) {
+            online.openSession(fieldId, sessionId);
+            analysis.selectField(fieldId);
+        } else {
+            online.openSession(selected == null ? null : selected.id(), sessionId);
+            attachChat();
+        }
+    }
+
+    private void renderRecent() {
+        if (recentRows == null) {
+            return;
+        }
+        List<ChatSession> recent = ChatSession.recent(sessions, chatKey(), MAX_RECENT);
+        Map<String, String> names = new HashMap<>();
+        for (FarmField field : fields) {
+            names.put(field.id(), field.name());
+        }
+        recentRows.removeAllViews();
+        for (ChatSession session : recent) {
+            recentRows.addView(ChatSessionRow.create(getLayoutInflater(), recentRows, session, names,
+                    item -> openSession(item.id(), item.fieldId()), item -> online.deleteSession(item.id())));
+        }
+        recentSection.setVisibility(sessions.isEmpty() ? View.GONE : View.VISIBLE);
     }
 
     private void detach() {
@@ -277,7 +344,7 @@ public final class AssistantFragment extends Fragment {
     }
 
     private String chatKey() {
-        return selected == null ? GENERAL_CHAT : selected.id();
+        return online.currentSession(selected == null ? null : selected.id());
     }
 
     private void renderFieldChips() {
@@ -533,6 +600,8 @@ public final class AssistantFragment extends Fragment {
         fieldChips = null;
         fieldScroll = null;
         contextLine = null;
+        recentSection = null;
+        recentRows = null;
         super.onDestroyView();
     }
 }

@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import com.agroshift.core.data.AgroShiftDatabase;
 import com.agroshift.core.data.AnalysisRepository;
 import com.agroshift.core.data.AppServices;
+import com.agroshift.core.data.ChatRepository;
 import com.agroshift.core.data.FarmDao;
 import com.agroshift.core.data.FieldRepository;
 import com.agroshift.core.data.OnlineServices;
@@ -39,7 +40,7 @@ public class AgroShiftApp extends Application implements SyncHost, AppServices {
         recordRepository = new RecordRepository(database.farmDao(), writes, sync);
         analysisRepository = new AnalysisRepository(database.farmDao(),
                 getSharedPreferences("agroshift_selection", MODE_PRIVATE));
-        onlineServices = new OnlineServices(this);
+        onlineServices = new OnlineServices(this, new ChatRepository(database.chatDao(), writes));
         waterRepository = new WaterRepository(database.farmDao(), writes, sync,
                 water -> CanalAlarms.sync(this, water));
         ClimateRefreshWorker.schedule(this);

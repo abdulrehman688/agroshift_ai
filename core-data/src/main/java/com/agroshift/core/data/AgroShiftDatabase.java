@@ -9,7 +9,8 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 @Database(entities = {FieldEntity.class, OutboxEntity.class, ClimateProfileEntity.class,
-        FarmRecordEntity.class, FieldWaterEntity.class}, version = 4, exportSchema = true)
+        FarmRecordEntity.class, FieldWaterEntity.class, ChatSessionEntity.class,
+        ChatMessageEntity.class}, version = 5, exportSchema = true)
 public abstract class AgroShiftDatabase extends RoomDatabase {
     static final Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
@@ -49,10 +50,27 @@ public abstract class AgroShiftDatabase extends RoomDatabase {
         }
     };
 
+    static final Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            db.execSQL("CREATE TABLE IF NOT EXISTS chat_sessions ("
+                    + "id TEXT NOT NULL, fieldId TEXT, title TEXT NOT NULL, createdAtMillis INTEGER NOT NULL, "
+                    + "updatedAtMillis INTEGER NOT NULL, messageCount INTEGER NOT NULL, PRIMARY KEY(id))");
+            db.execSQL("CREATE TABLE IF NOT EXISTS chat_messages ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, sessionId TEXT NOT NULL, "
+                    + "position INTEGER NOT NULL, fromFarmer INTEGER NOT NULL, text TEXT NOT NULL, "
+                    + "actionsJson TEXT NOT NULL, expert TEXT, usedFieldData INTEGER NOT NULL, "
+                    + "languageCode TEXT NOT NULL)");
+            db.execSQL("CREATE INDEX IF NOT EXISTS index_chat_messages_sessionId ON chat_messages (sessionId)");
+        }
+    };
+
     public abstract FarmDao farmDao();
+
+    public abstract ChatDao chatDao();
 
     public static AgroShiftDatabase create(Context context) {
         return Room.databaseBuilder(context.getApplicationContext(), AgroShiftDatabase.class,
-                "agroshift.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4).build();
+                "agroshift.db").addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5).build();
     }
 }

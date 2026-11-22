@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import com.agroshift.core.domain.chat.ChatSession;
 import com.agroshift.core.domain.engine.ClimateScenario;
 import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.farm.FarmField;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -81,7 +83,8 @@ public final class OnlineServices {
             + "et0_fao_evapotranspiration,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,weather_code";
     private static final int MAX_HISTORY = 12;
     private static final int MAX_ANSWER_ITEMS = 3;
-    private static final int MAX_SAVED_MESSAGES = 40;
+    private static final int MAX_SAVED_MESSAGES = 200;
+    private static final String GENERAL_SESSION = "general";
     private static final String PREFS = "agroshift_weather";
     private static final String CHAT_PREFS = "agroshift_chat";
     private static final String KEY_CHAT_LANGUAGE = "__chat_language";
@@ -93,10 +96,14 @@ public final class OnlineServices {
     private final SharedPreferences chatPrefs;
     private final Map<String, MutableLiveData<Weather>> weather = new ConcurrentHashMap<>();
     private final Map<String, MutableLiveData<List<ChatMessage>>> chats = new ConcurrentHashMap<>();
+    private final Map<String, String> currentSessions = new ConcurrentHashMap<>();
+    private final ChatRepository chatRepository;
 
-    public OnlineServices(Context context) {
+    public OnlineServices(Context context, ChatRepository chatRepository) {
+        this.chatRepository = chatRepository;
         prefs = context.getApplicationContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         chatPrefs = context.getApplicationContext().getSharedPreferences(CHAT_PREFS, Context.MODE_PRIVATE);
+        chatRepository.importLegacy(chatPrefs, KEY_CHAT_LANGUAGE);
         weatherApi = retrofit("https://api.open-meteo.com/", 20).create(WeatherApi.class);
         placeApi = retrofit("https://nominatim.openstreetmap.org/", 15).create(PlaceApi.class);
         assistantApi = retrofit("https://fieldshift-backend-f2dv.onrender.com/", 90).create(AssistantApi.class);
@@ -264,12 +271,44 @@ public final class OnlineServices {
     }
 
     private MutableLiveData<List<ChatMessage>> chat(String chatKey) {
-        return chats.computeIfAbsent(chatKey, key -> new MutableLiveData<>(readChat(key)));
+        return chats.computeIfAbsent(chatKey, key -> {
+            MutableLiveData<List<ChatMessage>> live = new MutableLiveData<>(List.of());
+            chatRepository.load(key, messages -> {
+                if (!messages.isEmpty()) {
+                    live.postValue(messages);
+                }
+            });
+            return live;
+        });
     }
 
-    public void clearChat(String chatKey) {
-        chatPrefs.edit().remove(chatKey).apply();
-        chat(chatKey).setValue(List.of());
+    public LiveData<List<ChatSession>> observeSessions() {
+        return chatRepository.observeSessions();
+    }
+
+    /** The open conversation for a farm. A new app launch always starts with a new one. */
+    public String currentSession(@Nullable String fieldId) {
+        return currentSessions.computeIfAbsent(sessionSlot(fieldId), key -> UUID.randomUUID().toString());
+    }
+
+    public String startNewSession(@Nullable String fieldId) {
+        String id = UUID.randomUUID().toString();
+        currentSessions.put(sessionSlot(fieldId), id);
+        return id;
+    }
+
+    public void openSession(@Nullable String fieldId, String sessionId) {
+        currentSessions.put(sessionSlot(fieldId), sessionId);
+    }
+
+    public void deleteSession(String sessionId) {
+        chatRepository.delete(sessionId);
+        chats.remove(sessionId);
+        currentSessions.values().removeIf(sessionId::equals);
+    }
+
+    private static String sessionSlot(@Nullable String fieldId) {
+        return fieldId == null ? GENERAL_SESSION : fieldId;
     }
 
     public ChatLanguage chatLanguage() {
@@ -290,7 +329,8 @@ public final class OnlineServices {
         MutableLiveData<List<ChatMessage>> live = chat(chatKey);
         List<ChatMessage> history = new ArrayList<>(live.getValue());
         history.add(new ChatMessage(true, question, List.of(), null, false, language.code()));
-        saveChat(chatKey, history);
+        String savedFieldId = field == null ? null : field.id();
+        saveChat(chatKey, savedFieldId, history);
         live.setValue(List.copyOf(history));
 
         boolean grounded = field != null && outlooks != null
@@ -324,69 +364,31 @@ public final class OnlineServices {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 ChatMessage answer = response.isSuccessful()
                         ? parseAnswer(response.body(), grounded, language) : null;
-                finish(chatKey, answer, onDone);
+                finish(chatKey, savedFieldId, answer, onDone);
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable error) {
-                finish(chatKey, null, onDone);
+                finish(chatKey, savedFieldId, null, onDone);
             }
         });
     }
 
-    private void finish(String chatKey, @Nullable ChatMessage answer, Consumer<Boolean> onDone) {
+    private void finish(String chatKey, @Nullable String fieldId, @Nullable ChatMessage answer,
+            Consumer<Boolean> onDone) {
         if (answer != null) {
             MutableLiveData<List<ChatMessage>> live = chat(chatKey);
             List<ChatMessage> updated = new ArrayList<>(live.getValue());
             updated.add(answer);
-            saveChat(chatKey, updated);
+            saveChat(chatKey, fieldId, updated);
             live.setValue(List.copyOf(updated));
         }
         onDone.accept(answer != null);
     }
 
-    private List<ChatMessage> readChat(String key) {
-        String saved = chatPrefs.getString(key, null);
-        if (saved == null) {
-            return List.of();
-        }
-        try {
-            List<ChatMessage> messages = new ArrayList<>();
-            for (JsonElement item : JsonParser.parseString(saved).getAsJsonArray()) {
-                JsonObject row = item.getAsJsonObject();
-                List<String> actions = new ArrayList<>();
-                if (row.has("actions")) {
-                    row.getAsJsonArray("actions").forEach(value -> actions.add(value.getAsString()));
-                }
-                messages.add(new ChatMessage(row.get("farmer").getAsBoolean(), row.get("text").getAsString(),
-                        actions, row.has("expert") ? row.get("expert").getAsString() : null,
-                        row.has("data") && row.get("data").getAsBoolean(),
-                        row.has("lang") ? row.get("lang").getAsString() : ChatLanguage.ENGLISH.code()));
-            }
-            return List.copyOf(messages);
-        } catch (RuntimeException corrupted) {
-            return List.of();
-        }
-    }
-
-    private void saveChat(String key, List<ChatMessage> messages) {
-        JsonArray saved = new JsonArray();
-        for (ChatMessage message : messages.subList(Math.max(0, messages.size() - MAX_SAVED_MESSAGES),
-                messages.size())) {
-            JsonObject row = new JsonObject();
-            row.addProperty("farmer", message.fromFarmer());
-            row.addProperty("text", message.text());
-            JsonArray actions = new JsonArray();
-            message.actions().forEach(actions::add);
-            row.add("actions", actions);
-            if (message.expert() != null) {
-                row.addProperty("expert", message.expert());
-            }
-            row.addProperty("data", message.usedFieldData());
-            row.addProperty("lang", message.languageCode());
-            saved.add(row);
-        }
-        chatPrefs.edit().putString(key, saved.toString()).apply();
+    private void saveChat(String key, @Nullable String fieldId, List<ChatMessage> messages) {
+        chatRepository.save(key, fieldId, messages.subList(Math.max(0, messages.size() - MAX_SAVED_MESSAGES),
+                messages.size()));
     }
 
     private static boolean citedFieldData(JsonObject body) {

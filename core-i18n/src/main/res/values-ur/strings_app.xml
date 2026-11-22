@@ -369,4 +369,20 @@
     <string name="search_actions">کام</string>
     <string name="search_action_label">ایپ میں کھولیں</string>
     <string name="search_section">%1$s (%2$d)</string>
+    <string name="whatif_scene_caption">%1$s: %2$s، %3$s ملی میٹر پانی درکار</string>
+    <string name="chat_history">گفتگو کی تاریخ</string>
+    <string name="chat_new">نئی گفتگو</string>
+    <string name="chat_recent">حالیہ گفتگو</string>
+    <string name="chat_view_history">پوری تاریخ دیکھیں</string>
+    <string name="chat_history_search">اپنی گفتگو تلاش کریں</string>
+    <string name="chat_history_empty">کوئی محفوظ گفتگو نہیں ملی</string>
+    <string name="chat_general">عمومی</string>
+    <string name="chat_session_meta">%1$s  ·  %2$s  ·  %3$d پیغامات</string>
+    <string name="chat_open">گفتگو جاری رکھیں: %1$s</string>
+    <string name="chat_delete">گفتگو حذف کریں</string>
+    <string name="chat_delete_title">یہ گفتگو حذف کریں؟</string>
+    <plurals name="chat_count">
+        <item quantity="one">%1$d محفوظ گفتگو</item>
+        <item quantity="other">%1$d محفوظ گفتگو</item>
+    </plurals>
 </resources>

@@ -31,7 +31,8 @@
             android:layout_marginStart="2dp"
             android:importantForAccessibility="no"
             android:padding="8dp"
-            android:src="@drawable/ic_chat_leaf" />
+            android:src="@drawable/ic_chat_leaf"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -76,13 +77,23 @@
             app:iconTint="@color/zameen_accent" />
 
         <ImageButton
+            android:id="@+id/assistant_history"
+            android:layout_width="@dimen/zameen_touch"
+            android:layout_height="@dimen/zameen_touch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/chat_history"
+            android:src="@drawable/ic_ui_history"
+            app:tint="@color/zameen_text" />
+
+        <ImageButton
             android:id="@+id/assistant_clear"
             android:layout_width="@dimen/zameen_touch"
             android:layout_height="@dimen/zameen_touch"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/assistant_clear"
-            android:src="@drawable/ic_chat_clear"
-            android:visibility="gone" />
+            android:contentDescription="@string/chat_new"
+            android:src="@drawable/ic_ui_plus"
+            android:visibility="gone"
+            app:tint="@color/zameen_accent" />
     </LinearLayout>
 
     <View
@@ -155,6 +166,42 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
+
+                <LinearLayout
+                    android:id="@+id/assistant_recent_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/chat_recent"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                        android:textSize="19sp" />
+
+                    <LinearLayout
+                        android:id="@+id/assistant_recent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/assistant_full_history"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="52dp"
+                        android:text="@string/chat_view_history"
+                        android:textAllCaps="false"
+                        app:icon="@drawable/ic_ui_history"
+                        app:iconGravity="textStart" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout

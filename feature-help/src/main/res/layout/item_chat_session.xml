@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/zameen_gap"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:minHeight="68dp"
+    android:orientation="horizontal"
+    android:paddingStart="12dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="4dp"
+    android:paddingBottom="8dp">
+
+    <ImageView
+        android:id="@+id/session_icon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:importantForAccessibility="no"
+        android:padding="10dp"
+        android:src="@drawable/ic_ui_chat"
+        app:tint="@color/zameen_accent" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/session_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:maxLines="1"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.AgroShift.Body"
+            android:textDirection="firstStrong" />
+
+        <TextView
+            android:id="@+id/session_meta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/session_delete"
+        android:layout_width="@dimen/zameen_touch"
+        android:layout_height="@dimen/zameen_touch"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/chat_delete"
+        android:src="@drawable/ic_chat_clear" />
+</LinearLayout>

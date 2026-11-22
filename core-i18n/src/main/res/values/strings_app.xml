@@ -368,4 +368,20 @@
     <string name="search_actions">Actions</string>
     <string name="search_action_label">Open in app</string>
     <string name="search_section">%1$s (%2$d)</string>
+    <string name="whatif_scene_caption">%1$s: %2$s, needs %3$s mm water</string>
+    <string name="chat_history">Chat history</string>
+    <string name="chat_new">New chat</string>
+    <string name="chat_recent">Recent chats</string>
+    <string name="chat_view_history">View full history</string>
+    <string name="chat_history_search">Search your chats</string>
+    <string name="chat_history_empty">No saved chats found</string>
+    <string name="chat_general">General</string>
+    <string name="chat_session_meta">%1$s  ·  %2$s  ·  %3$d messages</string>
+    <string name="chat_open">Continue chat: %1$s</string>
+    <string name="chat_delete">Delete chat</string>
+    <string name="chat_delete_title">Delete this chat?</string>
+    <plurals name="chat_count">
+        <item quantity="one">%1$d saved chat</item>
+        <item quantity="other">%1$d saved chats</item>
+    </plurals>
 </resources>
