@@ -109,6 +109,13 @@
             app:iconSize="20dp"
             app:iconTint="@color/zameen_accent" />
 
+        <com.agroshift.core.ui.VoiceWaveView
+            android:id="@+id/answer_wave"
+            android:layout_width="56dp"
+            android:layout_height="28dp"
+            android:layout_marginStart="4dp"
+            android:visibility="gone" />
+
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"

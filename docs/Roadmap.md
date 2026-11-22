@@ -35,8 +35,8 @@ Back to [[Home]]
 
 ## Planned experience
 
-- [ ] Confirm 0.6.1 Live Farm work on a phone: farm switcher, canal scene, living Home, crop timeline, Farm, field records and Market
-- [ ] Finish [[Live Farm Plan]]: Advisor What-If scene, all-farm map pins, assistant voice wave, optional sound
+- [ ] Confirm 0.7.0 Live Farm work on a phone: farm switcher, canal scene, living Home, crop timeline, Farm, records, Market, Advisor, Help and search
+- [ ] Finish [[Live Farm Plan]]: all-farm map pins and optional sound
 
 ## High priority
 

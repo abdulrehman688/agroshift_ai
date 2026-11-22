@@ -14,4 +14,12 @@ public enum ClimateScenario {
         this.temperatureC = temperatureC;
         this.rainPercent = rainPercent;
     }
+
+    public boolean hotter() {
+        return temperatureC > 0;
+    }
+
+    public boolean drier() {
+        return rainPercent < 0;
+    }
 }

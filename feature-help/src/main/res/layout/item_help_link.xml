@@ -1,13 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/zameen_gap"
     android:clickable="true"
     android:focusable="true"
-    android:gravity="center_vertical|start"
-    android:minHeight="56dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:textAlignment="viewStart"
-    android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:paddingStart="14dp"
+    android:paddingEnd="12dp">
+
+    <ImageView
+        android:id="@+id/link_icon"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:importantForAccessibility="no"
+        app:tint="@color/zameen_accent" />
+
+    <TextView
+        android:id="@+id/link_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:fontFamily="sans-serif-medium"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+
+    <ImageView
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_ui_external"
+        app:tint="@color/zameen_text_secondary" />
+</LinearLayout>

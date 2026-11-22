@@ -1,11 +1,11 @@
 # AgroShift Project Context
 
-Last updated: 2026-11-22. Status: Android preview 0.6.1, published to the GitHub repository.
+Last updated: 2026-11-22. Status: Android preview 0.7.0, published to the GitHub repository.
 
 ### Current build status
 
 - **Working:** Java multi-module Android app, Zameen theme, language onboarding, Urdu right-to-left UI, five-tab navigation, season thread, add/delete/undo fields, Room persistence, sync outbox with idempotency keys, tested concurrency primitives, command menu, skeleton loading, smooth corners, press springs, and unsaved-sheet protection.
-- **Preview APK:** `releases/AgroShift-0.6.1-preview.apk` includes a multi-farm Home, live sky, crop timeline, live canal scene, interactive Farm and Market pages, bilingual photo onboarding, a modern Home, irrigation estimate, canal turn alarm, danger alerts, map setup, NASA crop advice, What-If, weather, farm records, Market, Help, field-aware assistant, per-answer read aloud, copy, and a chat language selector. It passed build, lint and 78 automated tests, but has not been confirmed on a device.
+- **Preview APK:** `releases/AgroShift-0.7.0-preview.apk` includes a multi-farm Home, live sky, crop timeline, live canal scene, interactive Farm and Market pages, bilingual photo onboarding, a modern Home, irrigation estimate, canal turn alarm, danger alerts, map setup, NASA crop advice, What-If, weather, farm records, Market, Help, field-aware assistant, per-answer read aloud, copy, and a chat language selector. It passed build, lint and 83 automated tests, but has not been confirmed on a device.
 - **Analysis display rule:** show a clear answer first, followed by the full useful analysis: scores, six score bars, water need, rain chart, field stats, risks, reasons and actions. The user rejected the over-simplified version on 2026-11-22.
 - **Data flow:** see `docs/How Data Works.md`. The assistant receives the selected field's NASA analysis, without exact coordinates or field name. Its general farming advice is not yet restricted to a reviewed official knowledge base.
 - **Current limits:** Market opens official AMIS prices instead of showing them in-app. Community groups, listings and rental need a backend. Field Lens needs a secure image AI service.
@@ -15,6 +15,7 @@ Last updated: 2026-11-22. Status: Android preview 0.6.1, published to the GitHub
 - **Multi-farm Home:** Home lists all farms, and the selected farm is saved and shared with Advisor and the assistant.
 - **Live experience:** partly built, see `docs/Live Farm Plan.md`. Motion must represent real field state. Market charts use only the farmer's own sales until official price permission exists.
 - **Version 0.6.1:** includes the Farm, Market, field details and bottom-tab fixes. App screen tests run locally with `:app:testDebugUnitTest`, without an emulator.
+- **Version 0.7.0:** adds interactive Advisor and Help pages and global search. It passed build, lint and 83 automated tests, but has not been confirmed on a phone.
 - **Testing preference:** do not run emulator flows. Build the APK and run normal code checks. The user tests on their phone.
 - **Website parity:** feature-by-feature status is in `docs/Website Parity.md`. All website features are planned for mobile except the Iowa location and sample result.
 - **Not built yet:** Spring Boot backend, real sync gateway, Field Lens, server NASA pipeline, image placeholders, shared-element transitions, custom predictive-back transitions, safe-triangle menus, light sunlight theme, bundled Schibsted Grotesk and Nastaliq fonts. Exact pattern status is in `docs/UX Patterns.md`.

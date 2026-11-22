@@ -190,6 +190,9 @@ public final class MainActivity extends AppCompatActivity
             case MARKET -> bottomNav.setSelectedItemId(R.id.marketFragment);
             case COMMUNITY -> bottomNav.setSelectedItemId(R.id.communityFragment);
             case LANGUAGE -> openLanguage();
+            case WATER, ASK -> {
+                // Handled by the search sheet because they need the selected farm or assistant.
+            }
         }
     }
 

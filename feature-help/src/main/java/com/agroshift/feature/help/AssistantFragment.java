@@ -389,6 +389,7 @@ public final class AssistantFragment extends Fragment {
         boolean speaking = speakingIndex == index;
         read.setText(speaking ? string.assistant_stop : string.assistant_read_aloud);
         read.setIconResource(speaking ? R.drawable.ic_chat_stop : R.drawable.ic_chat_speaker);
+        card.findViewById(R.id.answer_wave).setVisibility(speaking ? View.VISIBLE : View.GONE);
         read.setOnClickListener(v -> toggleSpeech(message, index));
         card.findViewById(R.id.answer_copy).setOnClickListener(v -> copy(message));
         return card;

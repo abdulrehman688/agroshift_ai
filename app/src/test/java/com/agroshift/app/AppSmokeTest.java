@@ -6,16 +6,27 @@ import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.os.Looper;
+import android.os.SystemClock;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.test.core.app.ApplicationProvider;
+import com.agroshift.core.data.AnalysisState;
 import com.agroshift.core.data.AppServices;
+import com.agroshift.core.domain.engine.ClimateEngine;
+import com.agroshift.core.domain.engine.ClimateScenario;
+import com.agroshift.core.domain.engine.DailyClimate;
 import com.agroshift.core.domain.engine.FarmGoal;
+import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.engine.RotationPlan;
 import com.agroshift.core.domain.engine.SoilType;
 import com.agroshift.core.domain.engine.WaterAccess;
@@ -23,7 +34,12 @@ import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.farm.FarmRecord;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.slider.Slider;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
@@ -43,6 +59,8 @@ public class AppSmokeTest {
         Context context = ApplicationProvider.getApplicationContext();
         context.getSharedPreferences("agroshift_language", Context.MODE_PRIVATE).edit()
                 .putString("selected_tag", "en-PK").putBoolean("onboarding_seen", true).commit();
+        android.provider.Settings.Global.putFloat(context.getContentResolver(),
+                android.provider.Settings.Global.ANIMATOR_DURATION_SCALE, 0f);
         services = (AppServices) context;
         activity = Robolectric.buildActivity(MainActivity.class).setup().get();
         tabs = activity.findViewById(R.id.bottom_nav);
@@ -158,9 +176,123 @@ public class AppSmokeTest {
         layout(current());
         activity.getOnBackPressedDispatcher().onBackPressed();
         settle();
+        useAdvisor(first);
+        useHelp();
+        useSearch();
         activity.openLanguage();
         settle();
         layout(current());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void useAdvisor(FarmField field) {
+        tabs.setSelectedItemId(R.id.advisorFragment);
+        settle();
+        List<DailyClimate> days = new ArrayList<>();
+        LocalDate date = LocalDate.of(2006, 1, 1);
+        int index = 0;
+        while (date.isBefore(LocalDate.of(2026, 1, 1))) {
+            int month = date.getMonthValue();
+            double high = month >= 5 && month <= 8 ? 41 : 25;
+            double rain = index++ % 6 == 0 ? (month == 7 ? 12 : 1.5) : 0;
+            days.add(new DailyClimate(date, high - 8, high, high - 15, rain, 0.3));
+            date = date.plusDays(1);
+        }
+        Map<ClimateScenario, RotationAdvisor.Advice> outlooks = new EnumMap<>(ClimateScenario.class);
+        for (ClimateScenario scenario : ClimateScenario.values()) {
+            outlooks.put(scenario, RotationAdvisor.advise(ClimateEngine.buildScenario(days, 31.0, scenario),
+                    field.rotationKey(), field.water(), field.goal(), field.soil()));
+        }
+        services.analysisRepository().selectField(field.id());
+        settle();
+        ((MutableLiveData<AnalysisState>) services.analysisRepository().observe(field.id())).setValue(
+                new AnalysisState(AnalysisState.Status.READY, 0, 0, outlooks, null, false));
+        shadowOf(Looper.getMainLooper()).idle();
+        View advisor = current();
+        layout(advisor);
+        ((MutableLiveData<AnalysisState>) services.analysisRepository().observe(field.id())).setValue(
+                new AnalysisState(AnalysisState.Status.READY, 0, 0, outlooks, null, false));
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(View.VISIBLE, advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_content).getVisibility());
+        ChipGroup whatIf = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_whatif);
+        for (int i = whatIf.getChildCount() - 1; i >= 0; i--) {
+            whatIf.getChildAt(i).performClick();
+            shadowOf(Looper.getMainLooper()).idle();
+            draw(advisor);
+        }
+        ViewGroup options = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_options);
+        assertEquals(3, options.getChildCount());
+        options.getChildAt(options.getChildCount() - 1).performClick();
+        shadowOf(Looper.getMainLooper()).idle();
+        View chart = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_chart);
+        long now = SystemClock.uptimeMillis();
+        MotionEvent up = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, chart.getWidth() / 2f, 20f, 0);
+        chart.dispatchTouchEvent(up);
+        up.recycle();
+        draw(advisor);
+    }
+
+    private void draw(View view) {
+        layout(view);
+        view.draw(new Canvas(Bitmap.createBitmap(1080, 2200, Bitmap.Config.ARGB_8888)));
+    }
+
+    private void useHelp() {
+        tabs.setSelectedItemId(R.id.communityFragment);
+        settle();
+        View help = current();
+        layout(help);
+        ChipGroup filters = help.findViewById(com.agroshift.feature.help.R.id.help_crop_filters);
+        for (int i = filters.getChildCount() - 1; i >= 0; i--) {
+            filters.getChildAt(i).performClick();
+            settle();
+        }
+        ViewGroup grid = help.findViewById(com.agroshift.feature.help.R.id.help_crop_grid);
+        assertEquals(6, grid.getChildCount());
+        ((ViewGroup) grid.getChildAt(0)).getChildAt(0).performClick();
+        settle();
+        DialogFragment guide = (DialogFragment) currentFragment().getChildFragmentManager()
+                .findFragmentByTag("crop_guide");
+        assertNotNull(guide);
+        Slider slider = guide.requireView().findViewById(com.agroshift.feature.help.R.id.guide_slider);
+        slider.setValue(slider.getValueTo());
+        settle();
+        draw(guide.requireView());
+        guide.dismiss();
+        settle();
+    }
+
+    private void useSearch() {
+        activity.openCommandMenu();
+        settle();
+        DialogFragment menu = (DialogFragment) activity.getSupportFragmentManager().findFragmentByTag("command_menu");
+        assertNotNull(menu);
+        View sheet = menu.requireView();
+        EditText input = sheet.findViewById(R.id.command_search);
+        ViewGroup rows = sheet.findViewById(R.id.command_rows);
+        input.setText("Multan");
+        settle();
+        assertTrue(rows.getChildCount() >= 2);
+        input.setText("zzzz");
+        settle();
+        assertEquals(View.VISIBLE, sheet.findViewById(R.id.command_empty).getVisibility());
+        input.setText("Rice");
+        settle();
+        ChipGroup filters = sheet.findViewById(R.id.command_filters);
+        for (int i = filters.getChildCount() - 1; i >= 0; i--) {
+            filters.getChildAt(i).performClick();
+            settle();
+        }
+        input.setText("Wheat");
+        settle();
+        draw(sheet);
+        rows.getChildAt(rows.getChildCount() - 1).performClick();
+        settle();
+        Fragment opened = activity.getSupportFragmentManager().findFragmentByTag("crop_guide");
+        if (opened instanceof DialogFragment guide) {
+            guide.dismiss();
+            settle();
+        }
     }
 
     @Test

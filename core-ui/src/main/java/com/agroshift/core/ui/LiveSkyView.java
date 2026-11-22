@@ -33,6 +33,7 @@ public final class LiveSkyView extends View {
     private final float[] cloudX = new float[CLOUDS];
     private final Random random = new Random(7);
     private final float density;
+    private final android.graphics.Rect visibleArea = new android.graphics.Rect();
     private final Runnable frame = this::nextFrame;
     private SkyState sky;
     private Bitmap cloud;
@@ -96,7 +97,9 @@ public final class LiveSkyView extends View {
         float delta = Math.min(0.1f, (now - lastFrame) / 1000f);
         lastFrame = now;
         advance(delta);
-        invalidate();
+        if (getGlobalVisibleRect(visibleArea)) {
+            invalidate();
+        }
         postOnAnimationDelayed(frame, FRAME_MILLIS);
     }
 

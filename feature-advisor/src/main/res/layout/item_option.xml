@@ -3,8 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/zameen_gap"
+    android:clickable="true"
+    android:focusable="true"
     android:orientation="vertical"
     android:padding="16dp">
+
+    <TextView
+        android:id="@+id/option_showing"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/option_showing"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+        android:textColor="@color/zameen_accent"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"

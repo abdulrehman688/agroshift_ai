@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:clickable="true"
+    android:focusable="true"
+    android:minHeight="148dp"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <com.agroshift.core.ui.CropGrowthView
+        android:id="@+id/crop_growth"
+        android:layout_width="match_parent"
+        android:layout_height="64dp" />
+
+    <TextView
+        android:id="@+id/crop_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-medium"
+        android:maxLines="1"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AgroShift.Body"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/crop_season"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+        android:textColor="@color/zameen_accent" />
+
+    <TextView
+        android:id="@+id/crop_water"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:textAlignment="viewStart"
+        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+</LinearLayout>

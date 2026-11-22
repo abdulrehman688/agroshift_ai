@@ -179,57 +179,57 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:orientation="vertical"
-                android:padding="18dp">
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <com.agroshift.core.ui.ScoreRingView
+                    android:id="@+id/advisor_best_ring"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginStart="14dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/advisor_best_label"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
                         android:text="@string/plan_best"
                         android:textAlignment="viewStart"
                         android:textAppearance="@style/TextAppearance.AgroShift.Caption"
                         android:textColor="@color/zameen_accent" />
 
                     <TextView
-                        android:id="@+id/advisor_best_score"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/advisor_best_name"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
-                        android:fontFeatureSettings="tnum"
+                        android:breakStrategy="balanced"
+                        android:textAlignment="viewStart"
                         android:textAppearance="@style/TextAppearance.AgroShift.Headline"
-                        android:textColor="@color/zameen_accent" />
+                        android:textSize="24sp" />
+
+                    <TextView
+                        android:id="@+id/advisor_best_crops"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+
+                    <TextView
+                        android:id="@+id/advisor_best_reason"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
                 </LinearLayout>
-
-                <TextView
-                    android:id="@+id/advisor_best_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:breakStrategy="balanced"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.AgroShift.Headline" />
-
-                <TextView
-                    android:id="@+id/advisor_best_crops"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.AgroShift.Body" />
-
-                <TextView
-                    android:id="@+id/advisor_best_reason"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
             </LinearLayout>
 
             <TextView
@@ -241,6 +241,19 @@
                 android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AgroShift.Body"
                 android:textSize="19sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="@string/whatif_hint"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+            <com.agroshift.core.ui.WhatIfFieldView
+                android:id="@+id/advisor_scene"
+                android:layout_width="match_parent"
+                android:layout_height="190dp" />
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
@@ -260,8 +273,157 @@
                 android:id="@+id/advisor_whatif_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
                 android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:baselineAligned="false"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:id="@+id/advisor_card_score"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ui_star"
+                        app:tint="@color/zameen_accent" />
+
+                    <TextView
+                        android:id="@+id/advisor_stat_score"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:fontFeatureSettings="tnum"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:text="@string/whatif_stat_score"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                    <TextView
+                        android:id="@+id/advisor_delta_score"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:maxLines="2"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                        android:textColor="@color/zameen_text" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/advisor_card_rain"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/zameen_gap"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ui_rain"
+                        app:tint="@color/zameen_accent" />
+
+                    <TextView
+                        android:id="@+id/advisor_stat_rain"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:fontFeatureSettings="tnum"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:text="@string/whatif_stat_rain"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                    <TextView
+                        android:id="@+id/advisor_delta_rain"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:maxLines="2"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                        android:textColor="@color/zameen_text" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/advisor_card_demand"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/zameen_gap"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ui_drop"
+                        app:tint="@color/zameen_accent" />
+
+                    <TextView
+                        android:id="@+id/advisor_stat_demand"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:fontFeatureSettings="tnum"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:text="@string/whatif_stat_demand"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                    <TextView
+                        android:id="@+id/advisor_delta_demand"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFeatureSettings="tnum"
+                        android:maxLines="2"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                        android:textColor="@color/zameen_text" />
+                </LinearLayout>
+            </LinearLayout>
 
             <TextView
                 android:layout_width="match_parent"
@@ -272,6 +434,13 @@
                 android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AgroShift.Body"
                 android:textSize="19sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/plan_options_hint"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
 
             <LinearLayout
                 android:id="@+id/advisor_options"
@@ -299,9 +468,20 @@
                     android:id="@+id/advisor_year_rain"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
                     android:textAlignment="viewStart"
                     android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                <TextView
+                    android:id="@+id/advisor_chart_month"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="10dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:fontFeatureSettings="tnum"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                    android:textColor="@color/zameen_accent" />
 
                 <com.agroshift.core.ui.MonthlyChartView
                     android:id="@+id/advisor_chart"
