@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 /** Immutable visual state for a living photo. Every value is from 0 to 1 and comes from farm data. */
 public record LivingScene(float flow, float turnProgress, float rain, float wind, float cloud, float daylight,
-                          float golden, float heat) {
+                          float golden, float heat, float dryness, float health) {
     private static final float CALM_FLOW = 0.2f;
     private static final float NEAR_FLOW = 0.55f;
     private static final int NEAR_MINUTES = 60;
@@ -41,7 +41,19 @@ public record LivingScene(float flow, float turnProgress, float rain, float wind
                 golden = 0f;
             }
         }
-        return new LivingScene(flow, progress, rain, wind, cloud, daylight, golden, heat);
+        return new LivingScene(flow, progress, rain, wind, cloud, daylight, golden, heat, 0f, 1f);
+    }
+
+    /** A crop field under the current weather, with no canal water moving. */
+    public static LivingScene forField(LocalDateTime now, SkyState sky) {
+        LivingScene base = forCanal(null, now, sky);
+        return new LivingScene(0f, 0f, base.rain, base.wind, base.cloud, base.daylight, base.golden, base.heat, 0f, 1f);
+    }
+
+    /** Applies a What-If future and the chosen plan's crop health. */
+    public LivingScene withWhatIf(boolean hotter, boolean drier, float cropHealth) {
+        return new LivingScene(flow, turnProgress, drier ? 0f : rain, Math.max(wind, 0.2f), drier ? cloud * 0.3f : cloud,
+                daylight, golden, hotter ? Math.max(heat, 0.85f) : heat, drier ? 1f : 0f, clamp(cropHealth));
     }
 
     private static float bump(float hour, float center) {
