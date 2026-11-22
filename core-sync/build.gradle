@@ -1,0 +1,14 @@
+plugins {
+    id "com.android.library"
+}
+
+apply from: rootProject.file("gradle/android-library.gradle")
+
+android {
+    namespace "com.agroshift.core.sync"
+}
+
+dependencies {
+    api project(":core-data")
+    api "androidx.work:work-runtime:${rootProject.ext.workVersion}"
+}

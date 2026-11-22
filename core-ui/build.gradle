@@ -1,0 +1,17 @@
+plugins {
+    id "com.android.library"
+}
+
+apply from: rootProject.file("gradle/android-library.gradle")
+
+android {
+    namespace "com.agroshift.core.ui"
+}
+
+dependencies {
+    api project(":core-i18n")
+    api "androidx.core:core:${rootProject.ext.coreVersion}"
+    api "com.google.android.material:material:${rootProject.ext.materialVersion}"
+    api "org.osmdroid:osmdroid-android:${rootProject.ext.osmdroidVersion}"
+    implementation "androidx.dynamicanimation:dynamicanimation:1.0.0"
+}

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">AgroShift</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_farm">Farm</string>
+    <string name="nav_advisor">Advisor</string>
+    <string name="nav_market">Market</string>
+    <string name="nav_community">Help</string>
+    <string name="language_title">Choose your language</string>
+    <string name="language_hint">You can change this later</string>
+    <string name="action_continue">Continue</string>
+    <string name="season_rabi">Rabi</string>
+    <string name="season_kharif">Kharif</string>
+    <string name="season_thread_description">%1$s season, %2$d percent through the farming year</string>
+    <string name="home_empty_title">Add your first field</string>
+    <string name="home_empty_body">Your field stays saved on this phone, even without internet</string>
+    <string name="home_fields_title">Your fields</string>
+    <string name="action_add_field">Add field</string>
+    <string name="field_name">Field name</string>
+    <string name="field_area">Area in acres</string>
+    <string name="field_crop">Current crop</string>
+    <string name="field_area_value">%1$s acres</string>
+    <string name="field_no_crop">No crop added</string>
+    <string name="error_field_name">Enter a field name</string>
+    <string name="error_field_area">Enter an area above 0</string>
+    <string name="action_save">Save field</string>
+    <string name="action_undo">Undo</string>
+    <string name="field_deleted">Field removed</string>
+    <string name="field_saved">Field saved</string>
+    <string name="list_separator">, </string>
+    <string name="setup_title">Set up your field</string>
+    <string name="setup_map_hint">Tap the map to mark your field</string>
+    <string name="setup_use_location">Use my location</string>
+    <string name="setup_location_denied">Location is off. Tap the map instead</string>
+    <string name="setup_location_unavailable">Could not find you. Tap the map instead</string>
+    <string name="error_field_location">Mark a field on the map in Pakistan</string>
+    <string name="setup_water">Water access</string>
+    <string name="action_compare">Save and compare rotations</string>
+    <string name="option_current">Your current rotation</string>
+    <string name="option_water_saver">Water saver</string>
+    <string name="option_soil_builder">Soil builder</string>
+    <string name="water_irrigated">Irrigated</string>
+    <string name="water_limited">Limited water</string>
+    <string name="water_rainfed">Rainfed</string>
+    <string name="crop_wheat">Wheat</string>
+    <string name="crop_cotton">Cotton</string>
+    <string name="crop_rice">Rice</string>
+    <string name="crop_sorghum">Sorghum</string>
+    <string name="crop_chickpea">Chickpea</string>
+    <string name="crop_mungbean">Mungbean</string>
+    <string name="crop_berseem">Berseem</string>
+    <string name="crop_unknown">Crop</string>
+    <string name="advisor_empty_title">Add a field to compare rotations</string>
+    <string name="advisor_empty_body">AgroShift uses 20 years of NASA climate data for your location</string>
+    <string name="advisor_loading">Reading 20 years of NASA climate data</string>
+    <string name="advisor_progress">%1$d of %2$d data blocks</string>
+    <string name="advisor_error_network">Could not reach NASA. Check your connection</string>
+    <string name="advisor_error_busy">NASA is busy right now. Try again shortly</string>
+    <string name="advisor_error_data">NASA returned data AgroShift could not use</string>
+    <string name="action_retry">Try again</string>
+    <string name="advisor_stale">Showing saved data because the refresh failed</string>
+    <string name="advisor_chart_title">Rain and crop water demand</string>
+    <string name="advisor_chart_description">Monthly average rain compared with crop water demand</string>
+    <string name="chart_rain">Rain</string>
+    <string name="chart_demand">Water demand</string>
+    <string name="advisor_disclaimer">Use this for planning, then check with your local agriculture officer before changing crops</string>
+    <string name="home_add_location">Add a location to this field</string>
+    <string name="home_view_plan">View rotation plan</string>
+    <string name="home_loading">Reading NASA data</string>
+    <string name="field_open">Open %1$s</string>
+    <string-array name="months">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+    <string name="action_search">Search and actions</string>
+    <string name="action_close">Close</string>
+    <string name="command_hint">Search actions</string>
+    <string name="command_language">Change language</string>
+    <string name="command_empty">No matching action</string>
+    <string name="discard_title">Discard this field?</string>
+    <string name="discard_body">The details you entered will be lost</string>
+    <string name="action_keep_editing">Keep editing</string>
+    <string name="action_discard">Discard</string>
+</resources>

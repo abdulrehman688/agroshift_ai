@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="true">
+
+    <com.agroshift.core.ui.PhotoView
+        android:id="@+id/page_photo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="270dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/zameen_gutter"
+        android:paddingEnd="@dimen/zameen_gutter"
+        android:paddingBottom="124dp">
+
+        <TextView
+            android:id="@+id/page_title_ur"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:breakStrategy="balanced"
+            android:fontFamily="sans-serif-medium"
+            android:layoutDirection="rtl"
+            android:letterSpacing="0"
+            android:lineSpacingMultiplier="1.2"
+            android:textAlignment="viewStart"
+            android:textColor="@color/zameen_text"
+            android:textDirection="rtl"
+            android:textSize="30sp" />
+
+        <TextView
+            android:id="@+id/page_body_ur"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layoutDirection="rtl"
+            android:letterSpacing="0"
+            android:lineSpacingMultiplier="1.25"
+            android:textAlignment="viewStart"
+            android:textColor="@color/zameen_text_secondary"
+            android:textDirection="rtl"
+            android:textSize="17sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/zameen_hairline" />
+
+        <TextView
+            android:id="@+id/page_title_en"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:layoutDirection="ltr"
+            android:textAlignment="viewStart"
+            android:textColor="@color/zameen_text"
+            android:textDirection="ltr"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/page_body_en"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layoutDirection="ltr"
+            android:textAlignment="viewStart"
+            android:textColor="@color/zameen_text_secondary"
+            android:textDirection="ltr"
+            android:textSize="16sp" />
+    </LinearLayout>
+</FrameLayout>

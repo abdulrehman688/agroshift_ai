@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zameen_background"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="4">
+
+        <org.osmdroid.views.MapView
+            android:id="@+id/setup_map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/setup_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp">
+
+            <ImageButton
+                android:id="@+id/setup_back"
+                android:layout_width="@dimen/zameen_touch"
+                android:layout_height="@dimen/zameen_touch"
+                android:background="@drawable/bg_setup_control"
+                android:contentDescription="@string/action_close"
+                android:src="@drawable/ic_setup_back" />
+
+            <TextView
+                android:id="@+id/setup_hint"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_setup_control"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:text="@string/setup_map_hint"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                android:textColor="@color/zameen_text" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/setup_layer"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|start"
+            android:layout_margin="12dp"
+            android:minHeight="48dp"
+            android:text="@string/setup_satellite"
+            android:textAllCaps="false" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/setup_locate"
+            style="@style/Widget.Material3.Button.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="12dp"
+            android:minHeight="48dp"
+            android:text="@string/setup_use_location"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_setup_locate"
+            app:iconTint="@color/zameen_on_accent" />
+    </FrameLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="6"
+        android:background="@color/zameen_background">
+
+        <LinearLayout
+            android:id="@+id/setup_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/zameen_gutter"
+            android:paddingTop="16dp"
+            android:paddingEnd="@dimen/zameen_gutter"
+            android:paddingBottom="@dimen/zameen_gutter">
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/setup_search">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/setup_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLength="80"
+                    android:minHeight="56dp"
+                    android:textDirection="firstStrong" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/setup_quick_faisalabad"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/setup_quick_faisalabad"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/setup_quick_hyderabad"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:text="@string/setup_quick_hyderabad"
+                    android:textAllCaps="false" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/setup_name_layout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:hint="@string/field_name">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/setup_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapSentences"
+                        android:maxLength="60"
+                        android:minHeight="56dp"
+                        android:textDirection="firstStrong" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/setup_area_layout"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="2"
+                    android:hint="@string/field_area">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/setup_area"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal"
+                        android:maxLength="10"
+                        android:minHeight="56dp"
+                        android:textDirection="ltr" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/setup_summer"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/setup_summer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true" />
+
+            <TextView
+                android:id="@+id/setup_winter_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/setup_winter"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/setup_winter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/setup_water"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/setup_water"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/setup_soil"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/setup_soil"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:selectionRequired="true"
+                app:singleSelection="true" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/setup_priorities"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/setup_priorities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="false" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/setup_save"
+                style="@style/Widget.AgroShift.PrimaryButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_compare" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

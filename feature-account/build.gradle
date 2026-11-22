@@ -1,0 +1,14 @@
+plugins {
+    id "com.android.library"
+}
+
+apply from: rootProject.file("gradle/android-library.gradle")
+
+android {
+    namespace "com.agroshift.feature.account"
+}
+
+dependencies {
+    implementation project(":core-ui")
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+}

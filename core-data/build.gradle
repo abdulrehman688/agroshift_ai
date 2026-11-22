@@ -1,0 +1,28 @@
+plugins {
+    id "com.android.library"
+}
+
+apply from: rootProject.file("gradle/android-library.gradle")
+
+android {
+    namespace "com.agroshift.core.data"
+
+    defaultConfig {
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+}
+
+dependencies {
+    api project(":core-domain")
+    api "androidx.room:room-runtime:${rootProject.ext.roomVersion}"
+    api "androidx.lifecycle:lifecycle-livedata:${rootProject.ext.lifecycleVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${rootProject.ext.retrofitVersion}"
+    implementation "com.squareup.okhttp3:okhttp:4.12.0"
+    annotationProcessor "androidx.room:room-compiler:${rootProject.ext.roomVersion}"
+    testImplementation "junit:junit:${rootProject.ext.junitVersion}"
+}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bi_language_ur" translatable="false">اپنی زبان منتخب کریں</string>
+    <string name="bi_language_en" translatable="false">Choose your language</string>
+    <string name="bi_continue" translatable="false">جاری رکھیں  ·  Continue</string>
+    <string name="bi_skip" translatable="false">چھوڑیں  ·  Skip</string>
+    <string name="bi_next" translatable="false">اگلا  ·  Next</string>
+    <string name="bi_start" translatable="false">شروع کریں  ·  Start</string>
+    <string name="bi_title_1_ur" translatable="false">اپنا کھیت نقشے پر لگائیں</string>
+    <string name="bi_body_1_ur" translatable="false">چند ٹیپ میں اپنی زمین تلاش کریں</string>
+    <string name="bi_title_1_en" translatable="false">Mark your field</string>
+    <string name="bi_body_1_en" translatable="false">Find your land on the map in a few taps</string>
+    <string name="bi_title_2_ur" translatable="false">جانیں کیا اگانا ہے</string>
+    <string name="bi_body_2_ur" translatable="false">ناسا کے 20 سال کے موسم سے فصلی منصوبہ پائیں</string>
+    <string name="bi_title_2_en" translatable="false">Know what to grow</string>
+    <string name="bi_body_2_en" translatable="false">Get a crop plan from 20 years of NASA weather</string>
+    <string name="bi_title_3_ur" translatable="false">اپنی زبان میں پوچھیں</string>
+    <string name="bi_body_3_ur" translatable="false">لکھیں یا بولیں، اور کھیت کا حساب ایک جگہ رکھیں</string>
+    <string name="bi_title_3_en" translatable="false">Ask in your language</string>
+    <string name="bi_body_3_en" translatable="false">Type or speak, and keep farm records in one place</string>
+    <string name="photo_credits_body" translatable="false">RICE FIELDS IN PUNJAB, PAKISTAN: Faran104, CC BY-SA 4.0, Wikimedia Commons. Cropped and color adjusted.\n\nRice crop in pakistan: Tariq hameed sulemani, CC BY-SA 4.0, Wikimedia Commons. Cropped and color adjusted.\n\nWheat fields, Ahmedpur East , Pakistan: Malik.xayn, CC BY-SA 4.0, Wikimedia Commons. Cropped and color adjusted.\n\nSunset behind mustard fields in Pakistan: Samia fatima, CC BY-SA 4.0, Wikimedia Commons. Cropped and color adjusted.\n\nMustard besides Date trees: Obaid Hassan Qureshi, CC BY-SA 4.0, Wikimedia Commons. Cropped and color adjusted.\n\nRice field in Tehsil Chunian, Punjab, Pakistan - panoramio (7): Kamran sardar, CC BY 3.0, Wikimedia Commons. Cropped and color adjusted.\n\nIrrigation canals of Faislabad (cropped): PSSP, CC BY 2.0, Wikimedia Commons. Cropped and color adjusted.\n\nTractor in Plains of Punjab: Obaid-ur-Rehman, CC BY-SA 4.0, Wikimedia Commons. Cropped and color adjusted.</string>
+</resources>

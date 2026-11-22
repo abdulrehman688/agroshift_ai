@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_launcher"
+        android:shortcutId="add_field"
+        android:shortcutShortLabel="@string/action_add_field">
+        <intent
+            android:action="com.agroshift.app.action.ADD_FIELD"
+            android:targetClass="com.agroshift.app.MainActivity"
+            android:targetPackage="com.agroshift.app" />
+    </shortcut>
+</shortcuts>

@@ -1,0 +1,14 @@
+plugins {
+    id "com.android.library"
+}
+
+apply from: rootProject.file("gradle/android-library.gradle")
+
+android {
+    namespace "com.agroshift.feature.market"
+}
+
+dependencies {
+    implementation project(":feature-farm")
+    implementation "androidx.recyclerview:recyclerview:1.3.2"
+}

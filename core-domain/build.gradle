@@ -1,0 +1,19 @@
+plugins {
+    id "java-library"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    // The suite class re-runs the same tests, so Gradle runs it alone.
+    filter {
+        includeTestsMatching "com.agroshift.core.domain.AllDomainTests"
+    }
+}
+
+dependencies {
+    testImplementation "junit:junit:${rootProject.ext.junitVersion}"
+}

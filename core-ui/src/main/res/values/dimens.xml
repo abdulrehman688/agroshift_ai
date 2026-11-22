@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="zameen_gutter">20dp</dimen>
+    <dimen name="zameen_gap">8dp</dimen>
+    <dimen name="zameen_touch">48dp</dimen>
+    <dimen name="zameen_primary_height">58dp</dimen>
+    <dimen name="zameen_radius_sheet">32dp</dimen>
+    <dimen name="zameen_radius_card">18dp</dimen>
+    <dimen name="zameen_radius_action">20dp</dimen>
+</resources>

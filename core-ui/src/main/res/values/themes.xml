@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.AgroShift" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/zameen_accent</item>
+        <item name="colorOnPrimary">@color/zameen_on_accent</item>
+        <item name="colorPrimaryContainer">@color/zameen_surface_accent</item>
+        <item name="colorOnPrimaryContainer">@color/zameen_accent</item>
+        <item name="colorSecondary">@color/zameen_canal</item>
+        <item name="colorSecondaryContainer">@color/zameen_surface_accent</item>
+        <item name="colorOnSecondaryContainer">@color/zameen_accent</item>
+        <item name="colorError">@color/zameen_error</item>
+        <item name="android:colorBackground">@color/zameen_background</item>
+        <item name="colorSurface">@color/zameen_background</item>
+        <item name="colorSurfaceContainer">@color/zameen_surface</item>
+        <item name="colorSurfaceContainerLow">@color/zameen_surface</item>
+        <item name="colorSurfaceContainerHigh">@color/zameen_surface</item>
+        <item name="colorOnSurface">@color/zameen_text</item>
+        <item name="colorOnSurfaceVariant">@color/zameen_text_secondary</item>
+        <item name="colorOutline">@color/zameen_text_secondary</item>
+        <item name="colorOutlineVariant">@color/zameen_hairline</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.AgroShift.BottomSheet</item>
+    </style>
+
+    <style name="ThemeOverlay.AgroShift.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.AgroShift.BottomSheet</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+    </style>
+
+    <style name="Widget.AgroShift.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/zameen_background</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.AgroShift.Sheet</item>
+    </style>
+
+    <style name="ShapeAppearance.AgroShift.Sheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">@dimen/zameen_radius_sheet</item>
+        <item name="cornerSizeTopRight">@dimen/zameen_radius_sheet</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="ShapeAppearance.AgroShift.Action" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/zameen_radius_action</item>
+    </style>
+
+    <style name="Widget.AgroShift.PrimaryButton" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/zameen_primary_height</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.AgroShift.Action</item>
+    </style>
+
+    <style name="Widget.AgroShift.LanguageButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColor">@color/zameen_text</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:gravity">center_vertical|start</item>
+        <item name="strokeColor">@color/zameen_hairline</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.AgroShift.Action</item>
+    </style>
+
+    <style name="TextAppearance.AgroShift.Headline" parent="">
+        <item name="android:textSize">29sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textColor">@color/zameen_text</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.AgroShift.Body" parent="">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/zameen_text</item>
+        <item name="android:lineSpacingExtra">5sp</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+
+    <style name="TextAppearance.AgroShift.Caption" parent="">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/zameen_text_secondary</item>
+        <item name="android:letterSpacing">0</item>
+    </style>
+</resources>

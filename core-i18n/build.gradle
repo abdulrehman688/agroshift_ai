@@ -1,0 +1,14 @@
+plugins {
+    id "com.android.library"
+}
+
+apply from: rootProject.file("gradle/android-library.gradle")
+
+android {
+    namespace "com.agroshift.core.i18n"
+}
+
+dependencies {
+    api project(":core-domain")
+    api "androidx.appcompat:appcompat:${rootProject.ext.appcompatVersion}"
+}

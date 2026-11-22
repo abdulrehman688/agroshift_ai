@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <fragment
+        android:id="@+id/languageFragment"
+        android:name="com.agroshift.feature.account.LanguageFragment" />
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.agroshift.feature.account.OnboardingFragment" />
+
+    <fragment
+        android:id="@+id/fieldSetupFragment"
+        android:name="com.agroshift.feature.farm.FieldSetupFragment" />
+
+    <fragment
+        android:id="@+id/fieldDetailFragment"
+        android:name="com.agroshift.feature.farm.FieldDetailFragment">
+        <argument android:name="fieldId" app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/assistantFragment"
+        android:name="com.agroshift.feature.help.AssistantFragment" />
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.agroshift.feature.home.HomeFragment"
+        android:label="@string/nav_home" />
+
+    <fragment
+        android:id="@+id/farmFragment"
+        android:name="com.agroshift.feature.farm.FarmFragment"
+        android:label="@string/nav_farm" />
+
+    <fragment
+        android:id="@+id/advisorFragment"
+        android:name="com.agroshift.feature.advisor.AdvisorFragment"
+        android:label="@string/nav_advisor" />
+
+    <fragment
+        android:id="@+id/marketFragment"
+        android:name="com.agroshift.feature.market.MarketFragment"
+        android:label="@string/nav_market" />
+
+    <fragment
+        android:id="@+id/communityFragment"
+        android:name="com.agroshift.feature.help.HelpFragment"
+        android:label="@string/nav_community" />
+</navigation>

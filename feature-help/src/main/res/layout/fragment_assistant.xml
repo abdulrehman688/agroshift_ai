@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/zameen_background"
+    android:orientation="vertical"
+    android:paddingBottom="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingStart="8dp"
+        android:paddingEnd="12dp">
+
+        <ImageButton
+            android:id="@+id/assistant_back"
+            android:layout_width="@dimen/zameen_touch"
+            android:layout_height="@dimen/zameen_touch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_close"
+            android:src="@drawable/ic_assistant_back" />
+
+        <ImageView
+            android:id="@+id/assistant_mark"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="2dp"
+            android:importantForAccessibility="no"
+            android:padding="8dp"
+            android:src="@drawable/ic_chat_leaf" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="@string/assistant_title"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/assistant_context"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/assistant_language"
+            style="@style/Widget.Material3.Button.TonalButton.Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="44dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="12dp"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_chat_language"
+            app:iconPadding="5dp"
+            app:iconSize="18dp"
+            app:iconTint="@color/zameen_accent" />
+
+        <ImageButton
+            android:id="@+id/assistant_clear"
+            android:layout_width="@dimen/zameen_touch"
+            android:layout_height="@dimen/zameen_touch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/assistant_clear"
+            android:src="@drawable/ic_chat_clear"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/zameen_hairline" />
+
+    <HorizontalScrollView
+        android:id="@+id/assistant_fields_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/assistant_fields"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:selectionRequired="true"
+            app:singleLine="true"
+            app:singleSelection="true" />
+    </HorizontalScrollView>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/assistant_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:paddingStart="16dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/assistant_empty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="28dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:breakStrategy="balanced"
+                    android:text="@string/assistant_empty"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.AgroShift.Headline"
+                    android:textSize="26sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="18dp"
+                    android:text="@string/assistant_note"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+                <LinearLayout
+                    android:id="@+id/assistant_prompts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/assistant_messages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <com.agroshift.feature.help.TypingDotsView
+                android:id="@+id/assistant_thinking"
+                android:layout_width="72dp"
+                android:layout_height="40dp"
+                android:contentDescription="@string/assistant_thinking"
+                android:visibility="gone" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <LinearLayout
+        android:id="@+id/assistant_composer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="12dp"
+        android:gravity="bottom"
+        android:minHeight="58dp"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <ImageButton
+            android:id="@+id/assistant_mic"
+            android:layout_width="@dimen/zameen_touch"
+            android:layout_height="@dimen/zameen_touch"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/assistant_voice"
+            android:src="@drawable/ic_assistant_mic" />
+
+        <EditText
+            android:id="@+id/assistant_input"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="@string/assistant_hint"
+            android:importantForAutofill="no"
+            android:inputType="textCapSentences|textMultiLine"
+            android:maxLength="1000"
+            android:maxLines="4"
+            android:minHeight="48dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:textAlignment="viewStart"
+            android:textColor="@color/zameen_text"
+            android:textColorHint="@color/zameen_text_secondary"
+            android:textDirection="firstStrong"
+            android:textSize="16sp" />
+
+        <ImageButton
+            android:id="@+id/assistant_send"
+            android:layout_width="@dimen/zameen_touch"
+            android:layout_height="@dimen/zameen_touch"
+            android:contentDescription="@string/assistant_send"
+            android:src="@drawable/ic_chat_send" />
+    </LinearLayout>
+</LinearLayout>
