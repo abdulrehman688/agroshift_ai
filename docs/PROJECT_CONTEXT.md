@@ -1,11 +1,11 @@
 # AgroShift Project Context
 
-Last updated: 2026-11-22. Status: GitHub release APK is 0.10.2, which the user checked on their phone and said looks better than before.
+Last updated: 2026-11-23. Status: GitHub release APK is 0.10.3, which the user checked on their phone.
 
 ### Current build status
 
 - **Working:** Java multi-module Android app, Zameen theme, language onboarding, Urdu right-to-left UI, five-tab navigation, season thread, add/delete/undo fields, Room persistence, sync outbox with idempotency keys, tested concurrency primitives, command menu, skeleton loading, smooth corners, press springs, and unsaved-sheet protection.
-- **Preview APK:** `releases/AgroShift-0.10.2-preview.apk` adds Living Photo to the 0.8.0 feature set, which includes a multi-farm Home, live sky, crop timeline, live canal scene, interactive Farm and Market pages, bilingual photo onboarding, a modern Home, irrigation estimate, canal turn alarm, danger alerts, map setup, NASA crop advice, What-If, weather, farm records, Market, Help, field-aware assistant, per-answer read aloud, copy, and a chat language selector. It passed build, lint and 100 automated tests, and the user reported that it worked on their phone on 2026-11-22.
+- **Preview APK:** `releases/AgroShift-0.10.3-preview.apk` adds the recycle bin, Home image fix and Living Photo to the 0.8.0 feature set, which includes a multi-farm Home, live sky, crop timeline, live canal scene, interactive Farm and Market pages, bilingual photo onboarding, a modern Home, irrigation estimate, canal turn alarm, danger alerts, map setup, NASA crop advice, What-If, weather, farm records, Market, Help, field-aware assistant, per-answer read aloud, copy, and a chat language selector. It passed build, lint and 100 automated tests, and the user reported that it worked on their phone on 2026-11-22.
 - **Analysis display rule:** show a clear answer first, followed by the full useful analysis: scores, six score bars, water need, rain chart, field stats, risks, reasons and actions. The user rejected the over-simplified version on 2026-11-22.
 - **Data flow:** see `docs/How Data Works.md`. The assistant receives the selected field's NASA analysis, without exact coordinates or field name. Its general farming advice is not yet restricted to a reviewed official knowledge base.
 - **Current limits:** Market opens official AMIS prices instead of showing them in-app. Community groups, listings and rental need a backend. Field Lens needs a secure image AI service.
@@ -18,7 +18,7 @@ Last updated: 2026-11-22. Status: GitHub release APK is 0.10.2, which the user c
 - **Version 0.7.0:** adds interactive Advisor and Help pages and global search. It passed build, lint and 83 automated tests, but has not been confirmed on a phone.
 - **Version 0.8.0:** adds saved chat sessions, Sprint 2 course types, MPAndroidChart and the course report. It passed build, lint and 100 automated tests, and the user reported that it worked on their phone.
 - **Version 0.10.2:** brings Living Photo to Home, Advisor, Help, My Farm, onboarding and a new reopen screen, with 5 or 6 real stage photos for each of 11 crops and device-adaptive rendering. It passed build, lint and 116 automated tests, and the user reported that it looks better on their phone on 2026-11-22.
-- **Version 0.10.3:** adds a recycle bin on My Farm and bounds the Living Photo animation clock to fix the Home image glitch. Deleted items stay until restored, with no automatic permanent deletion. Awaiting phone test.
+- **Version 0.10.3:** adds a recycle bin on My Farm and bounds the Living Photo animation clock to fix the Home image glitch. Deleted items stay until restored, with no automatic permanent deletion. It passed build, lint and 130 automated tests, and the user reported that both work on their phone on 2026-11-23.
 - **Image rule:** photos must stay bright at all hours, with no night dimming. Never merge two photos. Crops move step by step through separate real photos, and each new photo slides in. The reopen screen has no slider or season bar.
 - **Scope:** the teacher encourages more features, so the app should stay feature-rich, with UI as the top priority.
 - **Visual direction:** the user rejected cartoon-style farm drawings and chose the Living Photo Engine over full 3D. See `docs/Living Photo Engine.md`. Crop Plan Studio is approved and follows the canal prototype.

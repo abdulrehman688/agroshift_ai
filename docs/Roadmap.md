@@ -45,7 +45,7 @@ Back to [[Home]]
 - [x] Redesign the reopen screen
 - [x] Confirm version 0.10.2 on a phone
 - [x] Add a recycle bin for farms and farm records
-- [ ] Confirm version 0.10.3 on a phone
+- [x] Confirm version 0.10.3 on a phone
 - [ ] Build Crop Plan Studio
 - [ ] Build Crop Plan Studio on top of it
 

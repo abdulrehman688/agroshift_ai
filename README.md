@@ -4,14 +4,14 @@
 
 **A field-first Android companion for Pakistani farmers, built with Java, NASA Earth data and local languages.**
 
-![Version](https://img.shields.io/badge/version-0.10.2%20preview-D8F36F?style=flat-square&labelColor=10140D)
+![Version](https://img.shields.io/badge/version-0.10.3%20preview-D8F36F?style=flat-square&labelColor=10140D)
 ![Java](https://img.shields.io/badge/Java-17-D8F36F?style=flat-square&labelColor=10140D)
 ![Android](https://img.shields.io/badge/Android-7.0%2B-D8F36F?style=flat-square&labelColor=10140D)
 ![Offline first](https://img.shields.io/badge/offline-first-D8F36F?style=flat-square&labelColor=10140D)
 
 <img src="docs/assets/readme-banner.jpg" alt="Pakistani rice, wheat and mustard fields with farmers at harvest" width="100%">
 
-### [Download the Android APK (0.10.2 preview, 13.7 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.10.2-preview.apk)
+### [Download the Android APK (0.10.3 preview, 13.8 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.10.3-preview.apk)
 
 </div>
 
@@ -62,7 +62,7 @@ See the full [roadmap](docs/Roadmap.md).
 
 ## How the Living Photo Engine is made
 
-> **Status:** version 0.10.2 brought bright real photos to the whole app and was checked on a phone. Version 0.10.3 adds a recycle bin and a Home image fix, and is awaiting phone testing.
+> **Status:** version 0.10.2 brought bright real photos to the whole app and was checked on a phone. Version 0.10.3 adds a recycle bin and a Home image fix, and has also been checked on a phone.
 
 AgroShift has replaced its cartoon-style drawings with **real farm photos brought to life on the phone's GPU**. Farm data decides what moves.
 
