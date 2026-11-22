@@ -39,6 +39,18 @@ All notable changes to AgroShift are recorded here.
 - Dark status bar icons over the field view
 - Field validation errors now clear when corrected
 
+## [0.10.3] - 2026-11-22
+
+### Added
+
+- Recycle bin on My Farm for deleted farms, tasks, costs, sales and notes, with filters and restore
+- Restoring a record from a deleted farm also restores that farm
+- Restoring a farm schedules its canal alarm again
+
+### Fixed
+
+- Live images no longer build up a growing animation clock that could distort them after a few minutes
+
 ## [0.10.2] - 2026-11-22
 
 ### Changed

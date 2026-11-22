@@ -14,6 +14,8 @@ uniform float uField;
 uniform float uDry;
 uniform float uHealth;
 uniform float uTime;
+uniform float uWaterT;
+uniform float uRainT;
 uniform float uFlow;
 uniform float uProgress;
 uniform float uRain;
@@ -50,6 +52,16 @@ float noise(vec2 p) {
                mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), f.x), f.y);
 }
 
+float noiseY(vec2 p, float period) {
+    vec2 i = floor(p);
+    vec2 f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float y0 = mod(i.y, period);
+    float y1 = mod(i.y + 1.0, period);
+    return mix(mix(hash(vec2(i.x, y0)), hash(vec2(i.x + 1.0, y0)), f.x),
+               mix(hash(vec2(i.x, y1)), hash(vec2(i.x + 1.0, y1)), f.x), f.y);
+}
+
 float fbm(vec2 p) {
     float value = 0.0;
     float amplitude = 0.5;
@@ -69,9 +81,9 @@ vec2 waterCoord(vec2 uv) {
 
 float waterHeight(vec2 uv) {
     vec2 p = waterCoord(uv);
-    float t = uTime * (0.16 + 0.95 * uFlow);
-    float broad = noise(vec2(p.x * 1.6, (p.y + t) * 1.1));
-    float fine = noise(vec2(p.x * 3.7 + 3.0, (p.y + t * 1.6) * 2.7));
+    float t = uWaterT;
+    float broad = noiseY(vec2(p.x * 1.6, (p.y + t) * 1.1), 44.0);
+    float fine = noiseY(vec2(p.x * 3.7 + 3.0, (p.y + t * 1.6) * 2.75), 176.0);
     return broad * 0.62 + fine * 0.38;
 }
 
@@ -80,7 +92,7 @@ float rainRing(vec2 uv, float scale, float t) {
     vec2 id = floor(p);
     vec2 f = fract(p) - 0.5;
     float seed = hash(id);
-    float phase = fract(t * (0.65 + seed * 0.5) + seed);
+    float phase = fract(t * floor((0.65 + seed * 0.5) * 8.0 + 0.5) / 8.0 + seed);
     vec2 center = (vec2(hash(id + 1.7), hash(id + 2.9)) - 0.5) * 0.5;
     float d = length(f - center);
     float radius = phase * 0.42;
@@ -129,7 +141,7 @@ void main() {
         normal = vec2(waterHeight(uv + vec2(e, 0.0)) - h, waterHeight(uv + vec2(0.0, e)) - h) / e;
         normal *= 0.0075 + 0.0075 * uFlow;
         if (uRain > 0.0 && uLow < 0.5) {
-            ring = rainRing(uv, 15.0, time) + rainRing(uv + 0.37, 24.0, time * 1.2);
+            ring = rainRing(uv, 15.0, uRainT) + rainRing(uv + 0.37, 24.0, uRainT * 1.2);
             normal += vec2(ring) * 0.018 * uRain;
         }
         if (uRippleAge < 1.4) {
@@ -171,8 +183,7 @@ void main() {
         vec3 surface = mix(color, skyTone, fresnel * 0.20);
         float glint = pow(max(dot(n, normalize(vec3(0.10, -0.34, 0.93))), 0.0), 190.0) * (0.25 + 0.75 * s);
         vec2 p = waterCoord(uv);
-        float t = time * (0.16 + 0.95 * uFlow);
-        float streak = smoothstep(0.58, 0.98, noise(vec2(p.x * 11.0, (p.y + t * 1.45) * 0.55)));
+        float streak = smoothstep(0.58, 0.98, noiseY(vec2(p.x * 11.0, (p.y + uWaterT * 1.5) * 0.55), 33.0));
         surface += skyTone * (glint * (0.10 + 0.08 * uFlow) + streak * uFlow * 0.028);
         surface += vec3(ring) * 0.035 * uRain;
         color = mix(color, surface, water);
@@ -205,8 +216,8 @@ void main() {
 
     if (uRain > 0.0) {
         vec2 r = vec2(uv.x + uv.y * 0.11, uv.y);
-        float rainA = smoothstep(0.965, 1.0, noise(vec2(r.x * 150.0, r.y * 5.0 - time * 8.5)));
-        float rainB = uLow < 0.5 ? smoothstep(0.975, 1.0, noise(vec2(r.x * 230.0 + 7.0, r.y * 7.0 - time * 12.0))) : 0.0;
+        float rainA = smoothstep(0.965, 1.0, noiseY(vec2(r.x * 150.0, r.y * 5.0 - uRainT * 8.5), 340.0));
+        float rainB = uLow < 0.5 ? smoothstep(0.975, 1.0, noiseY(vec2(r.x * 230.0 + 7.0, r.y * 7.0 - uRainT * 12.0), 480.0)) : 0.0;
         color += vec3(0.62, 0.68, 0.72) * (rainA + rainB * 0.7) * uRain * 0.55;
     }
 

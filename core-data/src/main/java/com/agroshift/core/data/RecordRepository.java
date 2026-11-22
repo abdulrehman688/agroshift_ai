@@ -3,7 +3,9 @@ package com.agroshift.core.data;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 import com.agroshift.core.domain.Result;
+import com.agroshift.core.domain.farm.BinItem;
 import com.agroshift.core.domain.farm.FarmRecord;
+import com.agroshift.core.domain.farm.RecycleBin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +31,18 @@ public final class RecordRepository {
 
     public LiveData<List<FarmRecord>> observeAll() {
         return Transformations.map(dao.observeAllRecords(), RecordRepository::toDomain);
+    }
+
+    /** Deleted farms and records, newest first. */
+    public LiveData<List<BinItem>> observeBin() {
+        return Transformations.map(dao.observeBin(), rows -> {
+            List<BinItem> items = new ArrayList<>(rows.size());
+            for (BinRow row : rows) {
+                items.add(new BinItem(BinItem.Kind.parse(row.kind), row.id, row.fieldId, row.title, row.farmName,
+                        row.amountRupees, row.deletedAtMillis, row.farmInBin, row.recordCount));
+            }
+            return RecycleBin.newestFirst(items);
+        });
     }
 
     public Result<FarmRecord> add(String fieldId, FarmRecord.Type type, String title, double amount) {

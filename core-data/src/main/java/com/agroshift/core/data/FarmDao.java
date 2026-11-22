@@ -36,6 +36,17 @@ public abstract class FarmDao {
             + "ORDER BY done ASC, dateMillis DESC")
     public abstract LiveData<List<FarmRecordEntity>> observeRecords(String fieldId);
 
+    @Query("SELECT 'FARM' AS kind, f.id AS id, f.id AS fieldId, f.name AS title, f.name AS farmName, "
+            + "0.0 AS amountRupees, f.deletedAtMillis AS deletedAtMillis, 1 AS farmInBin, "
+            + "(SELECT COUNT(*) FROM farm_records c WHERE c.fieldId = f.id AND c.deletedAtMillis IS NULL) AS recordCount "
+            + "FROM fields f WHERE f.deletedAtMillis IS NOT NULL "
+            + "UNION ALL "
+            + "SELECT r.type AS kind, r.id AS id, r.fieldId AS fieldId, r.title AS title, "
+            + "COALESCE(p.name, '') AS farmName, r.amountRupees AS amountRupees, r.deletedAtMillis AS deletedAtMillis, "
+            + "p.deletedAtMillis IS NOT NULL AS farmInBin, 0 AS recordCount "
+            + "FROM farm_records r LEFT JOIN fields p ON p.id = r.fieldId WHERE r.deletedAtMillis IS NOT NULL")
+    public abstract LiveData<List<BinRow>> observeBin();
+
     @Query("SELECT * FROM farm_records WHERE id = :id")
     public abstract FarmRecordEntity findRecord(String id);
 

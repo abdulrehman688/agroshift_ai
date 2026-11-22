@@ -56,6 +56,9 @@ import java.util.concurrent.Executors;
 public final class LivingPhotoView extends FrameLayout implements TextureView.SurfaceTextureListener {
     private static final float RIPPLE_SECONDS = 1.4f;
     private static final int MAX_TEXTURES = 12;
+    /** Motion values stay small forever, because large shader times break up on many phone GPUs. */
+    private static final float SWAY_SECONDS = 60f;
+    private static final float LOOP_SECONDS = 40f;
 
     private static final String VERTEX = "attribute vec2 aPos;\n"
             + "uniform vec4 uCrop;\n"
@@ -653,6 +656,10 @@ public final class LivingPhotoView extends FrameLayout implements TextureView.Su
 
         private void renderLoop(int program) throws InterruptedException {
             int time = GLES20.glGetUniformLocation(program, "uTime");
+            int uWaterT = GLES20.glGetUniformLocation(program, "uWaterT");
+            int uRainT = GLES20.glGetUniformLocation(program, "uRainT");
+            float waterPhase = 0f;
+            float rainPhase = 0f;
             int uFlow = GLES20.glGetUniformLocation(program, "uFlow");
             int uProgress = GLES20.glGetUniformLocation(program, "uProgress");
             int uRain = GLES20.glGetUniformLocation(program, "uRain");
@@ -701,7 +708,12 @@ public final class LivingPhotoView extends FrameLayout implements TextureView.Su
                     x = rippleX;
                     y = rippleY;
                 }
-                GLES20.glUniform1f(time, ((now - start) / 1_000_000L % 1_000_000L) / 1000f);
+                float cycle = (float) (((now - start) / 1_000_000L) % (long) (SWAY_SECONDS * 2000f)) / 1000f;
+                waterPhase = (waterPhase + (0.16f + 0.95f * flow) * delta) % LOOP_SECONDS;
+                rainPhase = (rainPhase + delta) % LOOP_SECONDS;
+                GLES20.glUniform1f(time, SWAY_SECONDS - Math.abs(cycle - SWAY_SECONDS));
+                GLES20.glUniform1f(uWaterT, waterPhase);
+                GLES20.glUniform1f(uRainT, rainPhase);
                 GLES20.glUniform1f(uFlow, flow);
                 GLES20.glUniform1f(uProgress, progress);
                 GLES20.glUniform1f(uRain, rain);

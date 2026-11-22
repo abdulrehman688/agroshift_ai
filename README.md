@@ -62,7 +62,7 @@ See the full [roadmap](docs/Roadmap.md).
 
 ## How the Living Photo Engine is made
 
-> **Status:** version 0.10.2 brings bright real photos to the whole app and has been checked on a phone.
+> **Status:** version 0.10.2 brought bright real photos to the whole app and was checked on a phone. Version 0.10.3 adds a recycle bin and a Home image fix, and is awaiting phone testing.
 
 AgroShift has replaced its cartoon-style drawings with **real farm photos brought to life on the phone's GPU**. Farm data decides what moves.
 

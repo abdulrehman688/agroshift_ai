@@ -31,3 +31,7 @@ Status is based on code in version 0.8.0. These patterns have not been confirmed
 - Interruptible motion: timeline and guide sliders step through real crop photos with a clean slide. Photos are never merged.
 - Reduced motion: Living Photo falls back to still photos, and the reopen screen shortens.
 - Pre-rendering: lists use decoded still photos, and only visible live scenes draw frames.
+
+## Version 0.10.3 notes
+
+- Undo toasts now have a lasting backup: deleted farms and records stay in the Recycle Bin on My Farm until restored.

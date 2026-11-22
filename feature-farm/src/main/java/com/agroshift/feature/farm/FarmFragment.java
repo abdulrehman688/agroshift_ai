@@ -27,6 +27,8 @@ import java.util.List;
 
 /** All farms with their crop progress, tasks and money at a glance. */
 public final class FarmFragment extends Fragment {
+    private static final String TAG_BIN = "recycle_bin";
+
     private List<FarmField> fields = List.of();
     private List<FarmRecord> records = List.of();
     private FieldListBinder binder;
@@ -70,6 +72,15 @@ public final class FarmFragment extends Fragment {
             records = next;
             render();
         });
+        MaterialButton bin = header.findViewById(R.id.farm_bin);
+        bin.setOnClickListener(v -> {
+            if (getChildFragmentManager().findFragmentByTag(TAG_BIN) == null) {
+                new RecycleBinSheet().show(getChildFragmentManager(), TAG_BIN);
+            }
+        });
+        services.recordRepository().observeBin().observe(getViewLifecycleOwner(), deleted -> bin.setText(
+                deleted.isEmpty() ? getString(string.bin_title)
+                        : getString(string.bin_open_count, EngineText.number(deleted.size(), 0))));
         showSwipeHintOnce(view);
         MaterialButton add = header.findViewById(R.id.farm_add);
         ZameenUi.polishPrimary(add);

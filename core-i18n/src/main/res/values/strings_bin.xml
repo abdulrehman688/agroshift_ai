@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bin_title">Recycle bin</string>
+    <string name="bin_open_count">Recycle bin (%1$s)</string>
+    <string name="bin_hint">Deleted farms, tasks, costs, sales and notes stay here until you restore them</string>
+    <string name="bin_empty_title">Nothing here</string>
+    <string name="bin_empty_body">Anything you delete will appear here</string>
+    <string name="bin_filter_all">All</string>
+    <string name="bin_filter_farms">Farms</string>
+    <string name="bin_restore">Restore</string>
+    <string name="bin_restore_item">Restore %1$s</string>
+    <string name="bin_restored">Restored</string>
+    <string name="bin_restored_with_farm">Restored with its farm</string>
+    <string name="bin_deleted_on">Deleted %1$s</string>
+    <string name="bin_farm_returns">Its farm will also come back</string>
+    <plurals name="bin_farm_records">
+        <item quantity="one">Farm with %1$d record</item>
+        <item quantity="other">Farm with %1$d records</item>
+    </plurals>
+</resources>

@@ -18,6 +18,7 @@ Last updated: 2026-11-22. Status: GitHub release APK is 0.10.2, which the user c
 - **Version 0.7.0:** adds interactive Advisor and Help pages and global search. It passed build, lint and 83 automated tests, but has not been confirmed on a phone.
 - **Version 0.8.0:** adds saved chat sessions, Sprint 2 course types, MPAndroidChart and the course report. It passed build, lint and 100 automated tests, and the user reported that it worked on their phone.
 - **Version 0.10.2:** brings Living Photo to Home, Advisor, Help, My Farm, onboarding and a new reopen screen, with 5 or 6 real stage photos for each of 11 crops and device-adaptive rendering. It passed build, lint and 116 automated tests, and the user reported that it looks better on their phone on 2026-11-22.
+- **Version 0.10.3:** adds a recycle bin on My Farm and bounds the Living Photo animation clock to fix the Home image glitch. Deleted items stay until restored, with no automatic permanent deletion. Awaiting phone test.
 - **Image rule:** photos must stay bright at all hours, with no night dimming. Never merge two photos. Crops move step by step through separate real photos, and each new photo slides in. The reopen screen has no slider or season bar.
 - **Scope:** the teacher encourages more features, so the app should stay feature-rich, with UI as the top priority.
 - **Visual direction:** the user rejected cartoon-style farm drawings and chose the Living Photo Engine over full 3D. See `docs/Living Photo Engine.md`. Crop Plan Studio is approved and follows the canal prototype.

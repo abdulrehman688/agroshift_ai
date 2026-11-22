@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bin_title">ری سائیکل بن</string>
+    <string name="bin_open_count">ری سائیکل بن (%1$s)</string>
+    <string name="bin_hint">حذف کیے گئے فارم، کام، خرچ، فروخت اور نوٹ بحال کرنے تک یہاں رہتے ہیں</string>
+    <string name="bin_empty_title">یہاں کچھ نہیں</string>
+    <string name="bin_empty_body">آپ جو بھی حذف کریں گے وہ یہاں نظر آئے گا</string>
+    <string name="bin_filter_all">سب</string>
+    <string name="bin_filter_farms">فارم</string>
+    <string name="bin_restore">بحال کریں</string>
+    <string name="bin_restore_item">%1$s بحال کریں</string>
+    <string name="bin_restored">بحال ہو گیا</string>
+    <string name="bin_restored_with_farm">اپنے فارم کے ساتھ بحال ہو گیا</string>
+    <string name="bin_deleted_on">حذف کیا گیا %1$s</string>
+    <string name="bin_farm_returns">اس کا فارم بھی واپس آ جائے گا</string>
+    <plurals name="bin_farm_records">
+        <item quantity="one">فارم، %1$d ریکارڈ کے ساتھ</item>
+        <item quantity="other">فارم، %1$d ریکارڈز کے ساتھ</item>
+    </plurals>
+</resources>
