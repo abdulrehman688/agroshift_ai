@@ -41,7 +41,7 @@ public final class CanalAlarmReceiver extends BroadcastReceiver {
         if (fieldId == null) {
             return;
         }
-        FieldWater water = repository.find(fieldId);
+        FieldWater water = repository.findById(fieldId).orElse(null);
         if (water == null || water.turn() == null) {
             return;
         }

@@ -546,7 +546,7 @@ public final class AssistantFragment extends Fragment {
         scrollToEnd();
         String crops = selected == null ? "" : EngineText.rotationName(requireContext(), selected.rotationKey());
         online.ask(chatKey(), question, selected, isReady() ? analysisState.outlooks() : null, crops,
-                online.chatLanguage(), success -> {
+                online.chatLanguage(), failure -> {
                     waiting = false;
                     if (getView() == null) {
                         return;
@@ -554,8 +554,13 @@ public final class AssistantFragment extends Fragment {
                     thinking.setVisibility(View.GONE);
                     renderContext();
                     scrollToEnd();
-                    if (!success) {
-                        Snackbar.make(requireView(), string.assistant_error, Snackbar.LENGTH_LONG).show();
+                    if (failure != null) {
+                        Snackbar.make(requireView(), switch (failure) {
+                            case RATE_LIMITED -> string.chat_error_busy;
+                            case SERVER -> string.chat_error_server;
+                            case NETWORK -> string.chat_error_network;
+                            default -> string.assistant_error;
+                        }, Snackbar.LENGTH_LONG).show();
                     }
                 });
     }

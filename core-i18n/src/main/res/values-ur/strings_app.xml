@@ -385,4 +385,7 @@
         <item quantity="one">%1$d محفوظ گفتگو</item>
         <item quantity="other">%1$d محفوظ گفتگو</item>
     </plurals>
+    <string name="chat_error_busy">ابھی بہت زیادہ سوالات ہیں۔ چند منٹ بعد دوبارہ کوشش کریں</string>
+    <string name="chat_error_server">معاون شروع ہو رہا ہے۔ تھوڑی دیر بعد دوبارہ کوشش کریں</string>
+    <string name="chat_error_network">انٹرنیٹ نہیں۔ آپ کا سوال اس گفتگو میں محفوظ ہے</string>
 </resources>

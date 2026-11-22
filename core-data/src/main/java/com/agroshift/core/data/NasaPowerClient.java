@@ -2,6 +2,7 @@ package com.agroshift.core.data;
 
 import com.agroshift.core.domain.data.DataAccessException;
 import com.agroshift.core.domain.data.DataAccessException.Kind;
+import com.agroshift.core.domain.data.DataErrors;
 import com.agroshift.core.domain.engine.DailyClimate;
 import java.io.IOException;
 import java.io.InterruptedIOException;
@@ -47,13 +48,10 @@ final class NasaPowerClient {
                 range.start() + "0101", range.end() + "1231", "JSON");
         try {
             Response<NasaPowerApi.PowerResponse> response = call.execute();
-            if (response.code() == 429) {
-                throw new DataAccessException(Kind.RATE_LIMITED, "NASA POWER rate limit", null);
+            if (!response.isSuccessful()) {
+                throw new DataAccessException(DataErrors.fromHttp(response.code()), "NASA POWER request failed", null);
             }
-            if (response.code() >= 500) {
-                throw new DataAccessException(Kind.SERVER, "NASA POWER server error", null);
-            }
-            if (!response.isSuccessful() || response.body() == null
+            if (response.body() == null
                     || response.body().properties == null
                     || response.body().properties.parameter == null) {
                 throw new DataAccessException(Kind.BAD_DATA, "Unexpected NASA POWER response", null);

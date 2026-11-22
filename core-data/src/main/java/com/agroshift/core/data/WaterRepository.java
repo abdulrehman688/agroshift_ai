@@ -3,12 +3,14 @@ package com.agroshift.core.data;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
+import com.agroshift.core.domain.data.Repository;
 import com.agroshift.core.domain.water.CanalTurn;
 import com.agroshift.core.domain.water.FieldWater;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
@@ -16,7 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /** Offline watering dates and canal turns. */
-public final class WaterRepository {
+public final class WaterRepository implements Repository<FieldWater, String> {
     private final FarmDao dao;
     private final Executor executor;
     private final Runnable onLocalChange;
@@ -47,10 +49,32 @@ public final class WaterRepository {
         return result;
     }
 
-    @Nullable
-    public FieldWater find(String fieldId) {
+    @Override
+    public Optional<FieldWater> findById(String fieldId) {
         FieldWaterEntity entity = dao.findWater(fieldId);
-        return entity == null ? null : toDomain(entity);
+        return entity == null ? Optional.empty() : Optional.of(toDomain(entity));
+    }
+
+    @Override
+    public List<FieldWater> findAll() {
+        List<FieldWater> result = new ArrayList<>();
+        for (FieldWaterEntity entity : dao.allWater()) {
+            result.add(toDomain(entity));
+        }
+        return result;
+    }
+
+    @Override
+    public void save(FieldWater water) {
+        FieldWaterEntity entity = load(water.fieldId());
+        entity.lastWateredEpochDay = water.lastWatered() == null ? null : water.lastWatered().toEpochDay();
+        applyTurn(entity, water.turn());
+        save(entity);
+    }
+
+    @Override
+    public void deleteById(String fieldId) {
+        dao.deleteWater(fieldId);
     }
 
     public void setLastWatered(String fieldId, @Nullable LocalDate date) {
@@ -64,13 +88,17 @@ public final class WaterRepository {
     public void setTurn(String fieldId, @Nullable CanalTurn turn) {
         executor.execute(() -> {
             FieldWaterEntity entity = load(fieldId);
-            entity.turnDay = turn == null ? null : turn.day().getValue();
-            entity.turnStartMinute = turn == null ? null : turn.startMinute();
-            entity.turnDurationMinutes = turn == null ? null : turn.durationMinutes();
-            entity.turnRemindMinutes = turn == null ? null : turn.remindMinutes();
+            applyTurn(entity, turn);
             save(entity);
             onTurnChange.accept(toDomain(entity));
         });
+    }
+
+    private static void applyTurn(FieldWaterEntity entity, @Nullable CanalTurn turn) {
+        entity.turnDay = turn == null ? null : turn.day().getValue();
+        entity.turnStartMinute = turn == null ? null : turn.startMinute();
+        entity.turnDurationMinutes = turn == null ? null : turn.durationMinutes();
+        entity.turnRemindMinutes = turn == null ? null : turn.remindMinutes();
     }
 
     private FieldWaterEntity load(String fieldId) {

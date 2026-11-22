@@ -1,6 +1,7 @@
 package com.agroshift.app;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.robolectric.Shadows.shadowOf;
@@ -9,8 +10,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Looper;
-import android.os.SystemClock;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -33,6 +32,8 @@ import com.agroshift.core.domain.engine.SoilType;
 import com.agroshift.core.domain.engine.WaterAccess;
 import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.farm.FarmRecord;
+import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.slider.Slider;
@@ -233,11 +234,15 @@ public class AppSmokeTest {
             draw(advisor);
         }
         assertTrue(changed);
-        View chart = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_chart);
-        long now = SystemClock.uptimeMillis();
-        MotionEvent up = MotionEvent.obtain(now, now, MotionEvent.ACTION_UP, chart.getWidth() / 2f, 20f, 0);
-        chart.dispatchTouchEvent(up);
-        up.recycle();
+        CombinedChart chart = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_chart);
+        assertNotNull(chart.getData());
+        TextView month = advisor.findViewById(com.agroshift.feature.advisor.R.id.advisor_chart_month);
+        String before = month.getText().toString();
+        int slot = before.startsWith(new java.text.DateFormatSymbols().getMonths()[3]) ? 4 : 3;
+        Highlight tapped = new Highlight(slot, Float.NaN, 0);
+        tapped.setDataIndex(1);
+        chart.highlightValue(tapped, true);
+        assertNotEquals(before, month.getText().toString());
         draw(advisor);
     }
 

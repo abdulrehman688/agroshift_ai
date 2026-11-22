@@ -58,6 +58,12 @@ public abstract class FarmDao {
             + "WHERE w.turnDay IS NOT NULL AND f.deletedAtMillis IS NULL")
     public abstract List<FieldWaterEntity> waterWithTurns();
 
+    @Query("SELECT * FROM field_water")
+    public abstract List<FieldWaterEntity> allWater();
+
+    @Query("DELETE FROM field_water WHERE fieldId = :fieldId")
+    abstract void deleteWater(String fieldId);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract void putWater(FieldWaterEntity water);
 

@@ -6,6 +6,9 @@ import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.agroshift.core.domain.chat.ChatSession;
+import com.agroshift.core.domain.data.Cache;
+import com.agroshift.core.domain.data.DataAccessException;
+import com.agroshift.core.domain.data.DataErrors;
 import com.agroshift.core.domain.engine.ClimateScenario;
 import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.farm.FarmField;
@@ -76,6 +79,8 @@ public final class OnlineServices {
 
     private static final int RAIN_LIKELY_PERCENT = 50;
     private static final int FORECAST_DAYS = 7;
+    private static final int FORECAST_CACHE_SIZE = 32;
+    private static final long FORECAST_CACHE_MILLIS = 10 * 60 * 1000L;
     private static final int PAST_DAYS = 31;
     private static final String KEY_FETCHED = "agroshift_fetched";
     private static final String CURRENT_VALUES = "temperature_2m,precipitation,cloud_cover,wind_speed_10m,is_day";
@@ -98,6 +103,8 @@ public final class OnlineServices {
     private final Map<String, MutableLiveData<List<ChatMessage>>> chats = new ConcurrentHashMap<>();
     private final Map<String, String> currentSessions = new ConcurrentHashMap<>();
     private final ChatRepository chatRepository;
+    private final Cache<String, Boolean> recentForecasts =
+            new Cache<>(FORECAST_CACHE_SIZE, FORECAST_CACHE_MILLIS, System::currentTimeMillis);
 
     public OnlineServices(Context context, ChatRepository chatRepository) {
         this.chatRepository = chatRepository;
@@ -131,6 +138,9 @@ public final class OnlineServices {
             }
             return created;
         });
+        if (live.getValue() != null && recentForecasts.get(key).isPresent()) {
+            return live;
+        }
         forecastCall(field.latitude(), field.longitude()).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -177,6 +187,7 @@ public final class OnlineServices {
             body.addProperty(KEY_FETCHED, System.currentTimeMillis());
             Weather parsed = parseWeather(body);
             prefs.edit().putString(key, body.toString()).apply();
+            recentForecasts.put(key, Boolean.TRUE);
             return parsed;
         } catch (RuntimeException unusable) {
             return null;
@@ -325,7 +336,7 @@ public final class OnlineServices {
     /** Sends field facts when available. Exact coordinates and the field name are not included. */
     public void ask(String chatKey, String question, @Nullable FarmField field,
             @Nullable Map<ClimateScenario, RotationAdvisor.Advice> outlooks, String cropContext,
-            ChatLanguage language, Consumer<Boolean> onDone) {
+            ChatLanguage language, Consumer<DataAccessException.Kind> onDone) {
         MutableLiveData<List<ChatMessage>> live = chat(chatKey);
         List<ChatMessage> history = new ArrayList<>(live.getValue());
         history.add(new ChatMessage(true, question, List.of(), null, false, language.code()));
@@ -364,18 +375,20 @@ public final class OnlineServices {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 ChatMessage answer = response.isSuccessful()
                         ? parseAnswer(response.body(), grounded, language) : null;
-                finish(chatKey, savedFieldId, answer, onDone);
+                DataAccessException.Kind failure = response.isSuccessful()
+                        ? DataAccessException.Kind.BAD_DATA : DataErrors.fromHttp(response.code());
+                finish(chatKey, savedFieldId, answer, failure, onDone);
             }
 
             @Override
             public void onFailure(Call<JsonObject> call, Throwable error) {
-                finish(chatKey, savedFieldId, null, onDone);
+                finish(chatKey, savedFieldId, null, DataAccessException.Kind.NETWORK, onDone);
             }
         });
     }
 
     private void finish(String chatKey, @Nullable String fieldId, @Nullable ChatMessage answer,
-            Consumer<Boolean> onDone) {
+            DataAccessException.Kind failure, Consumer<DataAccessException.Kind> onDone) {
         if (answer != null) {
             MutableLiveData<List<ChatMessage>> live = chat(chatKey);
             List<ChatMessage> updated = new ArrayList<>(live.getValue());
@@ -383,7 +396,7 @@ public final class OnlineServices {
             saveChat(chatKey, fieldId, updated);
             live.setValue(List.copyOf(updated));
         }
-        onDone.accept(answer != null);
+        onDone.accept(answer != null ? null : failure);
     }
 
     private void saveChat(String key, @Nullable String fieldId, List<ChatMessage> messages) {

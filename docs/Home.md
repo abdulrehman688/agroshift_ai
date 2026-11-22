@@ -2,7 +2,7 @@
 
 A Java Android farm companion for Pakistani farmers, built around their own fields, NASA Earth data, official guidance and local languages.
 
-**Current milestone:** Live Farm preview 0.7.0, awaiting phone test
+**Current milestone:** Sprint 2 preview 0.8.0, awaiting phone test
 **Last updated:** 2026-11-22
 
 ## Start here
@@ -31,6 +31,8 @@ A Java Android farm companion for Pakistani farmers, built around their own fiel
 - [[Data Sources]]
 - [[How Data Works]]
 - [[Course Mapping]]
+- [[Course Report]]
+- [[Proposal Update]]
 - [[Maintenance]]
 
 ## How to use this vault

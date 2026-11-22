@@ -493,10 +493,10 @@
                     android:textAppearance="@style/TextAppearance.AgroShift.Caption"
                     android:textColor="@color/zameen_accent" />
 
-                <com.agroshift.core.ui.MonthlyChartView
+                <com.github.mikephil.charting.charts.CombinedChart
                     android:id="@+id/advisor_chart"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="220dp"
                     android:contentDescription="@string/advisor_chart_description" />
 
                 <LinearLayout

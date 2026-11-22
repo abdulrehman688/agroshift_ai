@@ -1,6 +1,6 @@
 # AgroShift Project Context
 
-Last updated: 2026-11-22. Status: Android preview 0.7.0, published to the GitHub repository.
+Last updated: 2026-11-22. Status: Android preview 0.8.0 built locally. GitHub has 0.7.0 until the next approved push.
 
 ### Current build status
 
@@ -16,6 +16,8 @@ Last updated: 2026-11-22. Status: Android preview 0.7.0, published to the GitHub
 - **Live experience:** partly built, see `docs/Live Farm Plan.md`. Motion must represent real field state. Market charts use only the farmer's own sales until official price permission exists.
 - **Version 0.6.1:** includes the Farm, Market, field details and bottom-tab fixes. App screen tests run locally with `:app:testDebugUnitTest`, without an emulator.
 - **Version 0.7.0:** adds interactive Advisor and Help pages and global search. It passed build, lint and 83 automated tests, but has not been confirmed on a phone.
+- **Version 0.8.0:** adds saved chat sessions, Sprint 2 course types, MPAndroidChart and the course report. It passed build, lint and 100 automated tests, but has not been confirmed on a phone.
+- **Scope:** the teacher encourages more features, so the app should stay feature-rich, with UI as the top priority.
 - **Testing preference:** do not run emulator flows. Build the APK and run normal code checks. The user tests on their phone.
 - **Website parity:** feature-by-feature status is in `docs/Website Parity.md`. All website features are planned for mobile except the Iowa location and sample result.
 - **Not built yet:** Spring Boot backend, real sync gateway, Field Lens, server NASA pipeline, image placeholders, shared-element transitions, custom predictive-back transitions, safe-triangle menus, light sunlight theme, bundled Schibsted Grotesk and Nastaliq fonts. Exact pattern status is in `docs/UX Patterns.md`.

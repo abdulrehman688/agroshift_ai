@@ -34,7 +34,6 @@ import com.agroshift.core.domain.season.SeasonTimeline;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.ui.AppNavigator;
-import com.agroshift.core.ui.MonthlyChartView;
 import com.agroshift.core.ui.ScoreRingView;
 import com.agroshift.core.ui.WhatIfFieldView;
 import com.agroshift.core.ui.ZameenUi;
@@ -106,8 +105,7 @@ public final class AdvisorFragment extends Fragment {
             ZameenUi.applySurface(view.findViewById(id), com.agroshift.core.ui.R.color.zameen_surface,
                     com.agroshift.core.ui.R.dimen.zameen_radius_card);
         }
-        MonthlyChartView monthChart = view.findViewById(R.id.advisor_chart);
-        monthChart.setOnMonthSelected(this::showChartMonth);
+        RainDemandChart.style(view.findViewById(R.id.advisor_chart), this::showChartMonth);
 
         int radius = com.agroshift.core.ui.R.dimen.zameen_radius_card;
         ZameenUi.applySurface(view.findViewById(R.id.advisor_best_card),
@@ -432,10 +430,9 @@ public final class AdvisorFragment extends Fragment {
         }
         showPreview(previewKind == null ? advice.best().kind() : previewKind);
 
-        MonthlyChartView chart = root.findViewById(R.id.advisor_chart);
-        chart.setSeries(advice.profile().series(Metric.PRECIP_MM), advice.profile().series(Metric.ET0_MM));
         int month = LocalDate.now().getMonthValue() - 1;
-        chart.selectMonth(month);
+        RainDemandChart.show(root.findViewById(R.id.advisor_chart), advice.profile().series(Metric.PRECIP_MM),
+                advice.profile().series(Metric.ET0_MM), month);
         showChartMonth(month);
         ((TextView) root.findViewById(R.id.advisor_year_rain)).setText(getString(
                 string.advisor_year_rain, EngineText.number(advice.profile().annualRainMm(), 0)));

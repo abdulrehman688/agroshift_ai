@@ -51,7 +51,7 @@ Urdu is a machine draft awaiting native review. Punjabi, Sindhi, Pashto, Saraiki
 | Sprint | Focus | Status |
 |---|---|---|
 | **1. Useful every day** | Map room, modern Home, irrigation answer, canal turn alarm, danger alerts | Built, awaiting phone test |
-| **2. Course requirements** | Proposal gaps, tests, topic-to-code report, proposal wording | Planned |
+| **2. Course requirements** | Proposal gaps, tests, topic-to-code report, proposal wording | Built in 0.8.0 |
 | **3. Polish and performance** | Remaining UX patterns, final fonts, sunlight theme, low-end performance | Planned |
 | **4. Big features** | Spring Boot backend, daily data pipeline, Field Lens, more languages | Planned |
 | **Later** | Listings, machinery rental, community | If time allows |
@@ -100,6 +100,7 @@ flowchart LR
 | Testing | JUnit 4 |
 | Planned backend | Spring Boot, PostgreSQL |
 | Maps | osmdroid |
+| Charts | MPAndroidChart |
 | Networking | Retrofit, Gson, OkHttp |
 
 ## Getting started
@@ -141,6 +142,7 @@ The [`docs`](docs/Home.md) folder is an [Obsidian](https://obsidian.md) vault an
 - [Design system](docs/Zameen%20Design%20System.md)
 - [UX patterns](docs/UX%20Patterns.md)
 - [Course mapping](docs/Course%20Mapping.md)
+- [Course report](docs/Course%20Report.md)
 - [Image credits](docs/Image%20Credits.md)
 - [Changelog](CHANGELOG.md)
 

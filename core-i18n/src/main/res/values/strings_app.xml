@@ -384,4 +384,7 @@
         <item quantity="one">%1$d saved chat</item>
         <item quantity="other">%1$d saved chats</item>
     </plurals>
+    <string name="chat_error_busy">Too many questions right now. Try again in a few minutes</string>
+    <string name="chat_error_server">The assistant is starting up. Try again in a moment</string>
+    <string name="chat_error_network">No internet. Your question is saved in this chat</string>
 </resources>

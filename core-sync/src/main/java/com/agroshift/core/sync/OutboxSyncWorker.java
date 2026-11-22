@@ -12,6 +12,7 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import com.agroshift.core.data.FarmDao;
 import com.agroshift.core.data.OutboxEntity;
+import com.agroshift.core.domain.data.SyncOutbox;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -43,25 +44,22 @@ public final class OutboxSyncWorker extends Worker {
             return Result.success();
         }
         FarmDao dao = host.farmDao();
-        List<OutboxEntity> batch;
-        while (!(batch = dao.nextOutbox(BATCH_SIZE)).isEmpty()) {
-            for (OutboxEntity entry : batch) {
-                if (isStopped()) {
-                    return Result.retry();
-                }
-                boolean sent;
-                try {
-                    sent = gateway.send(entry);
-                } catch (Exception e) {
-                    sent = false;
-                }
-                if (!sent) {
-                    dao.recordAttempt(entry.sequence);
-                    return Result.retry();
-                }
+        SyncOutbox<OutboxEntity> outbox = new SyncOutbox<>(new SyncOutbox.Store<>() {
+            @Override
+            public List<OutboxEntity> next(int limit) {
+                return dao.nextOutbox(limit);
+            }
+
+            @Override
+            public void remove(OutboxEntity entry) {
                 dao.removeOutbox(entry.sequence);
             }
-        }
-        return Result.success();
+
+            @Override
+            public void recordAttempt(OutboxEntity entry) {
+                dao.recordAttempt(entry.sequence);
+            }
+        }, BATCH_SIZE, gateway::send);
+        return outbox.drain(this::isStopped) == SyncOutbox.Outcome.COMPLETE ? Result.success() : Result.retry();
     }
 }
