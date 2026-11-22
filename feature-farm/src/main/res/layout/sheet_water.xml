@@ -26,6 +26,51 @@
             android:textAppearance="@style/TextAppearance.AgroShift.Headline"
             android:textSize="24sp" />
 
+        <com.agroshift.core.ui.CanalSceneView
+            android:id="@+id/water_scene"
+            android:layout_width="match_parent"
+            android:layout_height="170dp" />
+
+        <TextView
+            android:id="@+id/water_countdown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:fontFeatureSettings="tnum"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.AgroShift.Body"
+            android:textSize="19sp" />
+
+        <LinearLayout
+            android:id="@+id/water_meter_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/water_meter_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+
+            <com.agroshift.core.ui.SoilMeterView
+                android:id="@+id/water_meter"
+                android:layout_width="match_parent"
+                android:layout_height="14dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginBottom="12dp"
+            android:background="@color/zameen_hairline" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

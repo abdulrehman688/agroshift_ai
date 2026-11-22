@@ -37,7 +37,8 @@ public final class AgroShiftApp extends Application implements SyncHost, AppServ
         Runnable sync = () -> OutboxSyncWorker.schedule(this);
         fieldRepository = new FieldRepository(database.farmDao(), writes, sync);
         recordRepository = new RecordRepository(database.farmDao(), writes, sync);
-        analysisRepository = new AnalysisRepository(database.farmDao());
+        analysisRepository = new AnalysisRepository(database.farmDao(),
+                getSharedPreferences("agroshift_selection", MODE_PRIVATE));
         onlineServices = new OnlineServices(this);
         waterRepository = new WaterRepository(database.farmDao(), writes, sync,
                 water -> CanalAlarms.sync(this, water));

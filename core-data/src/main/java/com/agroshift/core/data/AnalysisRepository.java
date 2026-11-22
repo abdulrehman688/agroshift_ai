@@ -1,5 +1,6 @@
 package com.agroshift.core.data;
 
+import android.content.SharedPreferences;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.agroshift.core.domain.concurrent.ChunkPipeline;
@@ -27,6 +28,7 @@ import org.json.JSONException;
 
 /** Loads 20 years of NASA data once per grid cell, then computes advice on the phone. */
 public final class AnalysisRepository {
+    private static final String KEY_SELECTED_FIELD = "selected_field";
     private static final int YEARS = 20;
     private static final int YEARS_PER_BLOCK = 4;
     private static final int DOWNLOAD_WORKERS = 2;
@@ -42,9 +44,12 @@ public final class AnalysisRepository {
     private final Map<String, MutableLiveData<AnalysisState>> states = new ConcurrentHashMap<>();
     private final Map<String, String> signatures = new ConcurrentHashMap<>();
     private final MutableLiveData<String> selectedFieldId = new MutableLiveData<>();
+    private final SharedPreferences selection;
 
-    public AnalysisRepository(FarmDao dao) {
+    public AnalysisRepository(FarmDao dao, SharedPreferences selection) {
         this.dao = dao;
+        this.selection = selection;
+        selectedFieldId.setValue(selection.getString(KEY_SELECTED_FIELD, null));
     }
 
     public LiveData<String> selectedFieldId() {
@@ -52,6 +57,7 @@ public final class AnalysisRepository {
     }
 
     public void selectField(String id) {
+        selection.edit().putString(KEY_SELECTED_FIELD, id).apply();
         selectedFieldId.setValue(id);
     }
 

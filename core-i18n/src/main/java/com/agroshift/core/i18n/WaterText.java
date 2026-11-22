@@ -4,6 +4,8 @@ import android.content.Context;
 import com.agroshift.core.domain.water.CanalTurn;
 import com.agroshift.core.domain.water.DangerAlert;
 import com.agroshift.core.domain.water.IrrigationAdvisor;
+import com.agroshift.core.domain.water.SkyState;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -58,6 +60,31 @@ public final class WaterText {
 
     public static String day(LocalDate date) {
         return date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
+    }
+
+    public static String sky(Context context, SkyState sky) {
+        return context.getString(switch (sky.condition()) {
+            case HEAVY_RAIN -> R.string.sky_heavy_rain;
+            case RAIN -> R.string.sky_rain;
+            case HOT -> R.string.sky_hot;
+            case WINDY -> R.string.sky_windy;
+            case CLOUDY -> R.string.sky_cloudy;
+            case CLEAR -> R.string.sky_clear;
+        });
+    }
+
+    public static String duration(Context context, Duration value) {
+        long seconds = Math.max(0, value.getSeconds());
+        long days = seconds / 86_400;
+        long hours = seconds % 86_400 / 3_600;
+        long minutes = seconds % 3_600 / 60;
+        if (days > 0) {
+            return context.getString(R.string.duration_days, days, hours);
+        }
+        if (hours > 0) {
+            return context.getString(R.string.duration_hours, hours, minutes);
+        }
+        return context.getString(R.string.duration_minutes, minutes, seconds % 60);
     }
 
     public static String dangerTitle(Context context, DangerAlert alert) {

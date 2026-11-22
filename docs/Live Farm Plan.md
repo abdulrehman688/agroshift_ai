@@ -2,7 +2,7 @@
 
 Back to [[Home]] and [[Roadmap]]
 
-**Status:** planned, not built. Goal: make AgroShift feel alive while every animation still means something true about the farmer's field.
+**Status:** partly built in 0.6.0 and awaiting phone test. Built: farm switcher, canal scene, soil meter, live Home sky, crop timeline, and interactive Farm, field record and Market pages. Planned: Advisor What-If scene, all-farm map pins, assistant voice wave, optional sound, and live prices after AMIS permission. Goal: make AgroShift feel alive while every animation still means something true about the farmer's field.
 
 ## Rules
 

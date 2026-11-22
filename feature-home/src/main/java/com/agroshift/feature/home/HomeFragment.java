@@ -5,6 +5,7 @@ import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -24,22 +25,29 @@ import com.agroshift.core.data.WaterRepository;
 import com.agroshift.core.domain.engine.ClimateAlert;
 import com.agroshift.core.domain.engine.ClimateProfile.Metric;
 import com.agroshift.core.domain.engine.RotationAdvisor;
+import com.agroshift.core.domain.engine.RotationPlan;
 import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.farm.FarmRecord;
+import com.agroshift.core.domain.farm.FarmSelection;
 import com.agroshift.core.domain.season.SeasonPosition;
+import com.agroshift.core.domain.season.SeasonTimeline;
 import com.agroshift.core.domain.water.DangerAlert;
 import com.agroshift.core.domain.water.DayForecast;
 import com.agroshift.core.domain.water.FieldWater;
 import com.agroshift.core.domain.water.IrrigationAdvisor;
+import com.agroshift.core.domain.water.SkyState;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.i18n.WaterText;
 import com.agroshift.core.ui.AppNavigator;
+import com.agroshift.core.ui.CropGrowthView;
+import com.agroshift.core.ui.LiveSkyView;
 import com.agroshift.core.ui.PhotoView;
-import com.agroshift.core.ui.SeasonThreadView;
+import com.agroshift.core.ui.SeasonTimelineView;
 import com.agroshift.core.ui.ZameenMap;
 import com.agroshift.core.ui.ZameenUi;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -55,6 +63,8 @@ public final class HomeFragment extends Fragment {
     private static final long SKELETON_DELAY_MILLIS = 150;
     private static final float HERO_PARALLAX = 0.35f;
     private static final double FIELD_ZOOM = 14.5;
+    private static final int FORECAST_DAYS = 7;
+    private static final long SKY_FRESH_MILLIS = 3 * 60 * 60 * 1000L;
 
     private AnalysisRepository analysis;
     private OnlineServices online;
@@ -77,6 +87,19 @@ public final class HomeFragment extends Fragment {
     private TextView waterTurn;
     private TextView waterSource;
     private LinearLayout dangers;
+    private FarmStrip farmStrip;
+    private List<FarmField> allFields;
+    private View farmsSection;
+    private TextView farmPill;
+    private LiveSkyView skyView;
+    private TextView heroDate;
+    private SeasonTimelineView timeline;
+    private CropGrowthView growth;
+    private TextView timelineMonth;
+    private TextView timelineCrop;
+    private TextView timelineStage;
+    private View timelineToday;
+    private int timelineIndex;
     private MapView map;
     private View mapSection;
     private Marker marker;
@@ -107,7 +130,6 @@ public final class HomeFragment extends Fragment {
         analysis = services.analysisRepository();
         online = services.onlineServices();
         AppNavigator navigator = (AppNavigator) requireActivity();
-        bindSeason(view);
         bindTopBar(view, navigator);
 
         map = view.findViewById(R.id.home_map);
@@ -124,6 +146,8 @@ public final class HomeFragment extends Fragment {
             }
         });
         bindHero(view);
+        bindFarms(view, services, navigator);
+        bindTimeline(view);
         bindTiles(view, navigator);
         water = services.waterRepository();
         waterCard = view.findViewById(R.id.home_water_card);
@@ -183,14 +207,10 @@ public final class HomeFragment extends Fragment {
         services.fieldRepository().observeFields().observe(getViewLifecycleOwner(), fields -> {
             view.removeCallbacks(showSkeleton);
             skeleton.setVisibility(View.GONE);
-            FarmField next = null;
-            for (FarmField field : fields) {
-                if (next == null || (!next.hasLocation() && field.hasLocation())) {
-                    next = field;
-                }
-            }
-            bindPrimary(next);
+            allFields = fields;
+            refreshFarm();
         });
+        analysis.selectedFieldId().observe(getViewLifecycleOwner(), id -> refreshFarm());
         services.recordRepository().observeAll().observe(getViewLifecycleOwner(), this::renderTasks);
     }
 
@@ -204,12 +224,118 @@ public final class HomeFragment extends Fragment {
         tasks.setText(open == 0 ? getString(string.home_no_tasks) : getString(string.home_tasks, open));
     }
 
+    private void refreshFarm() {
+        if (allFields == null || getView() == null) {
+            return;
+        }
+        FarmField next = FarmSelection.choose(allFields, analysis.selectedFieldId().getValue());
+        farmsSection.setVisibility(allFields.isEmpty() ? View.GONE : View.VISIBLE);
+        farmStrip.submit(allFields, next == null ? null : next.id());
+        farmPill.setText(next == null ? getString(string.app_name) : next.name());
+        bindPrimary(next);
+        renderTimeline();
+    }
+
+    private void bindFarms(View view, AppServices services, AppNavigator navigator) {
+        farmsSection = view.findViewById(R.id.home_farms_section);
+        farmPill = view.findViewById(R.id.home_farm);
+        ZameenUi.applySurface(farmPill, com.agroshift.core.ui.R.color.zameen_background,
+                com.agroshift.core.ui.R.dimen.zameen_radius_card);
+        ZameenUi.attachPressSpring(farmPill);
+        farmStrip = new FarmStrip(this, view.findViewById(R.id.home_farms), services,
+                field -> analysis.selectField(field.id()), navigator::openFieldSetup);
+        farmPill.setOnClickListener(v -> chooseFarm(navigator));
+    }
+
+    private void chooseFarm(AppNavigator navigator) {
+        if (allFields == null || allFields.isEmpty()) {
+            navigator.openFieldSetup();
+            return;
+        }
+        String[] names = new String[allFields.size()];
+        int checked = -1;
+        for (int i = 0; i < names.length; i++) {
+            names[i] = allFields.get(i).name();
+            if (primary != null && allFields.get(i).id().equals(primary.id())) {
+                checked = i;
+            }
+        }
+        List<FarmField> options = allFields;
+        new MaterialAlertDialogBuilder(requireContext())
+                .setTitle(string.farm_pick_title)
+                .setSingleChoiceItems(names, checked, (dialog, which) -> {
+                    analysis.selectField(options.get(which).id());
+                    dialog.dismiss();
+                })
+                .setPositiveButton(string.farm_add, (dialog, which) -> navigator.openFieldSetup())
+                .setNegativeButton(string.action_close, null)
+                .show();
+    }
+
+    private void bindTimeline(View view) {
+        timeline = view.findViewById(R.id.home_timeline);
+        growth = view.findViewById(R.id.home_growth);
+        timelineMonth = view.findViewById(R.id.home_timeline_month);
+        timelineCrop = view.findViewById(R.id.home_timeline_crop);
+        timelineStage = view.findViewById(R.id.home_timeline_stage);
+        timelineToday = view.findViewById(R.id.home_timeline_today);
+        ZameenUi.applySurface(view.findViewById(R.id.home_timeline_card), com.agroshift.core.ui.R.color.zameen_surface,
+                com.agroshift.core.ui.R.dimen.zameen_radius_card);
+        timelineIndex = SeasonTimeline.indexOf(LocalDate.now());
+        timeline.setToday(timelineIndex);
+        timeline.setOnMonthChanged(index -> {
+            timelineIndex = index;
+            renderTimeline();
+        });
+        timelineToday.setOnClickListener(v -> timeline.select(SeasonTimeline.indexOf(LocalDate.now())));
+        renderTimeline();
+    }
+
+    private void renderTimeline() {
+        if (timeline == null || getView() == null) {
+            return;
+        }
+        LocalDate today = LocalDate.now();
+        RotationPlan plan = null;
+        if (primary != null && primary.rotationKey() != null) {
+            try {
+                plan = RotationPlan.template(primary.rotationKey());
+            } catch (IllegalArgumentException unknown) {
+                plan = null;
+            }
+        }
+        SeasonTimeline.Moment moment = SeasonTimeline.at(plan, SeasonTimeline.monthAt(today, timelineIndex));
+        boolean isToday = timelineIndex == SeasonTimeline.indexOf(today);
+        String month = moment.month().getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault());
+        String season = getString(moment.season() == SeasonPosition.Season.RABI
+                ? string.season_rabi : string.season_kharif);
+        timelineMonth.setText(getString(isToday ? string.timeline_now : string.timeline_month, month, season));
+        if (primary == null) {
+            timelineCrop.setText(string.timeline_no_farm);
+            timelineStage.setText(string.timeline_hint);
+            growth.setGrowth(0f);
+        } else if (moment.hasCrop()) {
+            timelineCrop.setText(EngineText.cropName(requireContext(), moment.cropSlug()));
+            timelineStage.setText(getString(string.timeline_stage, EngineText.stage(requireContext(), moment.stageKey())));
+            growth.setGrowth((float) moment.growth());
+        } else {
+            timelineCrop.setText(string.timeline_bare);
+            timelineStage.setText(string.timeline_hint);
+            growth.setGrowth(0f);
+        }
+        timelineToday.setVisibility(isToday ? View.GONE : View.VISIBLE);
+        timeline.setContentDescription(getString(string.timeline_description, month, season,
+                timelineCrop.getText()));
+    }
+
     private void bindPrimary(@Nullable FarmField field) {
         boolean same = primary != null && field != null && primary.equals(field);
         primary = field;
         if (same) {
             return;
         }
+        skyView.setSky(null);
+        renderHeroDate(null);
         detach();
         fieldWater = null;
         latestWeather = null;
@@ -280,7 +406,8 @@ public final class HomeFragment extends Fragment {
         if (weather == null || getView() == null) {
             return;
         }
-        weatherNow.setText(getString(string.weather_now, EngineText.number(weather.currentC(), 0)));
+        weatherNow.setText(EngineText.number(weather.currentC(), 0) + "°");
+        renderForecast(weather);
         if (weather.rainDate() == null) {
             weatherNext.setText(string.weather_dry);
         } else {
@@ -289,8 +416,89 @@ public final class HomeFragment extends Fragment {
         }
         weatherCard.setVisibility(View.VISIBLE);
         latestWeather = weather;
+        boolean fresh = weather.fetchedMillis() > 0
+                && System.currentTimeMillis() - weather.fetchedMillis() < SKY_FRESH_MILLIS;
+        SkyState sky = fresh ? weather.sky() : null;
+        skyView.setSky(sky);
+        renderHeroDate(sky);
         renderDangers(weather);
         renderWater();
+    }
+
+    private void renderForecast(OnlineServices.Weather weather) {
+        View root = requireView();
+        LocalDate today = LocalDate.now();
+        boolean fresh = weather.fetchedMillis() > 0
+                && System.currentTimeMillis() - weather.fetchedMillis() < SKY_FRESH_MILLIS;
+        SkyState sky = fresh ? weather.sky() : null;
+        LinearLayout forecast = root.findViewById(R.id.home_forecast);
+        forecast.removeAllViews();
+        DayForecast todayForecast = null;
+        LayoutInflater inflater = getLayoutInflater();
+        for (DayForecast day : weather.days()) {
+            if (day.date().isBefore(today) || forecast.getChildCount() >= FORECAST_DAYS) {
+                continue;
+            }
+            if (day.date().equals(today)) {
+                todayForecast = day;
+            }
+            View item = inflater.inflate(R.layout.item_home_day, forecast, false);
+            ((TextView) item.findViewById(R.id.day_name)).setText(day.date().equals(today)
+                    ? getString(string.weather_today)
+                    : day.date().getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.getDefault()));
+            ((ImageView) item.findViewById(R.id.day_icon)).setImageResource(iconFor(day.kind()));
+            ((TextView) item.findViewById(R.id.day_high)).setText(EngineText.number(day.maxC(), 0) + "°");
+            ((TextView) item.findViewById(R.id.day_low)).setText(EngineText.number(day.minC(), 0) + "°");
+            item.setContentDescription(getString(string.weather_day_description,
+                    day.date().getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault()),
+                    EngineText.number(day.maxC(), 0), EngineText.number(day.minC(), 0), day.rainChance()));
+            forecast.addView(item);
+        }
+        ImageView icon = root.findViewById(R.id.home_weather_icon);
+        TextView condition = root.findViewById(R.id.home_weather_condition);
+        if (sky != null) {
+            condition.setText(WaterText.sky(requireContext(), sky));
+            icon.setImageResource(iconFor(sky));
+        } else if (todayForecast != null) {
+            condition.setText(switch (todayForecast.kind()) {
+                case SUN -> string.sky_clear;
+                case CLOUD -> string.sky_cloudy;
+                case RAIN -> string.sky_rain;
+                case STORM -> string.sky_storm;
+            });
+            icon.setImageResource(iconFor(todayForecast.kind()));
+        }
+        TextView high = root.findViewById(R.id.home_weather_high);
+        TextView low = root.findViewById(R.id.home_weather_low);
+        TextView wind = root.findViewById(R.id.home_weather_wind);
+        TextView chance = root.findViewById(R.id.home_weather_chance);
+        if (todayForecast != null) {
+            high.setText(getString(string.weather_high, EngineText.number(todayForecast.maxC(), 0)));
+            low.setText(getString(string.weather_low, EngineText.number(todayForecast.minC(), 0)));
+            chance.setText(getString(string.weather_rain_chance, todayForecast.rainChance()));
+        }
+        double windValue = sky != null ? sky.windKmh() : todayForecast != null ? todayForecast.windKmh() : 0;
+        wind.setText(getString(string.weather_wind, EngineText.number(windValue, 0)));
+    }
+
+    private static int iconFor(DayForecast.Kind kind) {
+        return switch (kind) {
+            case SUN -> com.agroshift.core.ui.R.drawable.ic_ui_sun;
+            case CLOUD -> com.agroshift.core.ui.R.drawable.ic_ui_cloud;
+            case RAIN -> com.agroshift.core.ui.R.drawable.ic_ui_rain;
+            case STORM -> com.agroshift.core.ui.R.drawable.ic_ui_storm;
+        };
+    }
+
+    private static int iconFor(SkyState sky) {
+        return switch (sky.condition()) {
+            case HEAVY_RAIN, RAIN -> com.agroshift.core.ui.R.drawable.ic_ui_rain;
+            case HOT -> com.agroshift.core.ui.R.drawable.ic_ui_heat;
+            case WINDY -> com.agroshift.core.ui.R.drawable.ic_ui_wind;
+            case CLOUDY -> com.agroshift.core.ui.R.drawable.ic_ui_cloud;
+            case CLEAR -> sky.day() ? com.agroshift.core.ui.R.drawable.ic_ui_sun
+                    : com.agroshift.core.ui.R.drawable.ic_ui_moon;
+        };
     }
 
     private void renderDangers(OnlineServices.Weather weather) {
@@ -376,16 +584,6 @@ public final class HomeFragment extends Fragment {
         }
     }
 
-    private void bindSeason(View view) {
-        SeasonPosition position = SeasonPosition.of(LocalDate.now());
-        SeasonThreadView thread = view.findViewById(R.id.home_season_thread);
-        thread.setFraction((float) position.yearFraction());
-        String season = getString(position.season() == SeasonPosition.Season.RABI
-                ? string.season_rabi : string.season_kharif);
-        thread.setContentDescription(getString(string.season_thread_description, season,
-                Math.round(position.yearFraction() * 100)));
-    }
-
     private void bindTopBar(View view, AppNavigator navigator) {
         View topBar = view.findViewById(R.id.home_top_bar);
         int gap = Math.round(8 * view.getResources().getDisplayMetrics().density);
@@ -413,14 +611,22 @@ public final class HomeFragment extends Fragment {
         PhotoView photo = view.findViewById(R.id.home_photo);
         photo.setPhoto(rabi ? com.agroshift.core.ui.R.drawable.photo_home_rabi
                 : com.agroshift.core.ui.R.drawable.photo_home_kharif);
-        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("EEE, d MMM", Locale.getDefault()));
-        ((TextView) view.findViewById(R.id.home_date)).setText(getString(string.home_date,
-                getString(rabi ? string.season_rabi : string.season_kharif), date));
+        skyView = view.findViewById(R.id.home_sky);
+        heroDate = view.findViewById(R.id.home_date);
+        renderHeroDate(null);
         if (ZameenUi.motionEnabled(requireContext())) {
             NestedScrollView scroll = view.findViewById(R.id.home_scroll);
             scroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener)
                     (v, x, y, oldX, oldY) -> photo.setTranslationY(y * HERO_PARALLAX));
         }
+    }
+
+    private void renderHeroDate(@Nullable SkyState sky) {
+        SeasonPosition position = SeasonPosition.of(LocalDate.now());
+        String date = LocalDate.now().format(DateTimeFormatter.ofPattern("EEE, d MMM", Locale.getDefault()));
+        String line = getString(string.home_date, getString(position.season() == SeasonPosition.Season.RABI
+                ? string.season_rabi : string.season_kharif), date);
+        heroDate.setText(sky == null ? line : getString(string.home_date, line, WaterText.sky(requireContext(), sky)));
     }
 
     private void bindTiles(View view, AppNavigator navigator) {
@@ -451,10 +657,12 @@ public final class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
         map.onResume();
+        skyView.setPaused(false);
     }
 
     @Override
     public void onPause() {
+        skyView.setPaused(true);
         map.onPause();
         super.onPause();
     }
@@ -462,6 +670,19 @@ public final class HomeFragment extends Fragment {
     @Override
     public void onDestroyView() {
         detach();
+        farmStrip.clear();
+        farmStrip = null;
+        allFields = null;
+        farmsSection = null;
+        farmPill = null;
+        skyView = null;
+        heroDate = null;
+        timeline = null;
+        growth = null;
+        timelineMonth = null;
+        timelineCrop = null;
+        timelineStage = null;
+        timelineToday = null;
         map.onDetach();
         map = null;
         mapSection = null;

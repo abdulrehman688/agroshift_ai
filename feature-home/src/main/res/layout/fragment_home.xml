@@ -22,6 +22,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
+            <com.agroshift.core.ui.LiveSkyView
+                android:id="@+id/home_sky"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
             <LinearLayout
                 android:id="@+id/home_top_bar"
                 android:layout_width="match_parent"
@@ -32,15 +37,33 @@
                 android:paddingStart="@dimen/zameen_gutter"
                 android:paddingEnd="@dimen/zameen_gutter">
 
-                <TextView
+                <FrameLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="sans-serif-medium"
-                    android:text="@string/app_name"
-                    android:textAlignment="viewStart"
-                    android:textColor="@color/zameen_text"
-                    android:textSize="20sp" />
+                    android:layout_marginEnd="@dimen/zameen_gap"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/home_farm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:clickable="true"
+                        android:drawableEnd="@drawable/ic_home_chevron"
+                        android:drawablePadding="4dp"
+                        android:ellipsize="end"
+                        android:focusable="true"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center_vertical"
+                        android:maxLines="1"
+                        android:minHeight="48dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="10dp"
+                        android:text="@string/app_name"
+                        android:textColor="@color/zameen_text"
+                        android:textDirection="firstStrong"
+                        android:textSize="17sp" />
+                </FrameLayout>
 
                 <ImageButton
                     android:id="@+id/home_language"
@@ -107,6 +130,42 @@
         </FrameLayout>
 
         <LinearLayout
+            android:id="@+id/home_farms_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:paddingStart="@dimen/zameen_gutter"
+                android:paddingEnd="@dimen/zameen_gutter"
+                android:text="@string/farm_strip_title"
+                android:textAlignment="viewStart"
+                android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                android:textSize="20sp" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:paddingStart="@dimen/zameen_gutter"
+                android:paddingEnd="12dp"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:id="@+id/home_farms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
+            </HorizontalScrollView>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -136,11 +195,70 @@
                     android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
             </LinearLayout>
 
-            <com.agroshift.core.ui.SeasonThreadView
-                android:id="@+id/home_season_thread"
+            <com.agroshift.core.ui.SeasonTimelineView
+                android:id="@+id/home_timeline"
                 android:layout_width="match_parent"
-                android:layout_height="18dp"
-                android:layout_marginTop="4dp" />
+                android:layout_height="48dp" />
+
+            <LinearLayout
+                android:id="@+id/home_timeline_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:minHeight="104dp"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <com.agroshift.core.ui.CropGrowthView
+                    android:id="@+id/home_growth"
+                    android:layout_width="92dp"
+                    android:layout_height="80dp" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/home_timeline_month"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                        android:textColor="@color/zameen_accent" />
+
+                    <TextView
+                        android:id="@+id/home_timeline_crop"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/home_timeline_stage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/home_timeline_today"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:text="@string/timeline_today"
+                    android:textAllCaps="false"
+                    android:visibility="gone" />
+            </LinearLayout>
 
             <com.agroshift.core.ui.SkeletonView
                 android:id="@+id/home_skeleton"
@@ -244,29 +362,145 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:gravity="center_vertical"
-                android:minHeight="72dp"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:padding="16dp"
                 android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/home_weather_now"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:fontFeatureSettings="tnum"
-                    android:textAppearance="@style/TextAppearance.AgroShift.Body"
-                    android:textSize="24sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/home_weather_icon"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:importantForAccessibility="no"
+                        app:tint="@color/zameen_accent" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/home_weather_now"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:fontFeatureSettings="tnum"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/zameen_text"
+                            android:textSize="36sp" />
+
+                        <TextView
+                            android:id="@+id/home_weather_condition"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAlignment="viewStart"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/home_weather_high"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFeatureSettings="tnum"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                            android:textColor="@color/zameen_text" />
+
+                        <TextView
+                            android:id="@+id/home_weather_low"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFeatureSettings="tnum"
+                            android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ui_wind"
+                        app:tint="@color/zameen_canal" />
+
+                    <TextView
+                        android:id="@+id/home_weather_wind"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:fontFeatureSettings="tnum"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                        android:textColor="@color/zameen_text" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ui_drop"
+                        app:tint="@color/zameen_canal" />
+
+                    <TextView
+                        android:id="@+id/home_weather_chance"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:layout_weight="1"
+                        android:fontFeatureSettings="tnum"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                        android:textColor="@color/zameen_text" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/zameen_hairline" />
+
+                <LinearLayout
+                    android:id="@+id/home_forecast"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" />
 
                 <TextView
                     android:id="@+id/home_weather_next"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="14dp"
-                    android:layout_weight="1"
-                    android:textAlignment="viewEnd"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:textAlignment="viewStart"
                     android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/weather_source"
+                    android:textAlignment="viewStart"
+                    android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
             </LinearLayout>
 
             <LinearLayout
@@ -274,80 +508,114 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/zameen_gap"
+                android:baselineAligned="false"
                 android:orientation="horizontal"
                 android:visibility="gone">
 
                 <LinearLayout
                     android:id="@+id/home_rain_card"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:padding="12dp">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ui_rain"
+                        app:tint="@color/zameen_accent" />
+
                     <TextView
                         android:id="@+id/home_rain_value"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
                         android:fontFamily="sans-serif-medium"
                         android:fontFeatureSettings="tnum"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
                         android:textAppearance="@style/TextAppearance.AgroShift.Body"
                         android:textSize="18sp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/home_rain"
+                        android:textAlignment="viewStart"
                         android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/home_heat_card"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/zameen_gap"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:padding="12dp">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ui_heat"
+                        app:tint="@color/zameen_accent" />
+
                     <TextView
                         android:id="@+id/home_heat_value"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
                         android:fontFamily="sans-serif-medium"
                         android:fontFeatureSettings="tnum"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
                         android:textAppearance="@style/TextAppearance.AgroShift.Body"
                         android:textSize="18sp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/home_heat"
+                        android:textAlignment="viewStart"
                         android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/home_risk_card"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/zameen_gap"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:padding="12dp">
 
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ui_alert"
+                        app:tint="@color/zameen_accent" />
+
                     <TextView
                         android:id="@+id/home_risk_value"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
                         android:fontFamily="sans-serif-medium"
                         android:fontFeatureSettings="tnum"
+                        android:maxLines="1"
+                        android:textAlignment="viewStart"
                         android:textAppearance="@style/TextAppearance.AgroShift.Body"
                         android:textSize="18sp" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/home_risks"
+                        android:textAlignment="viewStart"
                         android:textAppearance="@style/TextAppearance.AgroShift.Caption" />
                 </LinearLayout>
             </LinearLayout>
@@ -357,25 +625,43 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/zameen_gap"
-                android:orientation="vertical"
-                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:minHeight="72dp"
+                android:orientation="horizontal"
+                android:padding="14dp"
                 android:visibility="gone">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/plan_watch"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.AgroShift.Caption"
-                    android:textColor="@color/zameen_accent" />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_ui_alert"
+                    app:tint="@color/zameen_accent" />
 
-                <TextView
-                    android:id="@+id/home_watch"
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:textAlignment="viewStart"
-                    android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/plan_watch"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Caption"
+                        android:textColor="@color/zameen_accent" />
+
+                    <TextView
+                        android:id="@+id/home_watch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textAlignment="viewStart"
+                        android:textAppearance="@style/TextAppearance.AgroShift.Body" />
+                </LinearLayout>
             </LinearLayout>
 
             <TextView
@@ -384,11 +670,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/zameen_gap"
                 android:clickable="true"
+                android:drawableStart="@drawable/ic_ui_task"
+                android:drawableEnd="@drawable/ic_ui_chevron"
+                android:drawablePadding="12dp"
+                android:drawableTint="@color/zameen_accent"
                 android:focusable="true"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center_vertical|start"
-                android:minHeight="56dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
+                android:minHeight="64dp"
+                android:paddingStart="14dp"
+                android:paddingEnd="10dp"
                 android:textAlignment="viewStart"
                 android:textAppearance="@style/TextAppearance.AgroShift.Body"
                 android:visibility="gone" />

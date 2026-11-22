@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -19,20 +21,29 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import com.agroshift.core.data.AppServices;
+import com.agroshift.core.data.OnlineServices;
 import com.agroshift.core.data.WaterRepository;
+import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.water.CanalTurn;
 import com.agroshift.core.domain.water.FieldWater;
+import com.agroshift.core.domain.water.IrrigationAdvisor;
 import com.agroshift.core.i18n.R.string;
 import com.agroshift.core.i18n.WaterText;
 import com.agroshift.core.sync.CanalAlarms;
+import com.agroshift.core.ui.CanalSceneView;
+import com.agroshift.core.ui.SoilMeterView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.materialswitch.MaterialSwitch;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -45,6 +56,7 @@ public final class WaterSheet extends BottomSheetDialogFragment {
     private static final int[] DURATIONS = {30, 60, 90, 120, 180, 240};
     private static final int[] REMINDERS = {15, 30, 60, 120};
     private static final int DEFAULT_START = 6 * 60;
+    private static final int SOON_MINUTES = 60;
 
     private final ActivityResultLauncher<String> notificationPermission = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(), granted -> renderPermissions());
@@ -64,6 +76,26 @@ public final class WaterSheet extends BottomSheetDialogFragment {
     private TextView lastValue;
     private View allowAlerts;
     private View allowExact;
+    private CanalSceneView scene;
+    private TextView countdown;
+    private View meterSection;
+    private TextView meterLabel;
+    private SoilMeterView meter;
+    private FarmField field;
+    private OnlineServices.Weather weather;
+    private LiveData<OnlineServices.Weather> weatherData;
+    private final Handler handler = new Handler(Looper.getMainLooper());
+    private final Observer<OnlineServices.Weather> weatherObserver = next -> {
+        weather = next;
+        renderMeter();
+    };
+    private final Runnable tick = new Runnable() {
+        @Override
+        public void run() {
+            renderScene();
+            handler.postDelayed(this, 1_000);
+        }
+    };
 
     public static WaterSheet create(String fieldId) {
         WaterSheet sheet = new WaterSheet();
@@ -94,6 +126,28 @@ public final class WaterSheet extends BottomSheetDialogFragment {
         lastValue = view.findViewById(R.id.water_last_value);
         allowAlerts = view.findViewById(R.id.water_allow_alerts);
         allowExact = view.findViewById(R.id.water_allow_exact);
+        scene = view.findViewById(R.id.water_scene);
+        countdown = view.findViewById(R.id.water_countdown);
+        meterSection = view.findViewById(R.id.water_meter_section);
+        meterLabel = view.findViewById(R.id.water_meter_label);
+        meter = view.findViewById(R.id.water_meter);
+        AppServices services = (AppServices) requireContext().getApplicationContext();
+        services.fieldRepository().observeFields().observe(getViewLifecycleOwner(), fields -> {
+            for (FarmField item : fields) {
+                if (item.id().equals(fieldId) && !item.equals(field)) {
+                    field = item;
+                    if (weatherData != null) {
+                        weatherData.removeObserver(weatherObserver);
+                        weatherData = null;
+                    }
+                    if (item.hasLocation()) {
+                        weatherData = services.onlineServices().observeWeather(item);
+                        weatherData.observe(getViewLifecycleOwner(), weatherObserver);
+                    }
+                    renderMeter();
+                }
+            }
+        });
 
         binding = true;
         for (DayOfWeek day : DayOfWeek.values()) {
@@ -161,6 +215,49 @@ public final class WaterSheet extends BottomSheetDialogFragment {
         }
         summary.setText(water.turn() == null ? "" : WaterText.nextTurn(requireContext(), water.turn()));
         renderPermissions();
+        renderScene();
+        renderMeter();
+    }
+
+    private void renderScene() {
+        if (scene == null || current == null) {
+            return;
+        }
+        CanalTurn turn = current.turn();
+        if (turn == null) {
+            scene.setState(CanalSceneView.Mode.NONE, 0f);
+            countdown.setText(string.turn_scene_none);
+        } else {
+            LocalDateTime now = LocalDateTime.now();
+            if (turn.isActive(now)) {
+                scene.setState(CanalSceneView.Mode.RUNNING, turn.progress(now));
+                countdown.setText(getString(string.turn_running, WaterText.duration(requireContext(), turn.remaining(now))));
+            } else {
+                Duration until = turn.untilStart(now);
+                boolean soon = until.toMinutes() < Math.max(SOON_MINUTES, turn.remindMinutes());
+                scene.setState(soon ? CanalSceneView.Mode.SOON : CanalSceneView.Mode.WAITING, 0f);
+                countdown.setText(getString(string.turn_countdown, WaterText.duration(requireContext(), until)));
+            }
+        }
+        scene.setContentDescription(countdown.getText());
+    }
+
+    private void renderMeter() {
+        if (meter == null || current == null || field == null || weather == null) {
+            return;
+        }
+        IrrigationAdvisor.Answer answer = IrrigationAdvisor.decide(weather.days(), current.lastWatered(),
+                LocalDate.now(), field.water(), field.soil());
+        boolean known = answer.decision() == IrrigationAdvisor.Decision.IRRIGATE
+                || answer.decision() == IrrigationAdvisor.Decision.WAIT_FOR_RAIN
+                || answer.decision() == IrrigationAdvisor.Decision.SOON
+                || answer.decision() == IrrigationAdvisor.Decision.NOT_NEEDED;
+        meterSection.setVisibility(known ? View.VISIBLE : View.GONE);
+        if (known) {
+            float level = (float) Math.max(0, 1 - answer.usedMm() / answer.limitMm());
+            meter.setLevel(level);
+            meterLabel.setText(getString(string.soil_meter, Math.round(level * 100)));
+        }
     }
 
     private void saveTurn() {
@@ -214,9 +311,16 @@ public final class WaterSheet extends BottomSheetDialogFragment {
     public void onResume() {
         super.onResume();
         renderPermissions();
+        handler.post(tick);
         if (current != null && current.turn() != null) {
             CanalAlarms.sync(requireContext(), current);
         }
+    }
+
+    @Override
+    public void onPause() {
+        handler.removeCallbacks(tick);
+        super.onPause();
     }
 
     private void addChip(ChipGroup group, String label, int value, boolean checked) {
@@ -251,6 +355,14 @@ public final class WaterSheet extends BottomSheetDialogFragment {
         lastValue = null;
         allowAlerts = null;
         allowExact = null;
+        scene = null;
+        countdown = null;
+        meterSection = null;
+        meterLabel = null;
+        meter = null;
+        field = null;
+        weather = null;
+        weatherData = null;
         current = null;
         super.onDestroyView();
     }

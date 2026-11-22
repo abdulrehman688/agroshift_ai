@@ -1,6 +1,7 @@
 package com.agroshift.core.domain.water;
 
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 
@@ -33,5 +34,25 @@ public record CanalTurn(DayOfWeek day, int startMinute, int durationMinutes, int
     public boolean isActive(LocalDateTime now) {
         LocalDateTime previous = nextStart(now).minusWeeks(1);
         return !now.isBefore(previous) && now.isBefore(previous.plusMinutes(durationMinutes));
+    }
+
+    public Duration untilStart(LocalDateTime now) {
+        return Duration.between(now, nextStart(now));
+    }
+
+    /** Time left in the running turn, or zero when no turn is running. */
+    public Duration remaining(LocalDateTime now) {
+        return isActive(now)
+                ? Duration.between(now, nextStart(now).minusWeeks(1).plusMinutes(durationMinutes))
+                : Duration.ZERO;
+    }
+
+    /** Share of the running turn completed, from 0 to 1. */
+    public float progress(LocalDateTime now) {
+        if (!isActive(now)) {
+            return 0f;
+        }
+        long total = durationMinutes * 60L;
+        return Math.min(1f, (float) (total - remaining(now).getSeconds()) / total);
     }
 }

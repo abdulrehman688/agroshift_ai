@@ -4,12 +4,19 @@
     android:layout_height="wrap_content"
     android:layout_marginBottom="@dimen/zameen_gap"
     android:gravity="center_vertical"
-    android:minHeight="64dp"
+    android:minHeight="72dp"
     android:orientation="horizontal"
     android:paddingStart="12dp"
     android:paddingTop="8dp"
-    android:paddingEnd="16dp"
+    android:paddingEnd="14dp"
     android:paddingBottom="8dp">
+
+    <ImageView
+        android:id="@+id/item_record_icon"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:importantForAccessibility="no"
+        android:padding="10dp" />
 
     <CheckBox
         android:id="@+id/item_record_done"
@@ -19,7 +26,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="10dp"
         android:layout_weight="1"
         android:orientation="vertical">
 
@@ -27,6 +34,7 @@
             android:id="@+id/item_record_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
             android:textAlignment="viewStart"
             android:textAppearance="@style/TextAppearance.AgroShift.Body"
             android:textDirection="firstStrong" />

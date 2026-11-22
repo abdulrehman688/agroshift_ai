@@ -1,13 +1,18 @@
 package com.agroshift.feature.farm;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Paint;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,16 +31,21 @@ public final class RecordListBinder {
     private static final int UNDO_DURATION_MILLIS = 10_000;
     private final RecordAdapter adapter;
 
-    public RecordListBinder(RecyclerView list, View snackbarHost, RecordRepository repository) {
+    public RecordListBinder(RecyclerView list, View header, View snackbarHost, RecordRepository repository) {
         adapter = new RecordAdapter(repository);
         list.setLayoutManager(new LinearLayoutManager(list.getContext()));
-        list.setAdapter(adapter);
+        list.setAdapter(new ConcatAdapter(new HeaderAdapter(header), adapter));
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.START | ItemTouchHelper.END) {
             @Override
             public boolean onMove(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder from,
                     @NonNull RecyclerView.ViewHolder to) {
                 return false;
+            }
+
+            @Override
+            public int getSwipeDirs(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder holder) {
+                return holder.getBindingAdapter() == adapter ? super.getSwipeDirs(rv, holder) : 0;
             }
 
             @Override
@@ -99,18 +109,37 @@ public final class RecordListBinder {
             holder.title.setPaintFlags(task && record.done()
                     ? holder.title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG
                     : holder.title.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.type.setText(switch (record.type()) {
+            String kind = context.getString(switch (record.type()) {
                 case TASK -> string.record_task;
                 case EXPENSE -> string.record_cost;
                 case SALE -> string.record_sale;
                 case NOTE -> string.record_note;
             });
+            holder.type.setText(context.getString(string.record_meta, kind, DateUtils.getRelativeTimeSpanString(
+                    record.dateMillis(), System.currentTimeMillis(), DateUtils.DAY_IN_MILLIS)));
+            holder.icon.setVisibility(task ? View.GONE : View.VISIBLE);
+            holder.icon.setImageResource(switch (record.type()) {
+                case TASK -> com.agroshift.core.ui.R.drawable.ic_ui_task;
+                case EXPENSE -> com.agroshift.core.ui.R.drawable.ic_ui_cost;
+                case SALE -> com.agroshift.core.ui.R.drawable.ic_ui_sale;
+                case NOTE -> com.agroshift.core.ui.R.drawable.ic_ui_note;
+            });
+            int tint = ContextCompat.getColor(context, switch (record.type()) {
+                case EXPENSE -> com.agroshift.core.ui.R.color.zameen_error;
+                case SALE -> com.agroshift.core.ui.R.color.zameen_accent;
+                default -> com.agroshift.core.ui.R.color.zameen_canal;
+            });
+            holder.icon.setImageTintList(ColorStateList.valueOf(tint));
+            holder.title.setAlpha(task && record.done() ? 0.6f : 1f);
             boolean money = record.type() == FarmRecord.Type.EXPENSE || record.type() == FarmRecord.Type.SALE;
             holder.amount.setVisibility(money ? View.VISIBLE : View.GONE);
-            holder.amount.setText(money ? EngineText.rupees(context, record.amountRupees()) : "");
+            holder.amount.setText(money ? (record.type() == FarmRecord.Type.SALE ? "+ " : "- ")
+                    + EngineText.rupees(context, record.amountRupees()) : "");
+            holder.amount.setTextColor(tint);
         }
 
         static final class Holder extends RecyclerView.ViewHolder {
+            final ImageView icon;
             final CheckBox done;
             final TextView title;
             final TextView type;
@@ -119,6 +148,9 @@ public final class RecordListBinder {
             Holder(@NonNull View view) {
                 super(view);
                 ZameenUi.applySurface(view, com.agroshift.core.ui.R.color.zameen_surface,
+                        com.agroshift.core.ui.R.dimen.zameen_radius_card);
+                icon = view.findViewById(R.id.item_record_icon);
+                ZameenUi.applySurface(icon, com.agroshift.core.ui.R.color.zameen_surface_accent,
                         com.agroshift.core.ui.R.dimen.zameen_radius_card);
                 done = view.findViewById(R.id.item_record_done);
                 title = view.findViewById(R.id.item_record_title);

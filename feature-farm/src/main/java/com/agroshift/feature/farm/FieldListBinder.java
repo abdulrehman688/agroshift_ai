@@ -6,19 +6,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 import com.agroshift.core.data.FieldRepository;
+import com.agroshift.core.domain.engine.RotationPlan;
 import com.agroshift.core.domain.farm.FarmField;
+import com.agroshift.core.domain.farm.RecordStats;
+import com.agroshift.core.domain.season.SeasonTimeline;
 import com.agroshift.core.i18n.EngineText;
 import com.agroshift.core.i18n.R.string;
+import com.agroshift.core.ui.CropGrowthView;
 import com.agroshift.core.ui.ZameenUi;
 import com.google.android.material.snackbar.Snackbar;
 import java.text.NumberFormat;
+import java.time.YearMonth;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /** Field list with tap to open, swipe to remove and undo. */
@@ -27,17 +34,22 @@ public final class FieldListBinder {
 
     private final FieldAdapter adapter;
 
-    public FieldListBinder(RecyclerView list, View snackbarHost, FieldRepository repository,
+    public FieldListBinder(RecyclerView list, View header, View snackbarHost, FieldRepository repository,
             Consumer<FarmField> onOpen) {
         adapter = new FieldAdapter(onOpen);
         list.setLayoutManager(new LinearLayoutManager(list.getContext()));
-        list.setAdapter(adapter);
+        list.setAdapter(new ConcatAdapter(new HeaderAdapter(header), adapter));
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.START | ItemTouchHelper.END) {
             @Override
             public boolean onMove(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder from,
                     @NonNull RecyclerView.ViewHolder to) {
                 return false;
+            }
+
+            @Override
+            public int getSwipeDirs(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder holder) {
+                return holder.getBindingAdapter() == adapter ? super.getSwipeDirs(rv, holder) : 0;
             }
 
             @Override
@@ -55,7 +67,8 @@ public final class FieldListBinder {
         }).attachToRecyclerView(list);
     }
 
-    public void submit(List<FarmField> fields) {
+    public void submit(List<FarmField> fields, Map<String, RecordStats.Summary> stats) {
+        adapter.setStats(stats);
         adapter.submitList(fields);
     }
 
@@ -73,10 +86,18 @@ public final class FieldListBinder {
         };
 
         private final Consumer<FarmField> onOpen;
+        private Map<String, RecordStats.Summary> stats = Map.of();
 
         FieldAdapter(Consumer<FarmField> onOpen) {
             super(DIFF);
             this.onOpen = onOpen;
+        }
+
+        void setStats(Map<String, RecordStats.Summary> next) {
+            if (!next.equals(stats)) {
+                stats = next;
+                notifyItemRangeChanged(0, getItemCount());
+            }
         }
 
         @NonNull
@@ -98,14 +119,39 @@ public final class FieldListBinder {
             format.setMaximumFractionDigits(2);
             holder.area.setText(context.getString(string.field_area_value,
                     format.format(field.areaAcres())));
+            RecordStats.Summary summary = stats.getOrDefault(field.id(), RecordStats.Summary.EMPTY);
+            holder.tasks.setText(EngineText.number(summary.openTasks(), 0));
+            holder.money.setText(EngineText.rupees(context, summary.profit()));
+            SeasonTimeline.Moment moment = moment(field);
+            holder.growth.setGrowth((float) moment.growth());
+            holder.stage.setText(moment.hasCrop()
+                    ? context.getString(string.farm_now_stage, EngineText.cropName(context, moment.cropSlug()),
+                            EngineText.stage(context, moment.stageKey()))
+                    : context.getString(string.timeline_bare));
             holder.itemView.setContentDescription(context.getString(string.field_open, field.name()));
             holder.itemView.setOnClickListener(v -> onOpen.accept(field));
+        }
+
+        private static SeasonTimeline.Moment moment(FarmField field) {
+            RotationPlan plan = null;
+            if (field.rotationKey() != null) {
+                try {
+                    plan = RotationPlan.template(field.rotationKey());
+                } catch (IllegalArgumentException unknown) {
+                    plan = null;
+                }
+            }
+            return SeasonTimeline.at(plan, YearMonth.now());
         }
 
         static final class Holder extends RecyclerView.ViewHolder {
             final TextView name;
             final TextView crop;
             final TextView area;
+            final TextView stage;
+            final TextView tasks;
+            final TextView money;
+            final CropGrowthView growth;
 
             Holder(@NonNull View view) {
                 super(view);
@@ -114,6 +160,11 @@ public final class FieldListBinder {
                 name = view.findViewById(R.id.field_name);
                 crop = view.findViewById(R.id.field_crop);
                 area = view.findViewById(R.id.field_area);
+                stage = view.findViewById(R.id.field_stage);
+                tasks = view.findViewById(R.id.field_tasks);
+                money = view.findViewById(R.id.field_money);
+                growth = view.findViewById(R.id.field_growth);
+                ZameenUi.attachPressSpring(view);
             }
         }
     }

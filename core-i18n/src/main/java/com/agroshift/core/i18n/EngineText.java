@@ -174,7 +174,7 @@ public final class EngineText {
                 stage(context, alert.stageKey()), value, number(alert.threshold(), 0));
     }
 
-    private static String stage(Context context, String key) {
+    public static String stage(Context context, String key) {
         return context.getString(switch (key) {
             case "establishment" -> R.string.stage_establishment;
             case "transplant_establishment" -> R.string.stage_transplant;

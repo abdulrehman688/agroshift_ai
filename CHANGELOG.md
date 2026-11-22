@@ -26,6 +26,7 @@ All notable changes to AgroShift are recorded here.
 
 - Version 0.4.0 adds bilingual Urdu and English photo onboarding, a modern Home, licensed farm photography, photo headers on main screens and in-app photo credits (not yet device-tested)
 - Version 0.5.0 adds a full-screen Field Setup map, daily irrigation estimate, canal turn alarm, danger alerts and notifications (not yet device-tested)
+- Version 0.6.0 adds a multi-farm Home, live weather sky, weather icons and forecast, draggable crop timeline, live canal scene, soil water meter, and redesigned Farm, field record and Market pages (not yet device-tested)
 
 ### Fixed
 

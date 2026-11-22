@@ -10,6 +10,7 @@ import com.agroshift.core.domain.engine.RotationAdvisor;
 import com.agroshift.core.domain.farm.FarmField;
 import com.agroshift.core.domain.language.ChatLanguage;
 import com.agroshift.core.domain.water.DayForecast;
+import com.agroshift.core.domain.water.SkyState;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -35,7 +36,8 @@ import retrofit2.http.Query;
 
 /** Weather, place search and assistant calls. No API keys are stored in the app. */
 public final class OnlineServices {
-    public record Weather(int currentC, LocalDate rainDate, List<DayForecast> days, long fetchedMillis) {
+    public record Weather(int currentC, LocalDate rainDate, List<DayForecast> days, long fetchedMillis,
+                          @Nullable SkyState sky) {
         public Weather {
             days = List.copyOf(days);
         }
@@ -74,8 +76,9 @@ public final class OnlineServices {
     private static final int FORECAST_DAYS = 7;
     private static final int PAST_DAYS = 31;
     private static final String KEY_FETCHED = "agroshift_fetched";
+    private static final String CURRENT_VALUES = "temperature_2m,precipitation,cloud_cover,wind_speed_10m,is_day";
     private static final String DAILY_VALUES = "precipitation_probability_max,precipitation_sum,"
-            + "et0_fao_evapotranspiration,temperature_2m_max,temperature_2m_min,wind_speed_10m_max";
+            + "et0_fao_evapotranspiration,temperature_2m_max,temperature_2m_min,wind_speed_10m_max,weather_code";
     private static final int MAX_HISTORY = 12;
     private static final int MAX_ANSWER_ITEMS = 3;
     private static final int MAX_SAVED_MESSAGES = 40;
@@ -153,7 +156,7 @@ public final class OnlineServices {
     }
 
     private Call<JsonObject> forecastCall(double latitude, double longitude) {
-        return weatherApi.forecast(latitude, longitude, "temperature_2m", DAILY_VALUES, FORECAST_DAYS,
+        return weatherApi.forecast(latitude, longitude, CURRENT_VALUES, DAILY_VALUES, FORECAST_DAYS,
                 PAST_DAYS, "auto");
     }
 
@@ -195,6 +198,7 @@ public final class OnlineServices {
         JsonArray max = daily.getAsJsonArray("temperature_2m_max");
         JsonArray min = daily.getAsJsonArray("temperature_2m_min");
         JsonArray wind = daily.getAsJsonArray("wind_speed_10m_max");
+        JsonArray codes = daily.has("weather_code") ? daily.getAsJsonArray("weather_code") : null;
         LocalDate today = LocalDate.now();
         LocalDate nextRain = null;
         List<DayForecast> days = new ArrayList<>();
@@ -207,11 +211,24 @@ public final class OnlineServices {
             if (!rain.get(i).isJsonNull() && !et0.get(i).isJsonNull() && !max.get(i).isJsonNull()
                     && !min.get(i).isJsonNull() && !wind.get(i).isJsonNull()) {
                 days.add(new DayForecast(date, rain.get(i).getAsDouble(), chance, et0.get(i).getAsDouble(),
-                        max.get(i).getAsDouble(), min.get(i).getAsDouble(), wind.get(i).getAsDouble()));
+                        max.get(i).getAsDouble(), min.get(i).getAsDouble(), wind.get(i).getAsDouble(),
+                        codes == null || codes.get(i).isJsonNull() ? -1 : codes.get(i).getAsInt()));
             }
         }
         long fetched = body.has(KEY_FETCHED) ? body.get(KEY_FETCHED).getAsLong() : 0;
-        return new Weather(current, nextRain, days, fetched);
+        return new Weather(current, nextRain, days, fetched, parseSky(body.getAsJsonObject("current")));
+    }
+
+    @Nullable
+    private static SkyState parseSky(JsonObject current) {
+        for (String key : new String[] {"temperature_2m", "precipitation", "cloud_cover", "wind_speed_10m", "is_day"}) {
+            if (!current.has(key) || current.get(key).isJsonNull()) {
+                return null;
+            }
+        }
+        return new SkyState(current.get("is_day").getAsInt() == 1, current.get("cloud_cover").getAsInt(),
+                current.get("precipitation").getAsDouble(), current.get("wind_speed_10m").getAsDouble(),
+                current.get("temperature_2m").getAsDouble());
     }
 
     public void searchPlaces(String query, Consumer<List<Place>> onResult, Runnable onFailure) {
