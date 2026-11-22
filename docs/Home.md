@@ -2,7 +2,7 @@
 
 A Java Android farm companion for Pakistani farmers, built around their own fields, NASA Earth data, official guidance and local languages.
 
-**Current milestone:** Crop Plan Studio 0.11.0, awaiting phone test. Latest phone-checked release is 0.10.3
+**Current milestone:** Crop Plan Studio 0.11.0, checked on phone
 **Last updated:** 2026-11-22
 
 ## Start here

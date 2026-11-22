@@ -4,14 +4,14 @@
 
 **A field-first Android companion for Pakistani farmers, built with Java, NASA Earth data and local languages.**
 
-![Version](https://img.shields.io/badge/version-0.10.3%20preview-D8F36F?style=flat-square&labelColor=10140D)
+![Version](https://img.shields.io/badge/version-0.11.0%20preview-D8F36F?style=flat-square&labelColor=10140D)
 ![Java](https://img.shields.io/badge/Java-17-D8F36F?style=flat-square&labelColor=10140D)
 ![Android](https://img.shields.io/badge/Android-7.0%2B-D8F36F?style=flat-square&labelColor=10140D)
 ![Offline first](https://img.shields.io/badge/offline-first-D8F36F?style=flat-square&labelColor=10140D)
 
 <img src="docs/assets/readme-banner.jpg" alt="Pakistani rice, wheat and mustard fields with farmers at harvest" width="100%">
 
-### [Download the Android APK (0.10.3 preview, 13.8 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.10.3-preview.apk)
+### [Download the Android APK (0.11.0 preview, 13.8 MB)](https://github.com/abdulrehman688/agroshift_ai/raw/main/releases/AgroShift-0.11.0-preview.apk)
 
 </div>
 
@@ -53,7 +53,7 @@ Urdu is a machine draft awaiting native review. Punjabi, Sindhi, Pashto, Saraiki
 | **1. Useful every day** | Map room, modern Home, irrigation answer, canal turn alarm, danger alerts | Built, awaiting phone test |
 | **2. Course requirements** | Proposal gaps, tests, topic-to-code report, proposal wording | Built in 0.8.0 |
 | **Living Photo Engine** | Real photos animated by GPU shaders and farm data | Built across Home, Advisor, Help, Farm, canal and onboarding in 0.10.2, checked on phone |
-| **Crop Plan Studio** | 28 crop plans, goal filters, swipe cards, plan builder, year timeline, weather stress test, favorites and comparison | Built in 0.11.0, awaiting phone test. The download above stays on the phone-checked 0.10.3 until then |
+| **Crop Plan Studio** | 28 crop plans, goal filters, swipe cards, plan builder, year timeline, weather stress test, favorites and comparison | Built in 0.11.0 and checked on phone |
 | **3. Polish and performance** | Remaining UX patterns, final fonts, sunlight theme, low-end performance | Planned |
 | **4. Big features** | Spring Boot backend, daily data pipeline, Field Lens, more languages | Planned |
 | **Later** | Listings, machinery rental, community | If time allows |

@@ -47,7 +47,7 @@ Back to [[Home]]
 - [x] Add a recycle bin for farms and farm records
 - [x] Confirm version 0.10.3 on a phone
 - [x] Build Crop Plan Studio in 0.11.0
-- [ ] Confirm version 0.11.0 on a phone
+- [x] Confirm version 0.11.0 on a phone
 
 ## High priority
 
