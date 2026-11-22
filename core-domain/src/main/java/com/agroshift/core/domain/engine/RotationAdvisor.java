@@ -20,11 +20,15 @@ public final class RotationAdvisor {
         }
 
         public Fit fit() {
-            if (scores.overall() >= 70) {
-                return Fit.GOOD;
-            }
-            return scores.overall() >= 50 ? Fit.OKAY : Fit.RISKY;
+            return fitFor(scores.overall());
         }
+    }
+
+    public static Fit fitFor(double overall) {
+        if (overall >= 70) {
+            return Fit.GOOD;
+        }
+        return overall >= 50 ? Fit.OKAY : Fit.RISKY;
     }
 
     public record Advice(ClimateProfile profile, List<Option> options, Option best) {
