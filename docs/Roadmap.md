@@ -33,6 +33,10 @@ Back to [[Home]]
 4. **Big features:** Spring Boot backend, daily data pipeline, Field Lens and more languages.
 5. **Later, if time allows:** listings, machinery rental and community.
 
+## Planned experience
+
+- [ ] [[Live Farm Plan]]: farm switcher, live canal scene, living Home, draggable season timeline and interactive screens
+
 ## High priority
 
 - [ ] **Confirm map room on a phone.** Home has a 240dp map card and Field Setup has a full-screen map with a draggable form in 0.5.0. The user reported on 2026-11-22 that map screens feel congested. Applies to Field Setup (`fragment_field_setup.xml`) and Home (`fragment_home.xml`). Keep the map as the main element, move secondary controls into a draggable bottom sheet, keep controls clear of system bars and the keyboard, and keep 48dp touch targets, right-to-left layout and smooth sheet motion.

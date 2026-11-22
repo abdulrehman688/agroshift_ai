@@ -9,6 +9,9 @@ import android.view.View;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.dynamicanimation.animation.DynamicAnimation;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
@@ -41,6 +44,23 @@ public final class ZameenUi {
         MaterialShapeDrawable drawable = new MaterialShapeDrawable(smoothShape(context, radius));
         drawable.setFillColor(ColorStateList.valueOf(ContextCompat.getColor(context, color)));
         view.setBackground(drawable);
+    }
+
+    /** Adds system-bar space to a screen while keeping its own margins. */
+    public static void applySafeArea(View root, boolean includeBottom) {
+        int start = root.getPaddingStart();
+        int top = root.getPaddingTop();
+        int end = root.getPaddingEnd();
+        int bottom = root.getPaddingBottom();
+        ViewCompat.setOnApplyWindowInsetsListener(root, (view, insets) -> {
+            Insets safe = insets.getInsets(WindowInsetsCompat.Type.systemBars()
+                    | WindowInsetsCompat.Type.displayCutout());
+            boolean rtl = view.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+            view.setPaddingRelative(start + (rtl ? safe.right : safe.left), top + safe.top,
+                    end + (rtl ? safe.left : safe.right), bottom + (includeBottom ? safe.bottom : 0));
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(root);
     }
 
     public static void polishPrimary(MaterialButton button) {

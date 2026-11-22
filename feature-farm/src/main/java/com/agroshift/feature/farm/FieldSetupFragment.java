@@ -134,7 +134,7 @@ public final class FieldSetupFragment extends Fragment {
             return insets;
         });
         View form = view.findViewById(R.id.setup_form);
-        int formBottom = form.getPaddingBottom();
+        int formBottom = form.getPaddingBottom() + dp(8);
         ViewCompat.setOnApplyWindowInsetsListener(form, (v, insets) -> {
             Insets bottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()
                     | WindowInsetsCompat.Type.ime());
@@ -247,8 +247,8 @@ public final class FieldSetupFragment extends Fragment {
         View tools = root.findViewById(R.id.setup_tools);
         View details = root.findViewById(R.id.setup_details);
         sheetBehavior = BottomSheetBehavior.from(sheet);
-        sheetBehavior.setFitToContents(false);
-        sheetBehavior.setHalfExpandedRatio(0.6f);
+        sheetBehavior.setFitToContents(true);
+        sheetBehavior.setSkipCollapsed(false);
         sheetBack = new OnBackPressedCallback(false) {
             @Override
             public void handleOnBackPressed() {
@@ -284,8 +284,16 @@ public final class FieldSetupFragment extends Fragment {
             WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(root);
             Insets safe = insets == null ? Insets.NONE : insets.getInsets(WindowInsetsCompat.Type.systemBars()
                     | WindowInsetsCompat.Type.displayCutout());
+            ViewGroup.LayoutParams size = sheet.getLayoutParams();
+            size.height = root.getHeight() - safe.top - dp(64);
+            sheet.setLayoutParams(size);
+            View formView = root.findViewById(R.id.setup_form);
+            int clearBottom = safe.bottom + dp(24);
+            if (formView.getPaddingBottom() < clearBottom) {
+                formView.setPadding(formView.getPaddingLeft(), formView.getPaddingTop(),
+                        formView.getPaddingRight(), clearBottom);
+            }
             sheetBehavior.setPeekHeight(details.getBottom() + dp(12) + safe.bottom);
-            sheetBehavior.setExpandedOffset(safe.top + dp(64));
             placeTools.run();
         });
         details.setOnClickListener(v -> sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));

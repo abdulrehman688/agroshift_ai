@@ -32,6 +32,7 @@ public final class FieldDetailFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        ZameenUi.applySafeArea(view, true);
         String fieldId = requireArguments().getString(ARG_FIELD_ID);
         AppServices services = (AppServices) requireContext().getApplicationContext();
         RecordRepository records = services.recordRepository();

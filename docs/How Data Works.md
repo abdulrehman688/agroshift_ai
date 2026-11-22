@@ -1,6 +1,6 @@
 # How Data Works
 
-Back to [[Home]]. Current as of version 0.5.0.
+Back to [[Home]]. Current as of version 0.5.1.
 
 | Data | Source | How it reaches the app |
 |---|---|---|

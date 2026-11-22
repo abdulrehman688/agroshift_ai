@@ -29,6 +29,7 @@ All notable changes to AgroShift are recorded here.
 
 ### Fixed
 
+- Version 0.5.1 restores screen margins on Farm, Market and field details, and lets the Field Setup form open fully to its submit button (not yet device-tested)
 - Android lifecycle dependency crash at startup
 - Dark status bar icons over the field view
 - Field validation errors now clear when corrected

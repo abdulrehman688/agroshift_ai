@@ -36,6 +36,7 @@ public final class HelpFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        ZameenUi.applySafeArea(view, false);
         view.findViewById(R.id.help_credits).setOnClickListener(v -> new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(string.photo_credits)
                 .setMessage(string.photo_credits_body)

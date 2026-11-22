@@ -23,6 +23,7 @@ A Java Android farm companion for Pakistani farmers, built around their own fiel
 - [[Zameen Design System]]
 - [[UX Patterns]]
 - [[Image Credits]]
+- [[Live Farm Plan]]
 
 ## Engineering
 

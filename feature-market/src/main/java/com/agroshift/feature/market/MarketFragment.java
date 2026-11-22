@@ -41,6 +41,7 @@ public final class MarketFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        ZameenUi.applySafeArea(view, false);
         AppServices services = (AppServices) requireContext().getApplicationContext();
         View prices = view.findViewById(R.id.market_prices);
         ZameenUi.applySurface(prices, com.agroshift.core.ui.R.color.zameen_surface_accent,

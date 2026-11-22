@@ -27,6 +27,7 @@ public final class FarmFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        ZameenUi.applySafeArea(view, false);
         FieldRepository repository =
                 ((AppServices) requireContext().getApplicationContext()).fieldRepository();
         AppNavigator navigator = (AppNavigator) requireActivity();

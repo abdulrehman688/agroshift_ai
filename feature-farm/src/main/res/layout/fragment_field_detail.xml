@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/zameen_background"
-    android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:paddingStart="@dimen/zameen_gutter"
     android:paddingTop="8dp"

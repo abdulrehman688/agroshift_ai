@@ -68,6 +68,7 @@ public final class AdvisorFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle state) {
+        ZameenUi.applySafeArea(view, false);
         AppServices services = (AppServices) requireContext().getApplicationContext();
         fields = services.fieldRepository();
         analysis = services.analysisRepository();
