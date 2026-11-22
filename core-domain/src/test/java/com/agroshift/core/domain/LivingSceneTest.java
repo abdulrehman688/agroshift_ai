@@ -67,4 +67,25 @@ public class LivingSceneTest {
         LivingScene scene = LivingScene.forCanal(null, NOON, new SkyState(false, 0, 0, 0, 20));
         assertEquals(0f, scene.daylight(), 0f);
     }
+
+    @Test
+    public void fieldSceneUsesWeatherWithoutCanalFlow() {
+        LivingScene scene = LivingScene.forField(NOON, new SkyState(true, 40, 0, 30, 25));
+        assertEquals(0f, scene.flow(), 0f);
+        assertEquals(30f / 45f, scene.wind(), 0.001f);
+        assertEquals(0f, scene.dryness(), 0f);
+        assertEquals(1f, scene.health(), 0f);
+    }
+
+    @Test
+    public void whatIfMakesFieldDrierHotterAndLessHealthy() {
+        LivingScene base = LivingScene.forField(NOON, null);
+        LivingScene stressed = base.withWhatIf(true, true, 0.3f);
+        assertEquals(1f, stressed.dryness(), 0f);
+        assertEquals(0.3f, stressed.health(), 0.001f);
+        assertTrue(stressed.heat() >= 0.8f);
+        assertEquals(0f, stressed.rain(), 0f);
+        assertEquals(0f, base.withWhatIf(false, false, 2f).dryness(), 0f);
+        assertEquals(1f, base.withWhatIf(false, false, 2f).health(), 0f);
+    }
 }
